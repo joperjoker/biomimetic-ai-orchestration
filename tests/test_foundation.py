@@ -50,6 +50,19 @@ def test_architecture_document_present():
         assert term.lower() in text.lower(), f"missing architecture marker: {term}"
 
 
+def test_recursive_language_models_named_correctly():
+    for path in ROOT.rglob("*.md"):
+        if ".git" in path.parts:
+            continue
+        text = path.read_text(encoding="utf-8").lower()
+        assert "recursive learning model" not in text, (
+            f"misnomer 'recursive learning model' in {path.relative_to(ROOT)}; "
+            "use 'Recursive Language Models'"
+        )
+    arch = (ROOT / "docs" / "architecture.md").read_text(encoding="utf-8")
+    assert "Context and memory layer" in arch, "missing context/memory layer component"
+
+
 def test_markdown_has_no_forbidden_dashes():
     offenders = []
     for path in ROOT.rglob("*.md"):

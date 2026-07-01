@@ -23,7 +23,8 @@ All harnesses share one contract, so they are interchangeable and testable: type
 - Central baseline scheduler harness (`src/orchestrator/baseline.py`): each round, pull advertised tasks and available agents, score all pairs with the shared module, assign by the Hungarian method (optimal) or greedy (naive), dispatch, execute, and log. This is the control condition.
 - Rejection Gate harness (`src/gates/`): `(agent, proposed_action, scope) -> (admit?, reason)` from a reliability check (`R >= tau`), an integrity and scope check, and a safety lint. Applied to CTA agents and, by dogfooding, to the Auto-Researcher's own proposed changes.
 - Simulation harness (`sim/`): a seeded population generator, an event-loop engine with task arrivals, the ground-truth quality model, and an event log writer. Deterministic and offline (SQLite). Produces the H1 to H5 curves.
-- Auto-Researcher harness (`autoresearch/`), the loop: `propose() -> change` (edits only the search space), `run(change) -> metrics` (a time-boxed simulation batch), `evaluate(metrics) -> verdict` (against the protected primary metric and guardrails, over multiple seeds), `commit_or_revert(verdict)`, then `log(decision)` to the ledger. Kept changes become commits, so the git history becomes the research narrative.
+- Auto-Researcher harness (`autoresearch/`), the loop: `propose() -> change` (edits only the search space), `run(change) -> metrics` (a time-boxed simulation batch), `evaluate(metrics) -> verdict` (against the protected primary metric and guardrails, over multiple seeds), `commit_or_revert(verdict)`, then `log(decision)` to the ledger. Kept changes become commits, so the git history becomes the research narrative. The loop reads its history through the context and memory layer (below) rather than holding it all in the prompt.
+- Context and memory layer (`context/`), the Recursive Language Models principle: treat the event log, the ledger, and the docs as an external environment; `retrieve(query, budget) -> records`, `summarise(records, budget) -> digest`, and `recurse(chunks, depth) -> aggregate`, with Claude Code subagents as the recursion substrate. It keeps the Auto-Researcher reliable over a long campaign by avoiding context rot.
 - Analysis and report harness (`analysis/`): read the event log, compute the metric-to-measurement map in `docs/architecture.md` (means, 95 per cent confidence intervals, Mann-Whitney U, effect sizes), and regenerate the figures and tables under `results/`.
 - Experiment ledger and provenance (`docs/experiment-ledger.md` and a `ledger` table): an append-only record of every loop decision (proposal, config hash, seeds, metric before and after, significance, safety verdict, keep or revert), so the research is auditable and reproducible.
 
@@ -36,6 +37,7 @@ All harnesses share one contract, so they are interchangeable and testable: type
 - Budgets and kill-switches: time, compute, and token or cost caps per experiment and per session; automatic stop on anomalies; no external network side effects during experiments.
 - Human-in-the-loop gates: changing the search space, merging to the default branch, and publishing all require a human, and batches are sized so a human can review them.
 - Provenance: the ledger and the gate reasons give a full audit trail.
+- Context-rot mitigation: the loop uses the external-memory context layer (the Recursive Language Models principle: Zhang, Kraska, and Khattab, 2025) rather than holding the full history in its prompt, retrieving and recursively summarising from the event log and ledger under a depth and budget cap, with deterministic and logged sub-calls. See `docs/architecture.md`.
 
 ## 5. The repository as the report (public-ready)
 
@@ -57,7 +59,7 @@ Pre-publication checklist (a human gate): a secret scan (Supabase keys and token
 - Phase 3, central baseline: `src/orchestrator/baseline.py` (Hungarian and greedy). Verify the first H1 and H2 comparison in simulation.
 - Phase 4, analysis and report: `analysis/` computes the metric map and writes `results/`. Verify that figures regenerate from the logs.
 - Phase 5, Rejection Gate: `src/gates/` with reliability, integrity, scope, and a safety lint. Verify the gate ablation under injected unreliability (H4).
-- Phase 6, Auto-Researcher loop (simulation only first): `autoresearch/` and `search_space/`, the ledger, and the guardrails in section 4. Human gate: approve the search space. Verify that kept changes have significant, reproducible gains without breaching a guardrail.
+- Phase 6, Auto-Researcher loop (simulation only first): `autoresearch/`, `search_space/`, the `context/` memory layer, the ledger, and the guardrails in section 4. Human gate: approve the search space. Verify that kept changes have significant, reproducible gains without breaching a guardrail, and that the context layer keeps the loop within budget without loading full history.
 - Phase 7, real-swarm pilot: the Supabase schema (`tasks, agents, events, attempts`) and the atomic claim; Claude Code subagent workers in worktrees; the simulation-versus-pilot calibration. Human gate: approve pilot runs and the cost budget.
 - Phase 8, repo-as-report and publication: `docs/safety.md`, `REPRODUCE.md`, `results/`, and the paper's results and discussion. Human gate: the pre-publication checklist and the switch to public.
 
@@ -80,3 +82,4 @@ Pre-publication checklist (a human gate): a secret scan (Supabase keys and token
 - Karpathy, A. (2026) AutoResearch, the associated loop, and the reliability commentary. Verify against the primary repository and posts, since current detail comes from secondary write-ups.
 - The AI Scientist-v2 (Sakana AI, 2025) and related closed-loop AI research systems, for related work.
 - Cemri et al. (2025), already cited, for the multi-agent failure modes that motivate the leash.
+- Zhang, A.L., Kraska, T., & Khattab, O. (2025) Recursive Language Models. arXiv:2512.24601. The external-memory principle for context-rot mitigation. Verify the identifier and authors against the primary source before citing in the public paper.

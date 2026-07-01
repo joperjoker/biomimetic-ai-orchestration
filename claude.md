@@ -6,7 +6,7 @@ This file is the persistent memory for the biomimetic-ai-orchestration project. 
 
 Validate a decentralised multi-agent orchestration framework that removes the central scheduler. Tasks advertise themselves through a semantic metadata envelope (the scent), distributed agents self-select work by calculating their own affinity, and a pre-execution sandbox (the Rejection Gate) screens candidates before they gain write access. The biological reference is cryptic female choice, drawn from Fitzpatrick and colleagues (2020), cited in full in section 9.
 
-Research North Star (do not lose sight of this): the one claim under test is that decentralised, signal-driven self-selection relieves the central-orchestrator bottleneck while holding match quality and safety. The biomimicry (cryptic female choice for signal-driven choice, the response threshold model for the activation barrier, the zona pellucida for the trust gate) is the design source, not the goal. Every addition should serve that claim or be marked as a consideration.
+Research North Star (do not lose sight of this): the one claim under test is that decentralised, signal-driven self-selection relieves the central-orchestrator bottleneck while holding match quality and safety. The biomimicry (cryptic female choice for signal-driven choice, the response threshold model for the activation barrier, the zona pellucida for the trust gate) is the design source, not the goal. Every addition should serve that claim or be marked as a consideration. The Recursive Language Models strategy adopted for the research process (section 7) is a reliability technique for conducting the research, not part of the CTA contribution.
 
 ## 2. The Consortium (Persona Model)
 
@@ -258,6 +258,7 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - Evaluation is dual-mode: a Python simulation for scale, and a real-swarm pilot of Claude Code subagents over Supabase Postgres for ecological validity. See section 4.6 and `docs/architecture.md`.
 - Pilot stack (assumed, revisable): Claude Code subagents as the swarm, Supabase Postgres as the task pool, atomic-claim store, event log, and reliability store.
 - Pilot task type (assumed, revisable): software micro-tasks in this repository, giving an objective ground-truth quality (test pass fraction).
+- The Auto-Researcher uses an external-memory context strategy (the Recursive Language Models principle, arXiv:2512.24601) to avoid context rot: it retrieves and recursively summarises from the event log and ledger rather than holding full history in the prompt, under depth and budget caps with deterministic, logged sub-calls. This is a process reliability technique, separate from CTA. Full recursive model-in-a-REPL is an optional later extension.
 - Licence: Apache-2.0 (confirmed). The full text is in the `LICENSE` file, and the reasoning is in `docs/theory.md` section 9.
 
 ## 8. Open Items for Future Phases
@@ -274,11 +275,14 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - Build the real-swarm pilot: Claude Code subagents that self-assess, claim, pass the gate, and execute scoped software micro-tasks in isolated git worktrees.
 - Build the analysis layer that computes the metric-to-measurement map in `docs/architecture.md` from the event log.
 - Follow the phased build in `docs/roadmap.md`: the agent harnesses, the Auto-Researcher loop (a Karpathy-style propose, run, evaluate, keep-or-revert loop kept on a leash by the Rejection Gate), and the repository shaped as the public report. Not yet started.
+- Build the context and memory layer (`context/`) so the Auto-Researcher queries and recursively summarises the event log and ledger instead of loading full history, following the Recursive Language Models principle.
 
 ## 9. References
 
 Bonabeau E, Theraulaz G, Deneubourg J-L. (1996) Quantitative study of the fixed threshold model for the regulation of division of labour in insect societies. Proceedings of the Royal Society of London B: Biological Sciences, 263(1376): 1565-1569. DOI: 10.1098/rspb.1996.0229.
 
 Fitzpatrick JL, Willis C, Devigili A, Young A, Carroll M, Hunter HR, Brison DR. (2020) Chemical signals from eggs facilitate cryptic female choice in humans. Proceedings of the Royal Society B: Biological Sciences, 287(1928): 20200805. DOI: 10.1098/rspb.2020.0805. Published 11 June 2020.
+
+Zhang AL, Kraska T, Khattab O. (2025) Recursive Language Models. arXiv:2512.24601. (Identifier and authors to be verified against the primary source before public citation.)
 
 The complete research reference list is in `docs/paper.md`.
