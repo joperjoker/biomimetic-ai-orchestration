@@ -15,3 +15,4 @@ All notable changes to this project are recorded in this file. The format follow
 - Foundation guard test suite that checks structure, key documents, and the style constraints.
 - Apache License 2.0 (`LICENSE`), and the confirmed language decision (Python 3.11 or later).
 - Two-stage selection frame: a binary eligibility filter followed by an activation-energy barrier (`BE >= Ea`), with a deterministic threshold default and an optional Arrhenius temperature extension, plus the distinct infeasible and stalled outcomes.
+- Research draft (`docs/paper.md`): introduction (problem, prior art, contributions, research questions) and methodology (design, formal model, baseline, variables and metrics, procedure, analysis, validity and threats), with verified references.
