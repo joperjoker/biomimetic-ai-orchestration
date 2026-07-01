@@ -80,6 +80,10 @@ Before any agent gains write access, it must pass the Rejection Gate, a pre-exec
 
 The orchestrator is deliberately thin: it provides the consistency needed for a single agent to claim a task, rather than assigning workloads. The two-stage selection, the lifecycle, and the concurrency model are described in `docs/theory.md`.
 
+## Research approach
+
+The framework is evaluated against a centralised baseline in two modes that share one scoring core, so coordination is the only variable. A Python simulation provides scale and the scaling curves, and a small real-swarm pilot of agents competing over a shared coordination store provides ecological validity. Every action is written to an append-only event log, so each metric is a query over that log. The research write-up is in `docs/paper.md`, and the experimental architecture (components, controls, the metric-to-measurement map, and the evaluation protocol) is in `docs/architecture.md`.
+
 ## Repository Layout
 
 ```
@@ -95,9 +99,11 @@ The orchestrator is deliberately thin: it provides the consistency needed for a 
 │   ├── gates/           Rejection Gate sandbox and reliability scoring
 │   └── orchestrator/    Decentralised coordination and event loop
 ├── tests/               Validation suites (including the foundation guard)
-├── docs/                Extended theory, worked example, glossary, and references
+├── docs/                Theory, glossary, the research write-up, and the architecture
 └── .github/             Continuous integration and repository configuration
 ```
+
+Planned for the implementation phase (not yet created): `sim/` (simulation harness), `experiments/` (run configurations), and `analysis/` (metrics and statistics).
 
 ## Getting started
 

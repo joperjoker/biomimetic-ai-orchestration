@@ -42,6 +42,14 @@ def test_paper_holds_formal_framework():
         assert term in text, f"missing formal-framework marker: {term}"
 
 
+def test_architecture_document_present():
+    path = ROOT / "docs" / "architecture.md"
+    assert path.is_file(), "missing docs/architecture.md"
+    text = path.read_text(encoding="utf-8")
+    for term in ("Experimental Architecture", "atomic claim", "metric to measurement"):
+        assert term.lower() in text.lower(), f"missing architecture marker: {term}"
+
+
 def test_markdown_has_no_forbidden_dashes():
     offenders = []
     for path in ROOT.rglob("*.md"):

@@ -6,6 +6,8 @@ This file is the persistent memory for the biomimetic-ai-orchestration project. 
 
 Validate a decentralised multi-agent orchestration framework that removes the central scheduler. Tasks advertise themselves through a semantic metadata envelope (the scent), distributed agents self-select work by calculating their own affinity, and a pre-execution sandbox (the Rejection Gate) screens candidates before they gain write access. The biological reference is cryptic female choice, drawn from Fitzpatrick and colleagues (2020), cited in full in section 9.
 
+Research North Star (do not lose sight of this): the one claim under test is that decentralised, signal-driven self-selection relieves the central-orchestrator bottleneck while holding match quality and safety. The biomimicry (cryptic female choice for signal-driven choice, the response threshold model for the activation barrier, the zona pellucida for the trust gate) is the design source, not the goal. Every addition should serve that claim or be marked as a consideration.
+
 ## 2. The Consortium (Persona Model)
 
 Work is reasoned through five virtual personas. They are internal reasoning roles, not separate processes:
@@ -193,6 +195,10 @@ A task envelope is expected to carry at minimum:
 
 The concrete serialisation (for example JSON with a validation schema) is left to the Engineer in the implementation phase.
 
+### 4.6 Experimental Architecture (evaluation)
+
+The framework is evaluated in two modes that share one core, so results are comparable and every metric is recoverable. A simulation mode (Python, synthetic agents) provides scale and determinism for the scaling curves. A real-swarm pilot (a small set of Claude Code subagents over a Supabase Postgres coordination store) provides ecological validity, including real self-assessment, latency, cost, and quality. The atomic claim is a real conditional update in Postgres (`UPDATE tasks SET status='CLAIMED', claimed_by=$a WHERE id=$t AND status='ADVERTISED' RETURNING id`), so the decentralised coordination is measured rather than assumed. All activity is written to an append-only event log, so each metric is a query. The central baseline (Hungarian and greedy) uses the same shared scoring module, which isolates coordination as the only variable. The full component design, controls, metric-to-measurement map, and evaluation protocol are in `docs/architecture.md`.
+
 ## 5. Operating Protocol for Autonomous Loops
 
 ### 5.1 Execution Loop
@@ -248,6 +254,9 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - The formal model is named Chemotactic Task Allocation (CTA) and is specified in `docs/paper.md` section 2.2.
 - Effective capability couples reliability into affinity by default: `C_effective = C_base x R`.
 - Evaluation uses an independent ground-truth quality model (not the affinity score) to judge outcomes, and models self-assessment as noisy and possibly biased, so calibration can be studied.
+- Evaluation is dual-mode: a Python simulation for scale, and a real-swarm pilot of Claude Code subagents over Supabase Postgres for ecological validity. See section 4.6 and `docs/architecture.md`.
+- Pilot stack (assumed, revisable): Claude Code subagents as the swarm, Supabase Postgres as the task pool, atomic-claim store, event log, and reliability store.
+- Pilot task type (assumed, revisable): software micro-tasks in this repository, giving an objective ground-truth quality (test pass fraction).
 - Licence: Apache-2.0 (confirmed). The full text is in the `LICENSE` file, and the reasoning is in `docs/theory.md` section 9.
 
 ## 8. Open Items for Future Phases
@@ -260,6 +269,9 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - Implement the atomic claim primitive in the orchestrator.
 - Explore the catalyst and `Ea` annealing extensions once the base pipeline is measured.
 - Build a simulation harness to observe emergent allocation and to measure the metrics in section 6 against a centralised baseline.
+- Create the Supabase schema (tasks, agents, events, attempts) and the atomic-claim statement.
+- Build the real-swarm pilot: Claude Code subagents that self-assess, claim, pass the gate, and execute scoped software micro-tasks in isolated git worktrees.
+- Build the analysis layer that computes the metric-to-measurement map in `docs/architecture.md` from the event log.
 
 ## 9. References
 

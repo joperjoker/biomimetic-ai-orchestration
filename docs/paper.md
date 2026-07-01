@@ -32,7 +32,9 @@ Scope and non-goals: this is a simulation study, not a live deployment. The atom
 
 ### 2.1 Research design
 
-The study is a comparative, controlled simulation. Two systems are measured under identical task and agent populations: the decentralised framework and a centralised baseline. The scoring function (Binding Energy) is shared by both systems, so the only difference is how allocation is coordinated. This isolates the effect of decentralisation. Population size is varied to test the scaling hypothesis, and each configuration is run for many seeded replications to support interval estimates.
+The study is a comparative, controlled experiment. Two systems are measured under identical task and agent populations: the decentralised framework and a centralised baseline. The scoring function (Binding Energy) is shared by both systems, so the only difference is how allocation is coordinated. This isolates the effect of decentralisation. Population size is varied to test the scaling hypothesis, and each configuration is run for many seeded replications to support interval estimates.
+
+The experiment runs in two modes that share one core. A simulation mode uses many synthetic agents in Python for scale, determinism, and cheap sweeps, and produces the scaling curves for H1 to H5. A real-swarm pilot uses a small set of Claude Code subagents competing over a shared task pool in Supabase Postgres, where the atomic claim is a genuine compare-and-swap, and it supplies ecological validity: real self-assessment, latency, cost, and output quality. The shared core (scent schema, scoring module, event log, and metric code) makes the two modes comparable. The full design is in `docs/architecture.md`.
 
 ### 2.2 Formal framework (Chemotactic Task Allocation)
 
@@ -120,13 +122,17 @@ Hypotheses:
 ### 2.7 Validity and threats
 
 - Internal validity: the shared scoring function and fixed seeds isolate the coordination effect. Threats: implementation bias between the two systems, and claim contention that could confound latency at scale. Mitigations: a single shared scoring module with code review and open configurations, and contention measured directly (attempts per claim, wasted-evaluation rate) rather than assumed away.
-- External validity: this is the primary threat. A simulation abstracts away the variable latency, monetary cost, and stochastic output quality of live language-model agents, and it abstracts the cost and miscalibration of an agent scoring itself, which is the weakest real-world link. Reported failure rates for real multi-agent systems are high and are driven by specification ambiguity and coordination breakdown that a simulation does not reproduce (Cemri et al., 2025). Mitigations: sweep the self-assessment bias and noise (E13), state plainly that the study tests the coordination mechanism rather than deployment readiness, and run a small real-agent pilot as future work.
+- External validity: this is the primary threat. A simulation abstracts away the variable latency, monetary cost, and stochastic output quality of live language-model agents, and it abstracts the cost and miscalibration of an agent scoring itself, which is the weakest real-world link. Reported failure rates for real multi-agent systems are high and are driven by specification ambiguity and coordination breakdown that a simulation does not reproduce (Cemri et al., 2025). Mitigations: sweep the self-assessment bias and noise (E13), state plainly that the study tests the coordination mechanism rather than deployment readiness, and run the real-swarm pilot defined in the experimental architecture (`docs/architecture.md`), using matched runs to calibrate the simulation against live agents.
 - Construct validity: Binding Energy is only a proxy for allocation quality, and the framework rests on agents estimating their own `S` and `C`. Mitigation: an independent ground-truth quality function `Q` (E12) drives success and the quality hypothesis H2, so results do not depend on the proxy alone.
 - Reproducibility: code, seeds, and configurations are versioned, and continuous integration runs the deterministic path (`T -> 0`), so reported runs can be reproduced exactly; stochastic runs record their seeds and temperature.
 
-### 2.8 Ethical considerations
+### 2.8 Experimental architecture
 
-The study uses synthetic data in simulation, with no human subjects. The biological source is used only as a source of design intuition, and no claim is made about human reproduction.
+The framework and the baseline run over a shared coordination substrate (Supabase Postgres) holding the task pool, an append-only event log, and the reliability history. The atomic claim is a single conditional update that returns a row to exactly one agent, so the decentralised coordination is measured rather than assumed. A shared scoring module is called by the simulation agents, the pilot agents, and the central scheduler, so coordination is the only factor that varies. Every action is written to the event log, so each metric in section 2.4 is a query over that log. The components, the controls, the metric-to-measurement map, and the evaluation protocol are set out in `docs/architecture.md`.
+
+### 2.9 Ethical considerations
+
+The study uses synthetic data in simulation and small, scoped software tasks in the pilot, with no human subjects. The biological source is used only as a source of design intuition, and no claim is made about human reproduction.
 
 ## References
 
