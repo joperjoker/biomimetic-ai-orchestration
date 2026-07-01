@@ -7,7 +7,8 @@ This glossary maps the biological vocabulary of cryptic female choice onto the e
 | Egg | Task | The unit of work that advertises itself and is selected for. |
 | Chemical signal (chemoattractant) | Scent envelope | The semantic metadata a task emits to attract suitable agents. |
 | Sperm | Agent | A distributed worker that approaches tasks and competes for them. |
-| Chemotaxis (attraction strength) | Task Signal (S) | How strongly a task envelope matches an agent domain. |
+| Chemotaxis (attraction strength) | Compatibility (c) | How strongly the task wrapper matches an agent's role, skills, and prompt, in [0, 1]. Replaces the abstract signal S. |
+| Chemical gradient sensing | Task wrapper | The mechanism that reads an agent's role, skills, and prompt against the task requirements to produce the compatibility score. |
 | Gamete fitness | Agent Capability (C) | The agent competence for the required skills. |
 | Energetic cost of approach | Latency penalty (L) | The expected time and compute cost of an agent taking a task. |
 | Affinity of a sperm for an egg | Binding Energy | The ranked fit score, computed as (S x C) / L. |

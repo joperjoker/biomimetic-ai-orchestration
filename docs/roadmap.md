@@ -10,7 +10,7 @@ This project suits that loop, because Chemotactic Task Allocation (CTA) already 
 
 ## 2. Assumptions (revisable)
 
-- Stack: Claude Code subagents as the swarm; Supabase Postgres for the pilot pool, atomic claim, event log, and reliability store; SQLite for local simulation so the simulation needs no network.
+- Stack: Claude Code subagents as the swarm; a self-contained SQLite store (WAL mode) for the task pool, atomic claim, event log, and reliability store, so no external service is needed; an optional Postgres adapter behind the same interface for anyone wanting a distributed pilot.
 - Pilot task type: scoped software micro-tasks in this repository, with objective quality (test pass fraction).
 - Auto-Researcher autonomy: time-boxed, sandboxed, revertible experiments run without approval; human approval is required to change the search space, to merge to the default branch, and to publish.
 - Primary objective for the loop: minimise coordinator work per task and allocation latency, subject to guardrails (realised quality at or above a pre-registered margin, and safety and fairness not degraded). A single scalar objective is held in a protected metrics module.
@@ -50,7 +50,7 @@ All harnesses share one contract, so they are interchangeable and testable: type
 - `docs/experiment-ledger.md` (planned): the Auto-Researcher decision log.
 - Continuous integration runs the deterministic simulation and the tests, so visitors get green reproducibility.
 
-Pre-publication checklist (a human gate): a secret scan (Supabase keys and tokens stay in environment variables, never committed), the licence present (Apache-2.0, done), disclaimers that the biology is design intuition only, a clean history, and a statement of limitations. Making the repository public and any pull request operations need the GitHub connector to be authorised, so publication is a human or authorised step.
+Pre-publication checklist (a human gate): a secret scan (any API keys or tokens stay in environment variables, never committed), the licence present (Apache-2.0, done), disclaimers that the biology is design intuition only, a clean history, and a statement of limitations. Making the repository public and any pull request operations need the GitHub connector to be authorised, so publication is a human or authorised step.
 
 ## 6. Phased roadmap
 
@@ -60,7 +60,7 @@ Pre-publication checklist (a human gate): a secret scan (Supabase keys and token
 - Phase 4, analysis and report: `analysis/` computes the metric map and writes `results/`. Verify that figures regenerate from the logs.
 - Phase 5, Rejection Gate: `src/gates/` with reliability, integrity, scope, and a safety lint. Verify the gate ablation under injected unreliability (H4).
 - Phase 6, Auto-Researcher loop (simulation only first): `autoresearch/`, `search_space/`, the `context/` memory layer, the ledger, and the guardrails in section 4. Human gate: approve the search space. Verify that kept changes have significant, reproducible gains without breaching a guardrail, and that the context layer keeps the loop within budget without loading full history.
-- Phase 7, real-swarm pilot: the Supabase schema (`tasks, agents, events, attempts`) and the atomic claim; Claude Code subagent workers in worktrees; the simulation-versus-pilot calibration. Human gate: approve pilot runs and the cost budget.
+- Phase 7, real-swarm pilot: the store schema (`tasks, agents, events, attempts`, SQLite by default) and the atomic claim; Claude Code subagent workers in worktrees; the simulation-versus-pilot calibration. Human gate: approve pilot runs and the cost budget.
 - Phase 8, repo-as-report and publication: `docs/safety.md`, `REPRODUCE.md`, `results/`, and the paper's results and discussion. Human gate: the pre-publication checklist and the switch to public.
 
 ## 7. Verification strategy
@@ -75,7 +75,7 @@ Pre-publication checklist (a human gate): a secret scan (Supabase keys and token
 
 - Confirm the four assumptions in section 2.
 - GitHub connector authorisation is required before publishing or any pull request operation.
-- A Supabase project and keys are needed for Phase 7, kept in environment variables and never committed.
+- No external service is needed; the pilot runs on the self-contained SQLite store. An optional Postgres or Supabase adapter is available for a distributed pilot, with any keys kept in environment variables and never committed.
 
 ## 9. References to add (verify primary sources before citing in the public paper)
 

@@ -50,7 +50,7 @@ Matching a task to an agent is decided in two stages, followed by a distinct tru
 ```
 [Eligibility Filter]  ->  [Binding Energy + Activation]  ->  [Rejection Gate]
    Can it, at all?          Is the match strong enough?         Is it trustworthy?
-   binary yes or no         BE >= Ea                            reliability + integrity
+   binary yes or no         c >= Ea                             reliability + integrity
 ```
 
 This structure borrows a second chemistry idea alongside binding energy: activation energy, the barrier a reaction must overcome before it proceeds. A useful consequence is that the framework can express work that cannot be done: a task with no eligible agent is infeasible, and a task with eligible agents but none clearing the barrier is stalled. These two outcomes are distinct and are handled separately (sections 3.3, 3.5, and 4.3).
@@ -75,7 +75,7 @@ Binding Energy = (S x C) / L
 
 Variables:
 
-- `S` (Task Signal): the strength of the match between the task's scent envelope and the agent's declared domain. Normalised to [0, 1].
+- Compatibility `c` (replaces the abstract signal `S`): the match produced by the task wrapper from the agent's role, skills, and prompt against the task requirements, in [0, 1]. Defined operationally in `docs/measures.md`. The activation barrier is compared against `c`.
 - `C` (Agent Capability): the agent's competence for the specific skills the task requires. Normalised to [0, 1].
 - `L` (Latency or compute cost penalty): the expected time and resource cost of the agent undertaking the task. Strictly greater than zero, floored at a small value (suggested 0.01) to keep the score bounded. `L` is a normalised relative cost with a typical value near 1, so `B` typically lies in [0, 1] and the absolute barrier `Ea` in [0, 1] is meaningful.
 
@@ -92,7 +92,7 @@ Decided rules (defaults, revisable):
 Binding Energy alone does not commit an agent to a task. As in a chemical reaction, the match must first overcome a barrier, the activation energy `Ea`. An eligible agent attempts to claim a task only when its Binding Energy is at or above the task's `Ea`:
 
 ```
-the reaction fires when   BE >= Ea
+the reaction fires when   c >= Ea   (compatibility reaches the barrier)
 ```
 
 - `Ea` is carried by the task envelope and is task-specific: demanding or higher-risk tasks set a higher barrier, routine tasks set a lower one.
@@ -160,7 +160,7 @@ CREATED -> ADVERTISED -> [ELIGIBILITY FILTER]
                           eligible       none eligible -> INFEASIBLE
                               |
                               v
-                  [ACTIVATION: best eligible BE >= Ea ?]
+                  [ACTIVATION: best eligible c >= Ea ?]
                               |            \
                             fires        below Ea -> STALLED -> RE_ADVERTISED -> ADVERTISED
                               |
@@ -202,7 +202,7 @@ The concrete serialisation (for example JSON with a validation schema) is left t
 
 ### 4.6 Experimental Architecture (evaluation)
 
-The framework is evaluated in two modes that share one core, so results are comparable and every metric is recoverable. A simulation mode (Python, synthetic agents) provides scale and determinism for the scaling curves. A real-swarm pilot (a small set of Claude Code subagents over a Supabase Postgres coordination store) provides ecological validity, including real self-assessment, latency, cost, and quality. The atomic claim is a real conditional update in Postgres (`UPDATE tasks SET status='CLAIMED', claimed_by=$a WHERE id=$t AND status='ADVERTISED' RETURNING id`), so the decentralised coordination is measured rather than assumed. All activity is written to an append-only event log, so each metric is a query. The central baseline (Hungarian and greedy) uses the same shared scoring module, which isolates coordination as the only variable. The full component design, controls, metric-to-measurement map, and evaluation protocol are in `docs/architecture.md`.
+The framework is evaluated in two modes that share one core, so results are comparable and every metric is recoverable. A simulation mode (Python, synthetic agents) provides scale and determinism for the scaling curves. A real-swarm pilot (a small set of Claude Code subagents over a self-contained SQLite coordination store) provides ecological validity, including real self-assessment, latency, cost, and quality. The atomic claim is a real conditional update under a transaction (`BEGIN IMMEDIATE; UPDATE tasks SET status='CLAIMED', claimed_by=? WHERE id=? AND status='ADVERTISED'` then check the changed row count), so the decentralised coordination is measured rather than assumed and needs no external service. All activity is written to an append-only event log, so each metric is a query. The central baseline (Hungarian and greedy) uses the same shared scoring module, which isolates coordination as the only variable. The full component design, controls, metric-to-measurement map, and evaluation protocol are in `docs/architecture.md`.
 
 ## 5. Operating Protocol for Autonomous Loops
 
@@ -262,9 +262,10 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - Evaluation controls multiple comparisons (H1 and H2 primary, others Holm-Bonferroni corrected) and sizes the seed count by a power analysis; the hypotheses carry explicit falsification criteria.
 - The formal model is named Chemotactic Task Allocation (CTA) and is specified in `docs/paper.md` section 2.2.
 - Effective capability couples reliability into affinity by default: `C_tilde = C x R` (ablatable). This is the canonical form used in `docs/paper.md` equations E5 and E6.
+- The task wrapper computes a measurable compatibility `c` from the agent's role, skills, and prompt against the task requirements. Activation is on compatibility (`c >= Ea`); the selection score `B = c x C_tilde / L` ranks the willing agents; cost `L` no longer gates firing. Every quantity is defined operationally in `docs/measures.md`, and `c` can be calibrated to predict success.
 - Evaluation uses an independent ground-truth quality model (not the affinity score) to judge outcomes, and models self-assessment as noisy and possibly biased, so calibration can be studied.
-- Evaluation is dual-mode: a Python simulation for scale, and a real-swarm pilot of Claude Code subagents over Supabase Postgres for ecological validity. See section 4.6 and `docs/architecture.md`.
-- Pilot stack (assumed, revisable): Claude Code subagents as the swarm, Supabase Postgres as the task pool, atomic-claim store, event log, and reliability store.
+- Evaluation is dual-mode: a Python simulation for scale, and a real-swarm pilot of Claude Code subagents over the self-contained SQLite store for ecological validity. Both stages run in order (simulation first, then the LLM stage). See section 4.6 and `docs/architecture.md`.
+- Pilot stack: Claude Code subagents as the swarm; a self-contained SQLite store (WAL) as the task pool, atomic-claim store, event log, and reliability store; an optional Postgres adapter for a distributed pilot. Minimise external platform use.
 - Pilot task type (assumed, revisable): software micro-tasks in this repository, giving an objective ground-truth quality (test pass fraction).
 - The Auto-Researcher uses an external-memory context strategy (the Recursive Language Models principle, arXiv:2512.24601) to avoid context rot: it retrieves and recursively summarises from the event log and ledger rather than holding full history in the prompt, under depth and budget caps with deterministic, logged sub-calls. This is a process reliability technique, separate from CTA. Full recursive model-in-a-REPL is an optional later extension.
 - Licence: Apache-2.0 (confirmed). The full text is in the `LICENSE` file, and the reasoning is in `docs/theory.md` section 9.
@@ -279,7 +280,7 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - Implement the atomic claim primitive in the orchestrator.
 - Explore the catalyst and `Ea` annealing extensions once the base pipeline is measured.
 - Build a simulation harness to observe emergent allocation and to measure the metrics in section 6 against a centralised baseline.
-- Create the Supabase schema (tasks, agents, events, attempts) and the atomic-claim statement.
+- Create the store schema (tasks, agents, events, attempts; SQLite by default) and the atomic-claim statement.
 - Build the real-swarm pilot: Claude Code subagents that self-assess, claim, pass the gate, and execute scoped software micro-tasks in isolated git worktrees.
 - Build the analysis layer that computes the metric-to-measurement map in `docs/architecture.md` from the event log.
 - Follow the phased build in `docs/roadmap.md`: the agent harnesses, the Auto-Researcher loop (a Karpathy-style propose, run, evaluate, keep-or-revert loop kept on a leash by the Rejection Gate), and the repository shaped as the public report. Not yet started.

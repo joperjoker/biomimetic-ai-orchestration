@@ -8,7 +8,7 @@ Multi-agent systems increasingly coordinate large numbers of autonomous agents o
 
 Decentralised alternatives have a long record. The Contract Net Protocol (Smith, 1980) distributes control through an announce, bid, and award exchange, although the award decision for each task still passes through a manager. Market and auction based allocation, surveyed and analysed by Dias, Zlot, Kalra, and Stentz (2006) and formalised by Gerkey and Matarić (2004), casts allocation as an optimisation problem and clarifies where decentralised methods trade optimality for scalability. Stigmergic methods such as ant colony optimisation (Dorigo, Maniezzo, and Colorni, 1996) coordinate indirectly through signals left in a shared environment, with no central assigner at all. These results establish that decentralised allocation is viable. Three gaps remain visible across much of this work: the award step is often still centralised per task, a trust or reliability screen before execution is rarely integrated, and there is seldom a principled account of tasks that cannot be done given the agents present.
 
-This project studies a decentralised framework, Chemotactic Task Allocation (CTA), that addresses those three gaps, drawing its selection principle from two biological sources. From cryptic female choice it takes signal-driven, post-advertisement selection: selection continues after the initial encounter and is biased by chemical signalling rather than decided by a single authority (Fitzpatrick et al., 2020). From the response threshold model of division of labour in social insects it takes the activation barrier: an individual engages a task only when the task stimulus exceeds its threshold (Bonabeau, Theraulaz, and Deneubourg, 1996), a mechanism since operationalised in swarm robotics. Translated to computation: each task emits a semantic metadata envelope (the scent), and distributed agents self-select by computing an affinity score, the Binding Energy `(S x C) / L`. Selection proceeds in two stages, a binary eligibility filter and then an activation energy barrier `Ea` that a match must clear to fire, followed by a distinct trust stage, the Rejection Gate, modelled on the zona pellucida. The biology and chemistry are used as design intuition, not as literal specifications, and the limits of the analogies are recorded in `docs/theory.md` section 8.
+This project studies a decentralised framework, Chemotactic Task Allocation (CTA), that addresses those three gaps, drawing its selection principle from two biological sources. From cryptic female choice it takes signal-driven, post-advertisement selection: selection continues after the initial encounter and is biased by chemical signalling rather than decided by a single authority (Fitzpatrick et al., 2020). From the response threshold model of division of labour in social insects it takes the activation barrier: an individual engages a task only when the task stimulus exceeds its threshold (Bonabeau, Theraulaz, and Deneubourg, 1996), a mechanism since operationalised in swarm robotics. Translated to computation: each task is described by a wrapper (the scent envelope) that reads an agent's role, skills, and prompt against the task requirements to produce a compatibility score `c` in [0, 1]. Distributed agents self-select: an agent may take a task only when its compatibility reaches the task's activation energy (`c >= Ea`), and among the willing agents the winner maximises a cost-adjusted, reliability-weighted score, the Binding Energy `B = c x C_tilde / L`. Selection proceeds in two stages, a binary eligibility filter and then the activation barrier, followed by a distinct trust stage, the Rejection Gate, modelled on the zona pellucida. Every quantity is defined operationally in `docs/measures.md`. The biology and chemistry are used as design intuition, not as literal specifications, and the limits of the analogies are recorded in `docs/theory.md` section 8.
 
 Compared with a simple pull-based work queue, where agents self-schedule by taking the best available task, CTA adds three things: the activation barrier as a quality floor, the Rejection Gate as a trust boundary, and the eligibility filter with its infeasible and stalled semantics. The evaluation isolates these additions with a pull-based baseline (section 2.3), so a result is not merely the effect of decentralisation.
 
@@ -19,6 +19,7 @@ Contributions:
 3. A reliability trust gate that screens degraded agents before they gain write access.
 4. An evaluation methodology that compares the framework against a centralised baseline on both scaling and match quality, with operational metrics.
 5. A formal framework (Chemotactic Task Allocation) that unifies eligibility, affinity, and activation into one model, with cost accounting that separates total system work from coordinator work.
+6. A measurable compatibility wrapper that scores an agent's role, skills, and prompt against a task and can be calibrated to predict success, so the activation threshold rests on an empirically validated score rather than an abstract one (`docs/measures.md`).
 
 Research questions:
 
@@ -37,7 +38,7 @@ Scope and non-goals: this is a simulation study, not a live deployment. The atom
 
 The study is a comparative, controlled experiment. Two systems are measured under identical task and agent populations: the decentralised framework and a centralised baseline. The scoring function (Binding Energy) is shared by both systems, so the only difference is how allocation is coordinated. This isolates the effect of decentralisation. Population size is varied to test the scaling hypothesis, and each configuration is run for many seeded replications to support interval estimates.
 
-The experiment runs in two modes that share one core. A simulation mode uses many synthetic agents in Python for scale, determinism, and cheap sweeps, and produces the scaling curves for H1 to H5. A real-swarm pilot uses a small set of Claude Code subagents competing over a shared task pool in Supabase Postgres, where the atomic claim is a genuine compare-and-swap, and it supplies ecological validity: real self-assessment, latency, cost, and output quality. The shared core (scent schema, scoring module, event log, and metric code) makes the two modes comparable. The full design is in `docs/architecture.md`.
+The experiment runs in two modes that share one core. A simulation mode uses many synthetic agents in Python for scale, determinism, and cheap sweeps, and produces the scaling curves for H1 to H5. A real-swarm pilot uses a small set of Claude Code subagents competing over a shared task pool in a self-contained store (SQLite by default), where the atomic claim is a genuine compare-and-swap, and it supplies ecological validity: real self-assessment, latency, cost, and output quality. The shared core (scent schema, scoring module, event log, and metric code) makes the two modes comparable. The full design is in `docs/architecture.md`.
 
 ### 2.2 Formal framework (Chemotactic Task Allocation)
 
@@ -45,19 +46,19 @@ Entities: a set of agents `A` of size `N`, and tasks `T` of size `M` arriving ov
 
 Stage one, eligibility (binary):
 
-- (E1) `elig(a,t) = 1[d_t in D_a] . 1[ReqPerm_t subset Perm_a] . 1[ReqTool_t subset Tool_a]`, valued in {0,1}.
+- (E1) `elig(a,t) = 1[ReqTool_t subset Tool_a] . 1[scope_t subset Perm_a]`, valued in {0,1}: tools and permitted scope are the hard requirements. Skills and domain are graded into compatibility (E3), not vetoed. See `docs/measures.md` section 2.
 - (E2) eligible set `A(t) = { a in A : elig(a,t) = 1 }`. The task is infeasible when `A(t)` is empty.
 
-Affinity (Binding Energy):
+Compatibility, capability, and the selection score:
 
-- (E3) signal match `S(a,t) = max(0, cos(phi(t), psi(a)))`, the cosine of a task-need embedding `phi(t)` and an agent-capability embedding `psi(a)`, in [0, 1].
+- (E3) compatibility `c(a,t)` in [0, 1], produced by the task wrapper from the agent's role, skills, and prompt against the task requirements. It aggregates measurable sub-scores (semantic match, skill coverage, scope fit) by a weighted geometric mean, or by a logistic model calibrated to predict success. Compatibility replaces the abstract signal `S`; full definitions are in `docs/measures.md` section 3.
 - (E4) reliability `R(a) = (s_a + 1) / (n_a + 2)`, a Laplace smoothed success ratio over a sliding window of `W` recent attempts.
 - (E5) effective capability `C_tilde(a,t) = C(a,t) . R(a)`, with base capability `C` in [0, 1], so reliability enters selection as well as the gate.
-- (E6) Binding Energy `B(a,t) = S(a,t) . C_tilde(a,t) / max(L(a,t), eps)`, with cost `L > 0` and floor `eps = 0.01`. In prose across the documents, `B` is written `BE`. `L` is a normalised relative cost with a typical value near 1, so `B` typically lies in [0, 1] and the absolute barrier `Ea` in [0, 1] is interpretable; the floor bounds pathological cases, and a near-zero-cost agent simply clears the barrier.
+- (E6) selection score, the Binding Energy `B(a,t) = c(a,t) . C_tilde(a,t) / max(L(a,t), eps)`, with cost `L > 0` and floor `eps = 0.01`. `B` ranks the agents that have cleared activation; it does not gate firing. In prose `B` is written `BE`, and `L` is a normalised relative cost with a typical value near 1. The activation barrier `Ea` in [0, 1] is compared against compatibility `c` (E7), which is bounded in [0, 1] by construction, so `Ea` is directly interpretable.
 
 Stage two, activation (firing):
 
-- (E7) activation drive `Delta(a,t) = B(a,t) - Ea_t`.
+- (E7) activation drive `Delta(a,t) = c(a,t) - Ea_t`; the barrier is on compatibility, not on the selection score.
 - (E8) firing probability `P_fire(a,t) = 1` when `Delta >= 0`, and `P_fire(a,t) = exp(Delta / T)` when `Delta < 0`, with temperature `T >= 0`. The deterministic threshold is the `T -> 0` limit. This is the Boltzmann or Arrhenius form; the response threshold sigmoid `s^n / (s^n + theta^n)` is an equivalent soft-threshold family.
 - (E9) firing set `F(t) = { a in A(t) : u_a <= P_fire(a,t) }`, with `u_a` drawn uniformly on [0, 1]. The task is stalled when `A(t)` is non-empty and `F(t)` is empty.
 
@@ -69,7 +70,7 @@ Claim and trust:
 Outcome and feedback:
 
 - (E12) realised quality, a ground truth independent of the agent's self-estimate, `Q(a,t) = clip(g(S_true, C_true) + xi)` with noise `xi ~ N(0, sigma_q^2)`, in [0, 1]. The attempt succeeds when `Q >= q_min`, which updates `(s_a, n_a)` and hence `R`.
-- (E13) self-assessment: agents act on noisy estimates `S_hat = clip(S + eta_S)`, `C_hat = clip(C + eta_C)`, and `L_hat = max(eps, L + eta_L)`, with `eta ~ N(b, sigma^2)` for bias `b` and noise `sigma`. Selection uses the estimated Binding Energy; outcomes use the truth through E12.
+- (E13) self-assessment: agents act on noisy estimates `c_hat = clip(c + eta_c)`, `C_hat = clip(C + eta_C)`, and `L_hat = max(eps, L + eta_L)`, with `eta ~ N(b, sigma^2)` for bias `b` and noise `sigma`. Activation and selection use the estimates; outcomes use the truth through E12.
 - (E14) annealing: while a task is stalled, `Ea_t <- max(Ea_min, Ea_t - delta)` per waiting round, so the barrier relaxes rather than starving the task.
 
 Cost accounting:
@@ -137,7 +138,7 @@ Falsification: the thesis is not supported if coordinator work and latency grow 
 
 ### 2.8 Experimental architecture
 
-The framework and the baseline run over a shared coordination substrate (Supabase Postgres) holding the task pool, an append-only event log, and the reliability history. The atomic claim is a single conditional update that returns a row to exactly one agent, so the decentralised coordination is measured rather than assumed. A shared scoring module is called by the simulation agents, the pilot agents, and the central scheduler, so coordination is the only factor that varies. Every action is written to the event log, so each metric in section 2.4 is a query over that log. The components, the controls, the metric-to-measurement map, and the evaluation protocol are set out in `docs/architecture.md`.
+The framework and the baseline run over a shared, self-contained coordination substrate (SQLite in WAL mode by default, with an optional Postgres adapter) holding the task pool, an append-only event log, and the reliability history. The atomic claim is a single conditional update that returns a row to exactly one agent, so the decentralised coordination is measured rather than assumed. A shared scoring module is called by the simulation agents, the pilot agents, and the central scheduler, so coordination is the only factor that varies. Every action is written to the event log, so each metric in section 2.4 is a query over that log. The components, the controls, the metric-to-measurement map, and the evaluation protocol are set out in `docs/architecture.md`.
 
 ### 2.9 Ethical considerations
 

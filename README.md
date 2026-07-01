@@ -28,17 +28,17 @@ Where:
 - `C` is the Agent Capability score (the agent's competence for the required skills).
 - `L` is the Latency or compute cost penalty (the expected time and resource cost of the agent taking the task).
 
-A higher Binding Energy indicates a stronger affinity. Among the agents that clear the activation barrier (see below), the highest Binding Energy wins, which produces an emergent allocation without a central scheduler. A worked example and the edge-case guards are set out in `docs/theory.md`.
+A higher Binding Energy indicates a stronger affinity. The activation barrier is compared against a compatibility score `c` computed by a task wrapper from the agent's role, skills, and prompt; among the agents that clear the barrier, the highest Binding Energy wins, which produces an emergent allocation without a central scheduler. A worked example and the edge-case guards are set out in `docs/theory.md`, and every quantity is defined operationally in `docs/measures.md`.
 
 ### Selection in stages
 
 Matching runs in two stages, then a trust gate, so each step answers one question:
 
 - Eligibility (binary): can the agent do the task at all (domain, permissions, tools)? If no agent qualifies, the task is infeasible given the present agents.
-- Activation energy (graded): among eligible agents, does the best Binding Energy reach the task barrier `Ea`? If none clears it, the task is stalled and waits for a better matched agent or a catalyst.
+- Activation energy (graded): among eligible agents, does the best compatibility `c` reach the task barrier `Ea`? If none clears it, the task is stalled and waits for a better matched agent or a catalyst.
 - Trust (the Rejection Gate): is the winning agent reliable and its action in scope?
 
-The default firing rule is a deterministic threshold (`BE >= Ea`), with an optional Arrhenius temperature variant for exploration. The two-stage model, the worked cases (infeasible and stalled), and the firing rule are set out in `docs/theory.md` section 3.
+The default firing rule is a deterministic threshold (`c >= Ea`), with an optional Arrhenius temperature variant for exploration. The two-stage model, the worked cases (infeasible and stalled), and the firing rule are set out in `docs/theory.md` section 3.
 
 ### The Rejection Gate (Zona Pellucida Analogue)
 

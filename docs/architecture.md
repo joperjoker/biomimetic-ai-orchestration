@@ -11,7 +11,7 @@ The research validates one claim: that decentralised, signal-driven self-selecti
 Evaluation runs in two modes that share one core:
 
 - Mode A, simulation: many synthetic agents in Python. It provides scale (large `N`), determinism, and cheap parameter sweeps. It produces the scaling curves and hypotheses H1 to H5.
-- Mode B, real-swarm pilot: a small swarm of Claude Code subagents competing over a shared task pool in Supabase Postgres. It provides ecological validity: real self-assessment, latency, cost, and output quality. It discharges the reality-gap threat.
+- Mode B, real-swarm pilot: a small swarm of Claude Code subagents competing over a shared task pool in a self-contained store (SQLite in WAL mode by default). It provides ecological validity: real self-assessment, latency, cost, and output quality. It discharges the reality-gap threat.
 
 Shared across both modes: the scent-envelope schema, the scoring module (equations E1 to E11), the event-log schema, and the metric computations. This shared core is the central control, because it isolates the effect of coordination from every other factor.
 
@@ -24,7 +24,7 @@ Shared across both modes: the scent-envelope schema, the scoring module (equatio
                      | generates paired populations
                      v
    +----------------------------------------------+
-   |        coordination substrate (Supabase)     |
+   |        coordination substrate (SQLite)       |
    |  tasks | agents | events (log) | attempts    |
    +----+----------------------+------------------+
         ^  atomic claim (CAS)   |  append-only telemetry
@@ -35,7 +35,7 @@ Shared across both modes: the scent-envelope schema, the scoring module (equatio
   | simulated) |        | scheduler     |        |  scaling curves  |
   +-----+------+        +-------+-------+        +------------------+
         |                       |
-        |  shared scoring module (E1 to E11): elig, S, C, L, R, B, P_fire
+        |  shared scoring module (E1 to E11): elig, compatibility c, C, L, R, B, P_fire
         v                       v
   +--------------------------------------+
   |   Rejection Gate (reliability + integrity)   |
@@ -49,16 +49,16 @@ Shared across both modes: the scent-envelope schema, the scoring module (equatio
 
 ## 4. Components
 
-1. Coordination substrate (Supabase Postgres). Four tables:
+1. Coordination substrate (self-contained: SQLite in WAL mode by default, with an optional Postgres adapter behind the same interface). Four tables:
    - `tasks`: identifier, envelope (jsonb: domain, eligibility as required capabilities, permissions, and tools, `Ea`, priority, expected cost, scope), status (one of CREATED, ADVERTISED, CLAIMED, EXECUTING, COMPLETED, FAILED, INFEASIBLE, STALLED), `claimed_by`, `run_id`, `condition`, and timestamps.
    - `agents`: identifier, capability profile, permissions, tools, `run_id`.
    - `events`: append-only telemetry, one row per event (see section 6).
    - `attempts`: reliability history (agent, task, success, `Q`, timestamp) used to compute `R = (s + 1) / (n + 2)` over a window `W`.
-2. Atomic claim (equation E10). The claim is a single statement, `UPDATE tasks SET status='CLAIMED', claimed_by=$agent WHERE id=$task AND status='ADVERTISED' RETURNING id`. Postgres row locking guarantees exactly one winner; losing agents receive zero rows and move on. This is the real compare-and-swap that the theory assumes, not an approximation.
-3. Scoring module (shared Python library). Pure functions `elig`, `S`, `C`, `L`, `R`, `B`, `P_fire`, and `tie_break`. The simulation agents, the pilot agents, and the central baseline all call the same module, so scoring is never a confound.
+2. Atomic claim (equation E10). Under a transaction, `BEGIN IMMEDIATE; UPDATE tasks SET status='CLAIMED', claimed_by=? WHERE id=? AND status='ADVERTISED'` then check the changed row count. SQLite locking under WAL guarantees exactly one winner; losing agents see zero changed rows and move on. This is the real compare-and-swap that the theory assumes, not an approximation, and it needs no external service.
+3. Scoring module (shared Python library). Pure functions `elig`, `compatibility` (the wrapper, `c`), `C`, `L`, `R`, `B`, `P_fire`, and `tie_break`. The simulation agents, the pilot agents, and the central baseline all call the same module, so scoring is never a confound.
 4. Agents:
    - Simulation: coroutines with synthetic capability vectors and a ground-truth outcome model. They poll the pool, compute `B`, fire, attempt the claim, and produce a realised quality `Q` from the ground-truth function with noise.
-   - Pilot: Claude Code subagents. Each reads the advertised tasks, self-assesses `S`, `C`, and `L` (the miscalibration under study, equation E13), fires when the estimated `B` reaches `Ea`, attempts the atomic claim, passes the gate, then executes a real micro-task in an isolated git worktree and reports `Q` as the test pass fraction.
+   - Pilot: Claude Code subagents. Each reads the advertised tasks, and the wrapper computes compatibility `c` from the subagent's role, skills, and prompt; the subagent self-assesses `c`, `C`, and `L` (the miscalibration under study, equation E13), fires when the estimated compatibility reaches `Ea`, attempts the atomic claim, passes the gate, then executes a real micro-task in an isolated git worktree and reports `Q` as the test pass fraction.
 5. Rejection Gate (shared). Admits when reliability `R >= tau` and the proposed action passes an integrity check (the change stays within the declared scope, enforced by a path allowlist and a safety lint). Otherwise it deflects and the task is re-advertised.
 6. Baseline conditions (the controls). Three baselines share the scoring module and populations with CTA. Two are centralised schedulers that each round score all eligible pairs and assign by the Hungarian method (optimal) or greedy (naive), then execute and log identically; they measure the coordinator cost that a decentralised design avoids. The third is a decentralised pull-based work queue where agents self-schedule by claiming the best available eligible task, without the activation barrier or the Rejection Gate; comparing CTA against it isolates CTA's mechanisms from decentralisation alone.
 7. Experiment harness. Seeded generators for agent and task populations, paired so the same populations feed every condition; configuration for `N`, `M`, arrival rate, the `Ea` distribution, `T`, `tau`, `W`, self-assessment bias and noise, and seed; and the ablations (gate on or off, deterministic versus Arrhenius, `Ea` sweep, noise sweep, `N` sweep).
@@ -111,7 +111,7 @@ Every metric is a query over the `events` table. Event types are ADVERTISE, EVAL
 
 ## 8. Doability and limits
 
-- The Supabase schema, the atomic claim, and the logging are ordinary Postgres and are reachable through the connected tools.
+- The SQLite schema, the atomic claim, and the logging are the Python standard library, so no external service or account is needed; an optional Postgres adapter exists for anyone wanting a distributed pilot.
 - The Claude Code swarm is small (for example 3 to 8 concurrent subagents) because of cost and concurrency, so the scaling claim rests on the simulation, while the pilot supplies ecological validity rather than scale. Pilot agents work in isolated git worktrees to avoid clobbering shared state.
 - The added complexity is justified by the hypotheses: heterogeneous agents are needed to make eligibility and matching meaningful, dynamic task arrival is needed to exercise stall, starvation, and stability, and the ablations are needed to attribute effects. Complexity beyond that is out of scope for now.
 

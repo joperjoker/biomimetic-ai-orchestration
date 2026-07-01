@@ -20,11 +20,11 @@ Eligible agents (section 3) rank their fit for a task using:
 Binding Energy = (S x C) / L
 ```
 
-- `S` (Task Signal): normalised match between the task scent envelope and the agent domain, in [0, 1].
+- `S` is now the compatibility `c`: the match produced by the task wrapper from the agent's role, skills, and prompt against the task requirements, in [0, 1] (`docs/measures.md`).
 - `C` (Agent Capability): normalised competence for the required skills, in [0, 1].
 - `L` (Latency or compute cost penalty): expected cost of the agent taking the task, strictly positive, floored at a small value (suggested 0.01) so the score stays bounded. `L` is a normalised relative cost with a typical value near 1, so `B` typically lies in [0, 1] and the absolute barrier `Ea` in [0, 1] is meaningful; a near-zero-cost agent simply clears the barrier.
 
-In the canonical model, `S` is an embedding cosine between the task need and the agent capability, and capability is coupled with reliability as the effective capability `C_tilde = C x R` (section 4.3), so the score used is `B = S x C_tilde / max(L, 0.01)`. See `docs/paper.md` section 2.2, equations E3 to E6.
+In the canonical model, the signal is the compatibility `c`, produced by the task wrapper from the agent's role, skills, and prompt against the task requirements. It aggregates measurable sub-scores (semantic match, skill coverage, scope fit). Capability couples with reliability as `C_tilde = C x R` (section 4.3), and the selection score is `B = c x C_tilde / max(L, 0.01)`. The activation barrier is compared against `c` (bounded in [0, 1]), not against `B`. Operational definitions are in `docs/measures.md`; the equations are in `docs/paper.md` section 2.2.
 
 ### 2.1 Worked example
 
@@ -63,10 +63,10 @@ If no agent in the present population is eligible, the task is infeasible given 
 
 ### 3.2 Stage two: Activation Energy
 
-Among eligible agents, a match must overcome a barrier before the task proceeds, the activation energy `Ea`. An eligible agent attempts to claim only when:
+Among eligible agents, the compatibility must overcome a barrier before the task proceeds, the activation energy `Ea`. An eligible agent attempts to claim only when its compatibility reaches the barrier:
 
 ```
-BE >= Ea
+c >= Ea
 ```
 
 - `Ea` travels in the task envelope and is task-specific: demanding or higher-risk tasks set a higher barrier, routine tasks set a lower one.
@@ -80,20 +80,20 @@ Default (deterministic threshold): a task fires when the best eligible Binding E
 Extension (Arrhenius, optional): firing is probabilistic, echoing the Arrhenius relation where the fraction of collisions with enough energy scales with `exp(-Ea / (k T))`. Here the chance that an eligible agent fires rises smoothly with its Binding Energy relative to the barrier, governed by a system temperature `T`:
 
 ```
-p(fire) = 1                        when BE >= Ea
-p(fire) = exp(-(Ea - BE) / T)      when BE < Ea
+p(fire) = 1                        when c >= Ea
+p(fire) = exp(-(Ea - c) / T)       when c < Ea
 ```
 
 A higher `T` lets more marginal matches fire (exploration), a lower `T` admits only strong matches (exploitation). As `T` approaches zero, this reduces to the deterministic threshold. A small illustration with `Ea = 0.20`:
 
-| BE | Ea - BE | p(fire), T = 0.05 | p(fire), T = 0.20 |
+| c | Ea - c | p(fire), T = 0.05 | p(fire), T = 0.20 |
 |------|---------|-------------------|-------------------|
 | 0.22 | below 0 | 1.00 | 1.00 |
 | 0.18 | 0.02 | 0.67 | 0.90 |
 | 0.10 | 0.10 | 0.14 | 0.61 |
 | 0.05 | 0.15 | 0.05 | 0.47 |
 
-The table shows the knob: at low temperature a match just under the barrier rarely fires, and at higher temperature the system is more willing to try a weaker match. Writing the activation drive as `Delta = BE - Ea`, this firing rule is `p(fire) = min(1, exp(Delta / T))`, which is equation E8 in `docs/paper.md` section 2.2.
+The table shows the knob: at low temperature a match just under the barrier rarely fires, and at higher temperature the system is more willing to try a weaker match. Writing the activation drive as `Delta = c - Ea` (compatibility minus the barrier), this firing rule is `p(fire) = min(1, exp(Delta / T))`, which is equation E8 in `docs/paper.md` section 2.2.
 
 ### 3.4 Considerations: catalyst and annealing
 
@@ -145,7 +145,7 @@ CREATED -> ADVERTISED -> [ELIGIBILITY FILTER]
                           eligible       none eligible -> INFEASIBLE
                               |
                               v
-                  [ACTIVATION: best eligible BE >= Ea ?]
+                  [ACTIVATION: best eligible c >= Ea ?]
                               |            \
                             fires        below Ea -> STALLED -> RE_ADVERTISED -> ADVERTISED
                               |
@@ -190,7 +190,7 @@ The biology and the chemistry are sources of design intuition, not literal speci
 - Cryptic female choice operates after mating within a single female, whereas tasks here are many and short lived.
 - Sperm do not compute their own fitness, whereas agents actively calculate their own Binding Energy. The framework adds agent side computation that has no biological counterpart.
 - The zona pellucida is a passive chemical barrier, whereas the Rejection Gate is an active evaluator that reasons about reliability and scope.
-- In physical chemistry, binding energy (a measure of stability, thermodynamics) and activation energy (a kinetic barrier) sit on different axes and are not compared directly. The framework compares `BE` with `Ea` on purpose as a modelling device, so the relation `BE >= Ea` is a design choice rather than a physical identity.
+- In physical chemistry, binding energy (a measure of stability) and activation energy (a kinetic barrier) sit on different axes. The framework borrows both names but compares compatibility `c` with the barrier `Ea` (a modelling choice, not a physical identity), and uses the Binding Energy only to rank the agents that have cleared activation.
 - The eligibility filter corresponds loosely to reactant compatibility (the right reactive sites must be present) rather than to any single equation.
 
 These divergences are acceptable. The value of the analogies is the principle of decentralised, signal led selection with a barrier to firing, not a one to one mechanical correspondence.

@@ -32,7 +32,7 @@ def test_master_context_holds_the_equation():
 
 def test_master_context_holds_the_two_stage_frame():
     text = (ROOT / "claude.md").read_text(encoding="utf-8")
-    for term in ("Eligibility", "Activation Energy", "BE >= Ea"):
+    for term in ("Eligibility", "Activation Energy", "c >= Ea"):
         assert term in text, f"missing two-stage selection term: {term}"
 
 
@@ -48,6 +48,16 @@ def test_architecture_document_present():
     text = path.read_text(encoding="utf-8")
     for term in ("Experimental Architecture", "atomic claim", "metric to measurement"):
         assert term.lower() in text.lower(), f"missing architecture marker: {term}"
+
+
+def test_measurable_model_present_and_compatibility_framing():
+    measures = ROOT / "docs" / "measures.md"
+    assert measures.is_file(), "missing docs/measures.md"
+    text = measures.read_text(encoding="utf-8")
+    for term in ("compatibility", "wrapper", "role", "skill", "prompt"):
+        assert term.lower() in text.lower(), f"measures.md missing: {term}"
+    paper = (ROOT / "docs" / "paper.md").read_text(encoding="utf-8")
+    assert "c >= Ea" in paper, "activation should be on compatibility (c >= Ea)"
 
 
 def test_paper_has_pull_based_baseline_and_heterogeneity():
