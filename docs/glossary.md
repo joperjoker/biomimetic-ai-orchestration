@@ -15,3 +15,9 @@ This glossary maps the biological vocabulary of cryptic female choice onto the e
 | Penetration of the zona | Admission | Passing the gate and gaining write access for a task. |
 | Block to polyspermy | Atomic claim | The consistency rule that lets exactly one agent win a task. |
 | Cryptic female choice | Decentralised selection | Selection biased by the task signal and agent fitness, with no central assigner. |
+| Reactant compatibility (functional groups) | Eligibility filter | The binary check that an agent can act on a task at all: capability domain, permissions, and tools. |
+| Activation energy | Firing barrier (Ea) | The minimum Binding Energy a match must reach for the task to proceed. |
+| Reaction proceeds | Task fires | An eligible agent clears the barrier and moves to claim and execute the task. |
+| Inert (no reaction) | Infeasible or stalled task | No eligible agent (infeasible), or eligible agents that do not clear Ea (stalled). |
+| Catalyst | Barrier reducer | Context, a tool, a cache, or a helper agent that lowers the effective Ea for a task. |
+| Temperature | Exploration knob | The parameter in the Arrhenius firing extension that sets willingness to try marginal matches. |

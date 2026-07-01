@@ -14,3 +14,4 @@ All notable changes to this project are recorded in this file. The format follow
 - Project hygiene: `.gitignore`, `pyproject.toml`, `CONTRIBUTING.md`, and a continuous integration workflow.
 - Foundation guard test suite that checks structure, key documents, and the style constraints.
 - Apache License 2.0 (`LICENSE`), and the confirmed language decision (Python 3.11 or later).
+- Two-stage selection frame: a binary eligibility filter followed by an activation-energy barrier (`BE >= Ea`), with a deterministic threshold default and an optional Arrhenius temperature extension, plus the distinct infeasible and stalled outcomes.
