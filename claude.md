@@ -10,13 +10,18 @@ Research North Star (do not lose sight of this): the one claim under test is tha
 
 ## 2. The Consortium (Persona Model)
 
-Work is reasoned through five virtual personas. They are internal reasoning roles, not separate processes:
+Work is reasoned through eight virtual personas. They are internal reasoning roles, not separate processes:
 
 1. The Strategist (Lead AI Architect): defines system architecture, success criteria, and theoretical risk mitigation.
 2. The Biologist (Senior Evolutionary Biology Researcher): translates biological mechanisms (cryptic female choice, the zona pellucida) into computational heuristics.
 3. The Engineer (Core AI Software Engineer): produces implementation logic, metadata structures, and directory layout.
 4. The Validator (QA and Validation Team): runs testing and verifies output against the Strategist's criteria.
 5. The Synthesizer (Expert Academic Writer and DevOps Engineer): formats production artifacts, manages Git, and maintains this documentation.
+6. The Principal AI Researcher: challenges novelty, baseline strength, and the agent and learning design.
+7. The Principal Mathematics Researcher: checks formal soundness, normalisation, and statistical inference.
+8. The Principal Science Researcher: checks experimental design, falsifiability, confounds, and generalisability.
+
+These principals apply a propose, challenge, evaluate, and judge loop and recommend a revision only when it is clearly higher quality.
 
 ## 3. Theoretical Background
 
@@ -72,7 +77,7 @@ Variables:
 
 - `S` (Task Signal): the strength of the match between the task's scent envelope and the agent's declared domain. Normalised to [0, 1].
 - `C` (Agent Capability): the agent's competence for the specific skills the task requires. Normalised to [0, 1].
-- `L` (Latency or compute cost penalty): the expected time and resource cost of the agent undertaking the task. Strictly greater than zero, floored at a small value (suggested 0.01) to keep the score bounded.
+- `L` (Latency or compute cost penalty): the expected time and resource cost of the agent undertaking the task. Strictly greater than zero, floored at a small value (suggested 0.01) to keep the score bounded. `L` is a normalised relative cost with a typical value near 1, so `B` typically lies in [0, 1] and the absolute barrier `Ea` in [0, 1] is meaningful.
 
 Interpretation: Binding Energy rises with stronger signal match and higher capability, and falls as cost rises. Among the agents that clear the activation barrier (section 3.5), the highest Binding Energy wins. A worked numerical example is given in `docs/theory.md` section 2.1.
 
@@ -250,8 +255,11 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - Activation energy `Ea` is task-specific, default 0.2, and replaces the earlier flat participation threshold. Firing uses a deterministic threshold by default, with an optional Arrhenius temperature extension.
 - The working directory itself is the project root, so no nested project folder was created.
 - Capability and signal values are normalised to [0, 1].
-- The latency penalty `L` is strictly positive with a floor of 0.01.
+- The latency penalty `L` is strictly positive with a floor of 0.01, and is a normalised relative cost with a typical value near 1, so `B` is comparable and the absolute `Ea` is interpretable.
 - Acceptance threshold 0.6 and reliability window 20, both revisable.
+- Baselines: two centralised (Hungarian and greedy) and a decentralised pull-based work queue (self-scheduling without the barrier or gate). The pull-based baseline isolates CTA's mechanisms from decentralisation alone.
+- Agent heterogeneity is a first-class experimental factor: CTA's advantage is expected to grow with heterogeneity and to narrow towards zero in a homogeneous population (H6).
+- Evaluation controls multiple comparisons (H1 and H2 primary, others Holm-Bonferroni corrected) and sizes the seed count by a power analysis; the hypotheses carry explicit falsification criteria.
 - The formal model is named Chemotactic Task Allocation (CTA) and is specified in `docs/paper.md` section 2.2.
 - Effective capability couples reliability into affinity by default: `C_tilde = C x R` (ablatable). This is the canonical form used in `docs/paper.md` equations E5 and E6.
 - Evaluation uses an independent ground-truth quality model (not the affinity score) to judge outcomes, and models self-assessment as noisy and possibly biased, so calibration can be studied.
@@ -276,6 +284,7 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - Build the analysis layer that computes the metric-to-measurement map in `docs/architecture.md` from the event log.
 - Follow the phased build in `docs/roadmap.md`: the agent harnesses, the Auto-Researcher loop (a Karpathy-style propose, run, evaluate, keep-or-revert loop kept on a leash by the Rejection Gate), and the repository shaped as the public report. Not yet started.
 - Build the context and memory layer (`context/`) so the Auto-Researcher queries and recursively summarises the event log and ledger instead of loading full history, following the Recursive Language Models principle.
+- Implement the decentralised pull-based baseline and the agent-heterogeneity sweep alongside the central baselines.
 
 ## 9. References
 

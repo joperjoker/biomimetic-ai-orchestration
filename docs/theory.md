@@ -22,7 +22,7 @@ Binding Energy = (S x C) / L
 
 - `S` (Task Signal): normalised match between the task scent envelope and the agent domain, in [0, 1].
 - `C` (Agent Capability): normalised competence for the required skills, in [0, 1].
-- `L` (Latency or compute cost penalty): expected cost of the agent taking the task, strictly positive, floored at a small value (suggested 0.01) so the score stays bounded.
+- `L` (Latency or compute cost penalty): expected cost of the agent taking the task, strictly positive, floored at a small value (suggested 0.01) so the score stays bounded. `L` is a normalised relative cost with a typical value near 1, so `B` typically lies in [0, 1] and the absolute barrier `Ea` in [0, 1] is meaningful; a near-zero-cost agent simply clears the barrier.
 
 In the canonical model, `S` is an embedding cosine between the task need and the agent capability, and capability is coupled with reliability as the effective capability `C_tilde = C x R` (section 4.3), so the score used is `B = S x C_tilde / max(L, 0.01)`. See `docs/paper.md` section 2.2, equations E3 to E6.
 

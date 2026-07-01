@@ -10,6 +10,8 @@ Decentralised alternatives have a long record. The Contract Net Protocol (Smith,
 
 This project studies a decentralised framework, Chemotactic Task Allocation (CTA), that addresses those three gaps, drawing its selection principle from two biological sources. From cryptic female choice it takes signal-driven, post-advertisement selection: selection continues after the initial encounter and is biased by chemical signalling rather than decided by a single authority (Fitzpatrick et al., 2020). From the response threshold model of division of labour in social insects it takes the activation barrier: an individual engages a task only when the task stimulus exceeds its threshold (Bonabeau, Theraulaz, and Deneubourg, 1996), a mechanism since operationalised in swarm robotics. Translated to computation: each task emits a semantic metadata envelope (the scent), and distributed agents self-select by computing an affinity score, the Binding Energy `(S x C) / L`. Selection proceeds in two stages, a binary eligibility filter and then an activation energy barrier `Ea` that a match must clear to fire, followed by a distinct trust stage, the Rejection Gate, modelled on the zona pellucida. The biology and chemistry are used as design intuition, not as literal specifications, and the limits of the analogies are recorded in `docs/theory.md` section 8.
 
+Compared with a simple pull-based work queue, where agents self-schedule by taking the best available task, CTA adds three things: the activation barrier as a quality floor, the Rejection Gate as a trust boundary, and the eligibility filter with its infeasible and stalled semantics. The evaluation isolates these additions with a pull-based baseline (section 2.3), so a result is not merely the effect of decentralisation.
+
 Contributions:
 
 1. A decentralised allocation framework in which tasks advertise semantic envelopes and agents self-select by affinity, reducing per-task coordination to an atomic claim rather than a central assignment.
@@ -25,6 +27,7 @@ Research questions:
 - RQ3: Does the two-stage model correctly separate infeasible from stalled tasks?
 - RQ4: Does the Rejection Gate preserve completion integrity when some agents are unreliable?
 - RQ5: Is allocation stable across the range of activation barriers and temperatures, without oscillation or starvation?
+- RQ6: Does CTA's advantage depend on agent heterogeneity, and if so, how does it change from a homogeneous to a specialised population?
 
 Scope and non-goals: this is a simulation study, not a live deployment. The atomic claim assumes a single logical coordination store providing compare-and-swap, so the framework reduces central work rather than removing it entirely (discussed in `docs/theory.md` section 6). The security model is limited to reliability scoring and scope integrity, and does not address adversarial agents beyond degraded reliability.
 
@@ -50,7 +53,7 @@ Affinity (Binding Energy):
 - (E3) signal match `S(a,t) = max(0, cos(phi(t), psi(a)))`, the cosine of a task-need embedding `phi(t)` and an agent-capability embedding `psi(a)`, in [0, 1].
 - (E4) reliability `R(a) = (s_a + 1) / (n_a + 2)`, a Laplace smoothed success ratio over a sliding window of `W` recent attempts.
 - (E5) effective capability `C_tilde(a,t) = C(a,t) . R(a)`, with base capability `C` in [0, 1], so reliability enters selection as well as the gate.
-- (E6) Binding Energy `B(a,t) = S(a,t) . C_tilde(a,t) / max(L(a,t), eps)`, with cost `L > 0` and floor `eps = 0.01`. In prose across the documents, `B` is written `BE`.
+- (E6) Binding Energy `B(a,t) = S(a,t) . C_tilde(a,t) / max(L(a,t), eps)`, with cost `L > 0` and floor `eps = 0.01`. In prose across the documents, `B` is written `BE`. `L` is a normalised relative cost with a typical value near 1, so `B` typically lies in [0, 1] and the absolute barrier `Ea` in [0, 1] is interpretable; the floor bounds pathological cases, and a near-zero-cost agent simply clears the barrier.
 
 Stage two, activation (firing):
 
@@ -81,11 +84,13 @@ The full narrative for these equations is in `docs/theory.md`.
 
 The centralised baseline is a single scheduler that, each round, assigns tasks to agents using the same Binding Energy scores. Two variants are used: an optimal one-to-one assignment by the Hungarian algorithm (Kuhn, 1955) maximising total match quality, and a greedy highest-affinity assigner. Comparing against both bounds the framework between the optimal and the naive centralised case.
 
+A third, decentralised baseline is a pull-based work queue: agents self-schedule by claiming the best available eligible task, without the activation barrier or the Rejection Gate. It removes the central assigner just as CTA does, so comparing CTA against it isolates the effect of CTA's specific mechanisms (the barrier, the gate, and the infeasible and stalled semantics) from the effect of decentralisation alone. Without this baseline, a scaling result could be attributed merely to avoiding an expensive central optimiser.
+
 ### 2.4 Variables and metrics
 
 Independent variables: number of agents `N`, number of tasks `M`, task arrival rate, the distribution of `Ea`, temperature `T`, the reliability acceptance threshold, and the injected fraction of unreliable agents.
 
-Independent variables also include the self-assessment bias `b` and noise `sigma` (E13), so that miscalibrated agents can be studied directly.
+Independent variables also include the self-assessment bias `b` and noise `sigma` (E13), so that miscalibrated agents can be studied directly, and the degree of agent capability heterogeneity, from a homogeneous population (agents are near-interchangeable) to a specialised one (agents cover distinct domains). Heterogeneity is expected to matter because self-selection has little to exploit when agents are interchangeable.
 
 Dependent variables, with operational definitions:
 
@@ -105,25 +110,29 @@ Dependent variables, with operational definitions:
 
 ### 2.5 Procedure
 
-Agent and task populations are drawn from controlled distributions with fixed random seeds. Each run includes a warm-up period that is excluded from measurement. Each configuration is repeated across at least thirty seeds to estimate confidence intervals. Raw event logs are retained so that every derived metric can be recomputed from source. The deterministic firing rule is used for exact replication, and any Arrhenius runs record their seeds and temperature.
+Agent and task populations are drawn from controlled distributions with fixed random seeds. Each run includes a warm-up period that is excluded from measurement. Each configuration is repeated across seeded replications, with the seed count set by a pilot power analysis to detect a pre-registered minimum effect size (at least thirty as a floor), so a null result reflects the framework rather than insufficient power. Raw event logs are retained so that every derived metric can be recomputed from source. The deterministic firing rule is used for exact replication, and any Arrhenius runs record their seeds and temperature.
 
 ### 2.6 Analysis
 
-Results are reported as means with 95 per cent confidence intervals. Systems are compared per metric. For scaling, growth of coordinator work and latency against `N` is fitted and compared between systems. Given that latency distributions are typically skewed, non-parametric tests (for example the Mann-Whitney U test) are preferred, and effect sizes are reported alongside p-values. Hypotheses and acceptance margins are fixed in advance to reduce the risk of post-hoc selection. Experiments are driven by an automated research loop with a protected, pre-registered metric and an append-only decision ledger (see `docs/roadmap.md`), which supports reproducibility and guards against metric-hacking. To keep long campaigns reliable, the loop treats the logged record as an external environment to query and recursively summarise rather than holding it all in context, which mitigates context rot (Recursive Language Models: Zhang, Kraska, and Khattab, 2025). This external-memory strategy is a property of the research process, not of the Chemotactic Task Allocation framework under study.
+Results are reported as means with 95 per cent confidence intervals. Systems are compared per metric. For scaling, growth of coordinator work and latency against `N` is fitted and compared between systems. Given that latency distributions are typically skewed, non-parametric tests (for example the Mann-Whitney U test) are preferred, and effect sizes are reported alongside p-values. Hypotheses and acceptance margins are fixed in advance to reduce the risk of post-hoc selection. H1 and H2 are the pre-registered primary endpoints; the remaining hypotheses are secondary, and their p-values are corrected for multiple comparisons with a Holm-Bonferroni procedure across the reported family of tests. Experiments are driven by an automated research loop with a protected, pre-registered metric and an append-only decision ledger (see `docs/roadmap.md`), which supports reproducibility and guards against metric-hacking. To keep long campaigns reliable, the loop treats the logged record as an external environment to query and recursively summarise rather than holding it all in context, which mitigates context rot (Recursive Language Models: Zhang, Kraska, and Khattab, 2025). This external-memory strategy is a property of the research process, not of the Chemotactic Task Allocation framework under study.
 
 Hypotheses:
 
-- H1: coordinator work per task (C2) and allocation latency grow more slowly with `N` for the framework than for the centralised baseline. Total evaluation work (C1) and communication (C3) are reported alongside and are expected to be comparable or higher, so the claim is bottleneck relief, not less total compute.
-- H2: mean realised quality `Q` (E12) is within a pre-registered margin of the Hungarian optimal baseline.
+- H1: coordinator work per task (C2) and allocation latency grow more slowly with `N` for the framework than for the centralised baseline, and comparably to the decentralised pull-based baseline. Total evaluation work (C1) and communication (C3) are reported alongside and are expected to be comparable or higher, so the claim is bottleneck relief, not less total compute. Since decentralisation alone relieves the bottleneck, CTA's distinct value is holding quality and safety while scaling, tested in H2 and H4.
+- H2: mean realised quality `Q` (E12) is within a pre-registered margin of the Hungarian optimal baseline and is higher than the pull-based baseline, so the activation barrier improves quality over naive self-scheduling.
 - H3: the framework labels a task infeasible exactly when no eligible agent exists, and stalled exactly when eligible agents exist but none clears `Ea`.
-- H4: under injected unreliability, the framework with the Rejection Gate achieves a higher successful-completion and integrity rate than an ablation without the gate.
+- H4: under injected unreliability, the framework with the Rejection Gate achieves a higher successful-completion and integrity rate than an ablation without the gate and than the pull-based baseline.
 - H5: allocation remains stable across the `Ea` and `T` sweep, with annealing (E14) bounding the maximum stall time and no sustained oscillation.
+- H6: CTA's advantage over both baselines increases with agent heterogeneity, and narrows towards zero in a homogeneous population where self-selection has little to exploit.
+
+Falsification: the thesis is not supported if coordinator work and latency grow at the same order for the framework as for the centralised baseline (H1), if realised quality falls below the pre-registered margin of the Hungarian optimum or does not exceed the pull-based baseline (H2), if the gate does not improve integrity under unreliability (H4), or if the advantage does not appear even in the specialised, high-heterogeneity regime (H6). These outcomes are reported as stated, not reframed.
 
 ### 2.7 Validity and threats
 
 - Internal validity: the shared scoring function and fixed seeds isolate the coordination effect. Threats: implementation bias between the two systems, and claim contention that could confound latency at scale. Mitigations: a single shared scoring module with code review and open configurations, and contention measured directly (attempts per claim, wasted-evaluation rate) rather than assumed away.
 - External validity: this is the primary threat. A simulation abstracts away the variable latency, monetary cost, and stochastic output quality of live language-model agents, and it abstracts the cost and miscalibration of an agent scoring itself, which is the weakest real-world link. Reported failure rates for real multi-agent systems are high and are driven by specification ambiguity and coordination breakdown that a simulation does not reproduce (Cemri et al., 2025). Mitigations: sweep the self-assessment bias and noise (E13), state plainly that the study tests the coordination mechanism rather than deployment readiness, and run the real-swarm pilot defined in the experimental architecture (`docs/architecture.md`), using matched runs to calibrate the simulation against live agents.
 - Construct validity: Binding Energy is only a proxy for allocation quality, and the framework rests on agents estimating their own `S` and `C`. Mitigation: an independent ground-truth quality function `Q` (E12) drives success and the quality hypothesis H2, so results do not depend on the proxy alone.
+- Generalisability: results could depend on how the synthetic populations are generated. Mitigation: vary the generative distribution family, not only parameters within one family, and in particular sweep agent heterogeneity (H6), since CTA's advantage is expected to depend on it. A result that holds across families and heterogeneity regimes is the one that generalises.
 - Reproducibility: code, seeds, and configurations are versioned, and continuous integration runs the deterministic path (`T -> 0`), so reported runs can be reproduced exactly; stochastic runs record their seeds and temperature.
 
 ### 2.8 Experimental architecture

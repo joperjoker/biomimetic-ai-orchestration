@@ -50,6 +50,13 @@ def test_architecture_document_present():
         assert term.lower() in text.lower(), f"missing architecture marker: {term}"
 
 
+def test_paper_has_pull_based_baseline_and_heterogeneity():
+    text = (ROOT / "docs" / "paper.md").read_text(encoding="utf-8")
+    assert "pull-based" in text.lower(), "missing the pull-based baseline"
+    for marker in ("RQ6", "H6"):
+        assert marker in text, f"missing hypothesis or question marker: {marker}"
+
+
 def test_recursive_language_models_named_correctly():
     for path in ROOT.rglob("*.md"):
         if ".git" in path.parts:
