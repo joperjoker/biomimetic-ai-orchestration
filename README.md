@@ -92,14 +92,14 @@ The framework is evaluated against a centralised baseline in two modes that shar
 ├── claude.md            Master context and theoretical blueprint for autonomous loops
 ├── CONTRIBUTING.md      Operating protocol, style constraints, and local checks
 ├── CHANGELOG.md         Notable changes
-├── pyproject.toml       Project manifest and tooling configuration (provisional)
+├── pyproject.toml       Project manifest and tooling configuration
 ├── src/
 │   ├── signals/         Task scent envelope generation and parsing
 │   ├── agents/          Agent definitions, capability scoring, Binding Energy logic
 │   ├── gates/           Rejection Gate sandbox and reliability scoring
 │   └── orchestrator/    Decentralised coordination and event loop
 ├── tests/               Validation suites (including the foundation guard)
-├── docs/                Theory, glossary, the research write-up, and the architecture
+├── docs/                Theory, glossary, the research write-up, the architecture, and the roadmap
 └── .github/             Continuous integration and repository configuration
 ```
 
@@ -119,7 +119,7 @@ At this stage the modules are not yet implemented, so the test suite contains a 
 
 ## Status
 
-This foundation run establishes the directory layout, the persistent documentation, the project hygiene files, and continuous integration. Implementation of the signal, agent, gate, and orchestrator modules follows in subsequent development phases, tracked in `claude.md`.
+The foundation, the research write-up (introduction and methodology), the formal framework, the experimental architecture, and the implementation roadmap are in place. Implementation of the scoring module, the agent harnesses, the simulation, and the Auto-Researcher loop has not started; it follows the phased plan in `docs/roadmap.md`, and progress is tracked in `claude.md`.
 
 ## Considerations for Future Work
 

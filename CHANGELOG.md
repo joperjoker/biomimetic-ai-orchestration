@@ -22,3 +22,7 @@ All notable changes to this project are recorded in this file. The format follow
 - Experimental architecture (`docs/architecture.md`): a dual-mode design (Python simulation for scale, a real-swarm pilot of Claude Code subagents over Supabase Postgres for ecological validity), the shared scoring core and central baseline as controls, a genuine atomic-claim coordination store, a metric-to-measurement map, and the evaluation protocol.
 - Research North Star and evaluation architecture logged to `claude.md` for memory.
 - Implementation roadmap (`docs/roadmap.md`): the agent harnesses, an Auto-Researcher loop adapted from Karpathy's AutoResearch (kept on a leash by the Rejection Gate with pre-registered metrics, sandboxing, and human gates), and the plan to shape the repository as the public report. Plan only, not yet built.
+
+### Changed
+
+- Consistency pass across the documents: standardised the effective-capability symbol on `C_tilde` and stated the reliability coupling as the default (ablatable); aligned the metric lists in `docs/theory.md` and `claude.md` with the authoritative set in `docs/paper.md` section 2.4 (realised quality with the Binding Energy proxy, and coordinator work); linked the Auto-Researcher loop and the experiment ledger into `docs/architecture.md` and the paper's analysis; unified "coordinator work" wording; and refreshed the README status and layout.

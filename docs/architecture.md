@@ -63,6 +63,8 @@ Shared across both modes: the scent-envelope schema, the scoring module (equatio
 6. Central baseline scheduler (the control condition). Each round it scores all eligible pairs with the same scoring module and assigns by the Hungarian method (optimal) or greedy (naive), then executes and logs identically. It measures the coordinator cost that the decentralised design avoids.
 7. Experiment harness. Seeded generators for agent and task populations, paired so the same populations feed every condition; configuration for `N`, `M`, arrival rate, the `Ea` distribution, `T`, `tau`, `W`, self-assessment bias and noise, and seed; and the ablations (gate on or off, deterministic versus Arrhenius, `Ea` sweep, noise sweep, `N` sweep).
 8. Analysis layer. Reads the `events` table and computes metrics and statistics (means, 95 per cent confidence intervals, Mann-Whitney U tests, effect sizes) and the scaling curves. A Vercel dashboard for visualisation is a consideration, not a requirement.
+9. Auto-Researcher loop. An optional meta-agent that speeds the study by proposing changes within a bounded search space, running time-boxed experiments through the simulation harness, and keeping a change only when it improves a protected, pre-registered metric without breaching a guardrail (otherwise it reverts with git). It is kept on a leash by the Rejection Gate applied to its own changes, with human gates for search-space changes, merges, and publication. The full design is in `docs/roadmap.md`.
+10. Experiment ledger. An append-only record of every Auto-Researcher decision (proposal, config hash, seeds, metric before and after, significance, safety verdict, keep or revert), so the research is auditable and reproducible.
 
 ## 5. Controls
 
@@ -114,4 +116,4 @@ Every metric is a query over the `events` table. Event types are ADVERTISE, EVAL
 
 ## 9. Planned layout (not yet created)
 
-The implementation phase is expected to add `sim/` (the simulation harness), `experiments/` (configurations and run scripts), and `analysis/` (metric and statistics notebooks), alongside the shared scoring module under `src/`.
+The implementation phase is expected to add `sim/` (the simulation harness), `experiments/` (configurations and run scripts), `analysis/` (metric and statistics notebooks), `autoresearch/` (the Auto-Researcher loop), and `search_space/` (the bounded surface the loop may edit), alongside the shared scoring module under `src/`. The phased order is in `docs/roadmap.md`.

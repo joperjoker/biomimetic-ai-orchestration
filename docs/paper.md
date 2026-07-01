@@ -20,7 +20,7 @@ Contributions:
 
 Research questions:
 
-- RQ1: Does signal-driven self-selection reduce per-task coordination cost and allocation latency, relative to a central assigner, as the population grows?
+- RQ1: Does signal-driven self-selection reduce per-task coordinator work and allocation latency, relative to a central assigner, as the population grows?
 - RQ2: Does it do so without materially degrading match quality?
 - RQ3: Does the two-stage model correctly separate infeasible from stalled tasks?
 - RQ4: Does the Rejection Gate preserve completion integrity when some agents are unreliable?
@@ -50,7 +50,7 @@ Affinity (Binding Energy):
 - (E3) signal match `S(a,t) = max(0, cos(phi(t), psi(a)))`, the cosine of a task-need embedding `phi(t)` and an agent-capability embedding `psi(a)`, in [0, 1].
 - (E4) reliability `R(a) = (s_a + 1) / (n_a + 2)`, a Laplace smoothed success ratio over a sliding window of `W` recent attempts.
 - (E5) effective capability `C_tilde(a,t) = C(a,t) . R(a)`, with base capability `C` in [0, 1], so reliability enters selection as well as the gate.
-- (E6) Binding Energy `B(a,t) = S(a,t) . C_tilde(a,t) / max(L(a,t), eps)`, with cost `L > 0` and floor `eps = 0.01`.
+- (E6) Binding Energy `B(a,t) = S(a,t) . C_tilde(a,t) / max(L(a,t), eps)`, with cost `L > 0` and floor `eps = 0.01`. In prose across the documents, `B` is written `BE`.
 
 Stage two, activation (firing):
 
@@ -109,7 +109,7 @@ Agent and task populations are drawn from controlled distributions with fixed ra
 
 ### 2.6 Analysis
 
-Results are reported as means with 95 per cent confidence intervals. Systems are compared per metric. For scaling, growth of coordination cost and latency against `N` is fitted and compared between systems. Given that latency distributions are typically skewed, non-parametric tests (for example the Mann-Whitney U test) are preferred, and effect sizes are reported alongside p-values. Hypotheses and acceptance margins are fixed in advance to reduce the risk of post-hoc selection.
+Results are reported as means with 95 per cent confidence intervals. Systems are compared per metric. For scaling, growth of coordinator work and latency against `N` is fitted and compared between systems. Given that latency distributions are typically skewed, non-parametric tests (for example the Mann-Whitney U test) are preferred, and effect sizes are reported alongside p-values. Hypotheses and acceptance margins are fixed in advance to reduce the risk of post-hoc selection. Experiments are driven by an automated research loop with a protected, pre-registered metric and an append-only decision ledger (see `docs/roadmap.md`), which supports reproducibility and guards against metric-hacking.
 
 Hypotheses:
 

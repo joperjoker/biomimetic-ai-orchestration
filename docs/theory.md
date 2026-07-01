@@ -28,7 +28,7 @@ In the canonical model, `S` is an embedding cosine between the task need and the
 
 ### 2.1 Worked example
 
-Three eligible agents evaluate the same task:
+Three eligible agents evaluate the same task (the example uses base capability, that is `R = 1`, so `C_tilde = C`):
 
 | Agent | S | C | L | Binding Energy |
 |-------|-----|------|------|----------------|
@@ -129,13 +129,13 @@ The acceptance threshold (suggested default 0.6) is the minimum reliability for 
 
 ### 4.3 Coupling reliability into Binding Energy
 
-One option worth considering is to fold reliability into the capability term, so that an unreliable agent both scores lower when competing and is more likely to be deflected at the gate:
+By default the model folds reliability into the capability term, so that an unreliable agent both scores lower when competing and is more likely to be deflected at the gate:
 
 ```
-C_effective = C_base x R
+C_tilde = C x R
 ```
 
-This keeps a single reliability signal driving both selection and admission.
+This keeps a single reliability signal driving both selection and admission (equation E5). An ablation that disables the coupling (using base capability `C` directly) is available for analysis.
 
 ## 5. Task lifecycle
 
@@ -172,13 +172,16 @@ This means the orchestrator is not removed entirely. It becomes a thin coordinat
 The Validator measures the framework against quantities, not impressions:
 
 - Allocation latency: time from advertisement to a successful claim.
-- Match quality: mean Binding Energy of winning agents.
+- Coordinator work: claim attempts per allocated task, distinct from total evaluation work and communication.
+- Match quality: realised quality `Q` of winning agents, with mean Binding Energy reported alongside as the proxy.
 - Infeasible rate: fraction of tasks with no eligible agent.
 - Stall rate: fraction of tasks that are eligible but fail to clear `Ea` on first advertisement.
 - Deflection rate: fraction of claims the gate rejects, with false deflection tracked separately.
 - Load fairness: distribution of completed tasks across agents (for example a Gini coefficient).
 - Starvation: maximum time any task waits in the pool.
-- Scaling: allocation latency plotted against agent and task population size, which is the central hypothesis to test against a centralised baseline.
+- Scaling: coordinator work and allocation latency plotted against agent and task population size, which is the central hypothesis to test against a centralised baseline.
+
+The complete metric set, with operational definitions and the measurement map, is in `docs/paper.md` section 2.4 and `docs/architecture.md` section 6.
 
 ## 8. Limits of the analogies
 

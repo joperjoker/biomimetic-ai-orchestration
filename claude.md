@@ -80,7 +80,7 @@ Decided rules (defaults, revisable):
 
 - Latency floor: clamp `L` to 0.01 if a computed value is zero or negative.
 - Tie breaker: when two agents compute equal Binding Energy, the agent with the lower `L` wins; if still tied, the lower agent identifier wins. This keeps outcomes deterministic and reproducible.
-- Capability coupling: capability may be scaled by reliability as `C_effective = C_base x R` (see section 3.6), so an unreliable agent both competes less strongly and is more likely to be deflected.
+- Capability coupling: by default capability is scaled by reliability as the effective capability `C_tilde = C x R` (see section 3.6), so an unreliable agent both competes less strongly and is more likely to be deflected. An ablation using base capability is available for analysis.
 
 ### 3.5 Stage two: Activation Energy
 
@@ -230,16 +230,17 @@ Qualitative criteria:
 - claude.md holds the full theory (cryptic female choice, the two-stage selection, Binding Energy, activation energy, Rejection Gate) so future loops need no external context.
 - Each subsequent phase leaves the repository in a committed, reproducible state.
 
-Quantitative metrics for the implementation phase (measured against a centralised baseline):
+Quantitative metrics for the implementation phase (measured against a centralised baseline). The authoritative list with operational definitions is in `docs/paper.md` section 2.4; the headline metrics are:
 
 - Allocation latency: time from advertisement to a successful claim.
-- Match quality: mean Binding Energy of winning agents.
+- Coordinator work: claim attempts per allocated task, distinct from total evaluation work and communication.
+- Match quality: realised quality `Q` of winning agents, with mean Binding Energy reported alongside as the proxy.
 - Infeasible rate: fraction of tasks with no eligible agent.
 - Stall rate: fraction of tasks that are eligible but fail to clear `Ea` on first advertisement.
 - Deflection rate: fraction of claims the gate rejects, with false deflection tracked separately.
 - Load fairness: distribution of completed tasks across agents (for example a Gini coefficient).
 - Starvation: maximum time any task waits in the pool.
-- Scaling: allocation latency against agent and task population size, which is the central hypothesis.
+- Scaling: coordinator work and allocation latency against agent and task population size, which is the central hypothesis.
 
 ## 7. Decisions and Assumptions Recorded
 
@@ -252,7 +253,7 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - The latency penalty `L` is strictly positive with a floor of 0.01.
 - Acceptance threshold 0.6 and reliability window 20, both revisable.
 - The formal model is named Chemotactic Task Allocation (CTA) and is specified in `docs/paper.md` section 2.2.
-- Effective capability couples reliability into affinity by default: `C_effective = C_base x R`.
+- Effective capability couples reliability into affinity by default: `C_tilde = C x R` (ablatable). This is the canonical form used in `docs/paper.md` equations E5 and E6.
 - Evaluation uses an independent ground-truth quality model (not the affinity score) to judge outcomes, and models self-assessment as noisy and possibly biased, so calibration can be studied.
 - Evaluation is dual-mode: a Python simulation for scale, and a real-swarm pilot of Claude Code subagents over Supabase Postgres for ecological validity. See section 4.6 and `docs/architecture.md`.
 - Pilot stack (assumed, revisable): Claude Code subagents as the swarm, Supabase Postgres as the task pool, atomic-claim store, event log, and reliability store.
