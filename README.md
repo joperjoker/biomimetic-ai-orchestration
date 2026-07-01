@@ -4,7 +4,7 @@ A decentralised multi-agent orchestration framework inspired by evolutionary bio
 
 ## Motivation
 
-Current multi-agent frameworks tend to rely on a deterministic central orchestrator that assigns workloads from the top down. As the agent population grows, that orchestrator becomes a scaling bottleneck and a single point of failure. This repository validates a decentralised alternative drawn from reproductive biology, specifically the model of cryptic female choice described in the 2020 study "Chemical signals from eggs facilitate cryptic female choice in humans".
+Current multi-agent frameworks tend to rely on a deterministic central orchestrator that assigns workloads from the top down. As the agent population grows, that orchestrator becomes a scaling bottleneck and a single point of failure. This repository validates a decentralised alternative drawn from reproductive biology, specifically the model of cryptic female choice described by Fitzpatrick and colleagues (2020).
 
 In place of a central manager, every task emits a semantic metadata envelope (referred to throughout as the scent). Distributed agents observe these envelopes and autonomously calculate their own compatibility before competing for the work. A pre-execution sandbox (the Rejection Gate) screens candidates so that agents with degraded reliability are deflected before they can gain write access.
 
@@ -28,11 +28,38 @@ Where:
 - `C` is the Agent Capability score (the agent's competence for the required skills).
 - `L` is the Latency or compute cost penalty (the expected time and resource cost of the agent taking the task).
 
-A higher Binding Energy indicates a stronger affinity. Agents pursue tasks where their Binding Energy is highest, which produces an emergent allocation without a central scheduler.
+A higher Binding Energy indicates a stronger affinity. Agents pursue tasks where their Binding Energy is highest, which produces an emergent allocation without a central scheduler. A worked example, the edge-case guards, and the participation threshold are set out in `docs/theory.md`.
 
 ### The Rejection Gate (Zona Pellucida Analogue)
 
-Before any agent gains write access, it must pass the Rejection Gate, a pre-execution sandbox modelled on the biological zona pellucida. The gate evaluates the candidate's recent reliability and the integrity of its proposed action. Agents whose reliability has degraded below the acceptance threshold are deflected, which protects shared state from unreliable actors.
+Before any agent gains write access, it must pass the Rejection Gate, a pre-execution sandbox modelled on the biological zona pellucida. The gate evaluates the candidate's recent reliability and the integrity of its proposed action. Agents whose reliability has degraded below the acceptance threshold are deflected, which protects shared state from unreliable actors. The reliability formula and the acceptance threshold are defined in `docs/theory.md`.
+
+## Architecture at a glance
+
+```
+            +------------------+
+   task --> |  signals (scent) |  produces the envelope, scores S
+            +--------+---------+
+                     |
+                     v
+            +------------------+        agents read the pool and each
+            |   orchestrator   | <----- compute Binding Energy = (S x C) / L
+            |   (task pool,    |        for the tasks they observe
+            |  atomic claim)   |
+            +--------+---------+
+                     | highest Binding Energy claims the task
+                     v
+            +------------------+        admits or deflects based on
+            |  Rejection Gate  |        reliability and integrity
+            +--------+---------+
+                     | admitted (write access granted)
+                     v
+            +------------------+
+            |  agent executes  |  outcome updates capability and reliability
+            +------------------+
+```
+
+The orchestrator is deliberately thin: it provides the consistency needed for a single agent to claim a task, rather than assigning workloads. The lifecycle and the concurrency model are described in `docs/theory.md`.
 
 ## Repository Layout
 
@@ -40,19 +67,34 @@ Before any agent gains write access, it must pass the Rejection Gate, a pre-exec
 .
 ├── README.md            Project overview (this file)
 ├── claude.md            Master context and theoretical blueprint for autonomous loops
+├── CONTRIBUTING.md      Operating protocol, style constraints, and local checks
+├── CHANGELOG.md         Notable changes
+├── pyproject.toml       Project manifest and tooling configuration (provisional)
 ├── src/
 │   ├── signals/         Task scent envelope generation and parsing
 │   ├── agents/          Agent definitions, capability scoring, Binding Energy logic
 │   ├── gates/           Rejection Gate sandbox and reliability scoring
 │   └── orchestrator/    Decentralised coordination and event loop
-├── tests/               Validation suites
-├── docs/                Extended design notes and research references
+├── tests/               Validation suites (including the foundation guard)
+├── docs/                Extended theory, worked example, glossary, and references
 └── .github/             Continuous integration and repository configuration
 ```
 
+## Getting started
+
+The project targets Python 3.11 or later. This is a confirmed decision recorded in `claude.md`.
+
+```
+python -m pip install -e ".[dev]"
+ruff check .
+pytest
+```
+
+At this stage the modules are not yet implemented, so the test suite contains a foundation guard that checks the structure, the key documents, and the style constraints.
+
 ## Status
 
-This run establishes the foundational workspace: the directory layout and the persistent documentation. Implementation of the signal, agent, gate, and orchestrator modules follows in subsequent development phases.
+This foundation run establishes the directory layout, the persistent documentation, the project hygiene files, and continuous integration. Implementation of the signal, agent, gate, and orchestrator modules follows in subsequent development phases, tracked in `claude.md`.
 
 ## Considerations for Future Work
 
@@ -62,6 +104,10 @@ The following points are offered as considerations rather than fixed directives:
 - The Rejection Gate could expose its reliability threshold as a tunable parameter, which would let operators trade throughput against safety.
 - A small simulation harness might help observe emergent allocation patterns before the framework is connected to live agents.
 
+## References
+
+Fitzpatrick JL, Willis C, Devigili A, Young A, Carroll M, Hunter HR, Brison DR. (2020) Chemical signals from eggs facilitate cryptic female choice in humans. Proceedings of the Royal Society B: Biological Sciences, 287(1928): 20200805. DOI: [10.1098/rspb.2020.0805](https://doi.org/10.1098/rspb.2020.0805).
+
 ## Licence
 
-To be determined in a later phase.
+Licensed under the Apache License, Version 2.0. See the [`LICENSE`](LICENSE) file for the full text. The reasoning behind the choice is recorded in `docs/theory.md`.
