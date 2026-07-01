@@ -82,4 +82,4 @@ Pre-publication checklist (a human gate): a secret scan (Supabase keys and token
 - Karpathy, A. (2026) AutoResearch, the associated loop, and the reliability commentary. Verify against the primary repository and posts, since current detail comes from secondary write-ups.
 - The AI Scientist-v2 (Sakana AI, 2025) and related closed-loop AI research systems, for related work.
 - Cemri et al. (2025), already cited, for the multi-agent failure modes that motivate the leash.
-- Zhang, A.L., Kraska, T., & Khattab, O. (2025) Recursive Language Models. arXiv:2512.24601. The external-memory principle for context-rot mitigation. Verify the identifier and authors against the primary source before citing in the public paper.
+- Zhang, A.L., Kraska, T., & Khattab, O. (2025) Recursive Language Models. arXiv:2512.24601. The external-memory principle for context-rot mitigation. Verified against the primary source (arXiv, submitted 31 December 2025).

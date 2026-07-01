@@ -292,6 +292,6 @@ Bonabeau E, Theraulaz G, Deneubourg J-L. (1996) Quantitative study of the fixed 
 
 Fitzpatrick JL, Willis C, Devigili A, Young A, Carroll M, Hunter HR, Brison DR. (2020) Chemical signals from eggs facilitate cryptic female choice in humans. Proceedings of the Royal Society B: Biological Sciences, 287(1928): 20200805. DOI: 10.1098/rspb.2020.0805. Published 11 June 2020.
 
-Zhang AL, Kraska T, Khattab O. (2025) Recursive Language Models. arXiv:2512.24601. (Identifier and authors to be verified against the primary source before public citation.)
+Zhang AL, Kraska T, Khattab O. (2025) Recursive Language Models. arXiv:2512.24601. (Verified against the primary source; submitted 31 December 2025.)
 
 The complete research reference list is in `docs/paper.md`.
