@@ -36,6 +36,12 @@ def test_master_context_holds_the_two_stage_frame():
         assert term in text, f"missing two-stage selection term: {term}"
 
 
+def test_paper_holds_formal_framework():
+    text = (ROOT / "docs" / "paper.md").read_text(encoding="utf-8")
+    for term in ("Formal framework", "P_fire", "W_coord"):
+        assert term in text, f"missing formal-framework marker: {term}"
+
+
 def test_markdown_has_no_forbidden_dashes():
     offenders = []
     for path in ROOT.rglob("*.md"):

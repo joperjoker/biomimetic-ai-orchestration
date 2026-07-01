@@ -10,6 +10,8 @@ The framework draws its central intuition from the following study:
 
 The study reports that human follicular fluid releases chemoattractants that preferentially draw sperm from particular males, and that the effect depends on the specific combination of follicular fluid and sperm. The selection therefore continues after the initial encounter, and it is biased by chemical signalling rather than decided by a single external authority.
 
+The activation barrier draws on a second source, the response threshold model of division of labour in social insects (Bonabeau, Theraulaz, and Deneubourg, 1996), in which an individual engages a task only when the task stimulus exceeds its threshold. This gives the barrier an established precedent that has since been operationalised in swarm robotics. The complete formal model, with numbered equations, is set out in `docs/paper.md` section 2.2.
+
 ## 2. The Binding Energy calculation
 
 Eligible agents (section 3) rank their fit for a task using:
@@ -21,6 +23,8 @@ Binding Energy = (S x C) / L
 - `S` (Task Signal): normalised match between the task scent envelope and the agent domain, in [0, 1].
 - `C` (Agent Capability): normalised competence for the required skills, in [0, 1].
 - `L` (Latency or compute cost penalty): expected cost of the agent taking the task, strictly positive, floored at a small value (suggested 0.01) so the score stays bounded.
+
+In the canonical model, `S` is an embedding cosine between the task need and the agent capability, and capability is coupled with reliability as the effective capability `C_tilde = C x R` (section 4.3), so the score used is `B = S x C_tilde / max(L, 0.01)`. See `docs/paper.md` section 2.2, equations E3 to E6.
 
 ### 2.1 Worked example
 
@@ -89,12 +93,19 @@ A higher `T` lets more marginal matches fire (exploration), a lower `T` admits o
 | 0.10 | 0.10 | 0.14 | 0.61 |
 | 0.05 | 0.15 | 0.05 | 0.47 |
 
-The table shows the knob: at low temperature a match just under the barrier rarely fires, and at higher temperature the system is more willing to try a weaker match.
+The table shows the knob: at low temperature a match just under the barrier rarely fires, and at higher temperature the system is more willing to try a weaker match. Writing the activation drive as `Delta = BE - Ea`, this firing rule is `p(fire) = min(1, exp(Delta / T))`, which is equation E8 in `docs/paper.md` section 2.2.
 
 ### 3.4 Considerations: catalyst and annealing
 
 - Catalyst: supporting context, a tool, a cache, or a helper agent can lower the effective `Ea` for a task, letting a marginal match fire. This mirrors a catalyst lowering the activation energy of a reaction without being consumed by it. It is a future extension, offered as a consideration.
 - Annealing: a task that stalls for too long could have its `Ea` reduced gradually so it does not starve. This connects to the starvation metric in section 7 and is also offered as a consideration.
+
+### 3.5 Quality feedback and self-assessment
+
+Two further elements close the loop and keep the model honest about its weakest assumption, that an agent can score itself.
+
+- Independent quality: the realised outcome of a task is drawn from a ground-truth quality function that does not depend on the agent's own estimate. An attempt counts as a success when the realised quality clears a minimum, and that success or failure updates the reliability `R`. This lets quality be measured against something other than the affinity score that drove selection.
+- Self-assessment noise: agents act on noisy, possibly biased estimates of their own `S`, `C`, and `L`. Selection uses the estimated Binding Energy, while outcomes use the ground truth. Sweeping the bias and noise shows how sensitive the framework is to miscalibrated agents. These elements are equations E12 and E13 in `docs/paper.md` section 2.2.
 
 ## 4. Reliability and the Rejection Gate
 

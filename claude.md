@@ -30,6 +30,8 @@ The computational translation:
 
 This is the foundational departure from conventional orchestration: choice is distributed and signal-driven, not centrally dictated. The limits of this analogy are recorded in `docs/theory.md` section 8, and should be kept in mind so the biology guides intuition without being treated as a literal specification.
 
+The activation barrier (section 3.5) draws on a second source, the response threshold model of division of labour in social insects (Bonabeau, Theraulaz, and Deneubourg, 1996), in which an individual engages a task only when the stimulus exceeds its threshold. The complete formal model, named Chemotactic Task Allocation, is set out with numbered equations in `docs/paper.md` section 2.2.
+
 ### 3.2 Selection in two stages, then a trust gate
 
 Matching a task to an agent is decided in two stages, followed by a distinct trust gate. Each step answers a different question, so the stages do not overlap:
@@ -243,6 +245,9 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - Capability and signal values are normalised to [0, 1].
 - The latency penalty `L` is strictly positive with a floor of 0.01.
 - Acceptance threshold 0.6 and reliability window 20, both revisable.
+- The formal model is named Chemotactic Task Allocation (CTA) and is specified in `docs/paper.md` section 2.2.
+- Effective capability couples reliability into affinity by default: `C_effective = C_base x R`.
+- Evaluation uses an independent ground-truth quality model (not the affinity score) to judge outcomes, and models self-assessment as noisy and possibly biased, so calibration can be studied.
 - Licence: Apache-2.0 (confirmed). The full text is in the `LICENSE` file, and the reasoning is in `docs/theory.md` section 9.
 
 ## 8. Open Items for Future Phases
@@ -258,4 +263,8 @@ Quantitative metrics for the implementation phase (measured against a centralise
 
 ## 9. References
 
+Bonabeau E, Theraulaz G, Deneubourg J-L. (1996) Quantitative study of the fixed threshold model for the regulation of division of labour in insect societies. Proceedings of the Royal Society of London B: Biological Sciences, 263(1376): 1565-1569. DOI: 10.1098/rspb.1996.0229.
+
 Fitzpatrick JL, Willis C, Devigili A, Young A, Carroll M, Hunter HR, Brison DR. (2020) Chemical signals from eggs facilitate cryptic female choice in humans. Proceedings of the Royal Society B: Biological Sciences, 287(1928): 20200805. DOI: 10.1098/rspb.2020.0805. Published 11 June 2020.
+
+The complete research reference list is in `docs/paper.md`.
