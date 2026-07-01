@@ -272,6 +272,7 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - Create the Supabase schema (tasks, agents, events, attempts) and the atomic-claim statement.
 - Build the real-swarm pilot: Claude Code subagents that self-assess, claim, pass the gate, and execute scoped software micro-tasks in isolated git worktrees.
 - Build the analysis layer that computes the metric-to-measurement map in `docs/architecture.md` from the event log.
+- Follow the phased build in `docs/roadmap.md`: the agent harnesses, the Auto-Researcher loop (a Karpathy-style propose, run, evaluate, keep-or-revert loop kept on a leash by the Rejection Gate), and the repository shaped as the public report. Not yet started.
 
 ## 9. References
 
