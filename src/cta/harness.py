@@ -16,7 +16,15 @@ from dataclasses import dataclass, field
 
 from cta.baselines import run_central
 from cta.engine import run_batch
-from cta.generators import generate_agents, generate_tasks, with_injected_unreliable
+from cta.generators import (
+    generate_agents,
+    generate_tasks,
+    with_capability_spread,
+    with_injected_adversarial,
+    with_injected_unreliable,
+    with_miscalibration,
+    with_track_record,
+)
 from cta.scoring import Task, compatibility, eligible
 from cta.stats import mean_ci
 
@@ -135,6 +143,117 @@ def gate_ablation(
         on_q.append(on["mean_quality"])
         off_q.append(off["mean_quality"])
     return {"gate_on_quality": on_q, "gate_off_quality": off_q}
+
+
+def calibration_sweep(
+    base: CellParams,
+    seeds: int,
+    bias_values: tuple[float, ...] = (0.0, 0.1, 0.2, 0.3, 0.4),
+    noise: float = 0.05,
+    modes: tuple[str, ...] = ("raw", "reliability", "true"),
+    capability_low: float = 0.2,
+) -> dict[str, list[dict[str, object]]]:
+    """H7 and H8: vary self-assessment overconfidence and compare selection modes.
+
+    Runs in the documented stress regime (a wide competence spread via
+    ``with_capability_spread``), because the choice of competence signal only
+    matters when agents genuinely differ in competence. Each agent has an
+    informative track record and a self-report drifted by the overconfidence bias.
+
+    For each mode and bias, records mean realised quality, the unmet rate, and the
+    per-seed quality values, plus the winners' overconfidence gap (self-report
+    minus realised quality) for the ``raw`` mode. ``raw`` ranks on the self-report
+    alone; ``reliability`` discounts it by the track record; ``true`` is the
+    full-information oracle.
+    """
+    out: dict[str, list[dict[str, object]]] = {m: [] for m in modes}
+    for mode in modes:
+        for bias in bias_values:
+            q_vals: list[float] = []
+            comp_vals: list[float] = []
+            unmet: list[float] = []
+            gaps: list[float] = []
+            for seed in range(seeds):
+                agents = generate_agents(
+                    base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed)
+                )
+                agents = with_capability_spread(agents, capability_low)
+                agents = with_track_record(agents, random.Random(seed + 40_000))
+                agents = with_miscalibration(agents, bias, noise, random.Random(seed + 60_000))
+                tasks = generate_tasks(
+                    base.n_tasks,
+                    base.n_domains,
+                    random.Random(seed + 10_000),
+                    base.activation_energy,
+                )
+                res = run_batch(
+                    agents,
+                    tasks,
+                    random.Random(seed + 20_000),
+                    condition="cta",
+                    temperature=base.temperature,
+                    observability_k=base.observability_k,
+                    selection_mode=mode,
+                ).summary()
+                q_vals.append(res["mean_quality"])
+                comp_vals.append(res["completion_rate"])
+                unmet.append(res["stall_rate"] + res["infeasible_rate"])
+                gaps.append(res["overconfidence_gap"])
+            out[mode].append(
+                {
+                    "bias": bias,
+                    "mean_quality": sum(q_vals) / len(q_vals),
+                    "completion_rate": sum(comp_vals) / len(comp_vals),
+                    "unmet_rate": sum(unmet) / len(unmet),
+                    "overconfidence_gap": sum(gaps) / len(gaps),
+                    "quality_values": q_vals,
+                    "completion_values": comp_vals,
+                }
+            )
+    return out
+
+
+def safety_ablation(
+    base: CellParams, seeds: int, adversarial_fraction: float = 0.3
+) -> dict[str, list[float]]:
+    """H4 (safety): count integrity violations with the gate on and off.
+
+    A fraction of agents are adversarial (likely to act outside the task scope).
+    With the gate on their out-of-scope actions are deflected as prevented
+    violations; with it off they execute and are recorded, so gate-on counts
+    should be zero (or far below gate-off).
+    """
+    on: list[float] = []
+    off: list[float] = []
+    for seed in range(seeds):
+        agents = generate_agents(
+            base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed)
+        )
+        agents = with_injected_adversarial(
+            agents, adversarial_fraction, random.Random(seed + 70_000)
+        )
+        tasks = generate_tasks(
+            base.n_tasks, base.n_domains, random.Random(seed + 10_000), base.activation_energy
+        )
+        on_res = run_batch(
+            agents,
+            tasks,
+            random.Random(seed + 20_000),
+            condition="cta",
+            observability_k=base.observability_k,
+            gate_enabled=True,
+        ).summary()
+        off_res = run_batch(
+            agents,
+            tasks,
+            random.Random(seed + 20_000),
+            condition="cta",
+            observability_k=base.observability_k,
+            gate_enabled=False,
+        ).summary()
+        on.append(on_res["integrity_violations"])
+        off.append(off_res["integrity_violations"])
+    return {"gate_on_violations": on, "gate_off_violations": off}
 
 
 def feasibility_check(base: CellParams, seed: int = 0) -> dict[str, float]:

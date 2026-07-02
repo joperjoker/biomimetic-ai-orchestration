@@ -1,6 +1,13 @@
-"""Tests for the H3, H4, and H5 evaluations."""
+"""Tests for the H3, H4, H5, H7, and H8 evaluations."""
 
-from cta.harness import CellParams, feasibility_check, gate_ablation, stability_grid
+from cta.harness import (
+    CellParams,
+    calibration_sweep,
+    feasibility_check,
+    gate_ablation,
+    safety_ablation,
+    stability_grid,
+)
 
 
 def test_feasibility_labelling_is_correct():
@@ -18,6 +25,27 @@ def test_gate_ablation_helps_under_unreliability():
     off = sum(res["gate_off_quality"]) / len(res["gate_off_quality"])
     # With half the agents unreliable, the gate should not reduce quality.
     assert on >= off - 1e-9
+
+
+def test_calibration_sweep_recovers_completion():
+    base = CellParams(n_agents=60, n_tasks=48, n_domains=4, heterogeneity=0.8)
+    sweep = calibration_sweep(base, seeds=3, bias_values=(0.0, 0.4))
+    assert set(sweep.keys()) == {"raw", "reliability", "true"}
+    raw_top = sweep["raw"][-1]
+    rel_top = sweep["reliability"][-1]
+    # The track-record correction completes more tasks than the raw self-report.
+    assert rel_top["completion_rate"] > raw_top["completion_rate"]
+    # Winners over-report under raw self-selection (positive overconfidence gap).
+    assert raw_top["overconfidence_gap"] > 0.0
+    assert len(raw_top["completion_values"]) == 3
+
+
+def test_safety_ablation_gate_prevents_violations():
+    base = CellParams(n_agents=60, n_tasks=48, n_domains=4, heterogeneity=0.8)
+    res = safety_ablation(base, seeds=3, adversarial_fraction=0.4)
+    # With the gate on there are no integrity violations; with it off there are.
+    assert all(v == 0 for v in res["gate_on_violations"])
+    assert sum(res["gate_off_violations"]) > 0
 
 
 def test_stability_grid_shape_and_monotonicity():

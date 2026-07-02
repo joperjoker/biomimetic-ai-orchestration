@@ -37,9 +37,12 @@ def test_evaluate_returns_all_hypotheses():
         ],
     }
     verdicts = evaluate(base, scaling, hetero)
-    assert set(verdicts.keys()) == {"H1", "H2", "H3", "H4", "H5", "H6"}
+    assert set(verdicts.keys()) == {"H1", "H2", "H3", "H4", "H5", "H6", "H7", "H8"}
     assert verdicts["H1"]["verdict"] == "SUPPORTED"  # central grows faster
     assert verdicts["H6"]["verdict"] == "SUPPORTED"  # advantage rises with heterogeneity
+    # Without calibration or safety data the new hypotheses are pending, not evaluated.
+    assert verdicts["H7"]["verdict"] == "PENDING"
+    assert verdicts["H8"]["verdict"] == "PENDING"
 
 
 def test_autorun_writes_artifacts(tmp_path):
@@ -49,6 +52,12 @@ def test_autorun_writes_artifacts(tmp_path):
     assert (out / "RESULTS.md").is_file()
     assert (out / "figures" / "scaling_peak_per_node.svg").is_file()
     assert (out / "figures" / "heterogeneity_quality.svg").is_file()
+    assert (out / "figures" / "calibration_quality.svg").is_file()
     loaded = json.loads((out / "summary.json").read_text(encoding="utf-8"))
     assert "verdicts" in loaded and "scaling_peak_per_node" in loaded
+    assert "calibration" in loaded and "safety" in loaded
     assert summary["verdicts"]["H1"]["verdict"] in ("SUPPORTED", "NOT SUPPORTED")
+    # The calibration and safety hypotheses are evaluated by the full autorun.
+    assert summary["verdicts"]["H7"]["verdict"] == "SUPPORTED"
+    assert summary["verdicts"]["H8"]["verdict"] == "SUPPORTED"
+    assert summary["verdicts"]["H4"]["verdict"] == "SUPPORTED"

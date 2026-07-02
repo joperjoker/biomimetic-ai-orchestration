@@ -6,28 +6,33 @@ per-task outcomes and a summary. The concurrent-process mode over the store (for
 faithful contention) is a separate engine; both share this scoring logic.
 
 Conditions:
-- ``cta``: eligibility, then activation (``c >= Ea``), winner by Binding Energy,
-  then the Rejection Gate.
-- ``pull_based``: eligibility only, winner by Binding Energy, no barrier, no gate.
-  This isolates the effect of CTA's mechanisms from decentralisation alone.
+- ``cta``: eligibility, then activation on the self-reported compatibility
+  (``c_hat >= Ea``), winner by the bid (``selection_mode``), then the Rejection
+  Gate. Realised quality uses the true compatibility, so self-assessment
+  miscalibration corrupts the allocation without changing the ground truth.
+- ``pull_based``: eligibility only, winner by the true-fit bid, no barrier, no
+  gate. This isolates the effect of CTA's mechanisms from decentralisation alone.
 """
 
 from __future__ import annotations
 
+import math
 import random
 from dataclasses import dataclass
 
 from cta.quality import is_success, realised_quality
 from cta.scoring import (
+    EPS,
     Agent,
     GateConfig,
     Task,
-    binding_energy,
     compatibility,
     eligible,
-    p_fire,
     reliability,
+    self_reported_compatibility,
 )
+
+SELECTION_MODES = ("reliability", "raw", "true")
 
 
 @dataclass
@@ -37,6 +42,8 @@ class TaskOutcome:
     winner: str | None
     quality: float | None
     fired: int  # number of agents that attempted to claim (contention)
+    violation: bool = False  # an out-of-scope write that executed (gate absent or off)
+    self_report: float | None = None  # the winner's self-reported compatibility (E13)
 
 
 @dataclass
@@ -55,13 +62,26 @@ class BatchResult:
         claim_attempts = sum(o.fired for o in self.outcomes)
         successful_claims = sum(1 for o in self.outcomes if o.winner is not None)
         peak_store_load = max((o.fired for o in self.outcomes), default=0)
+        integrity_violations = sum(1 for o in self.outcomes if o.violation)
+        # Overconfidence gap (E13): how far winners' self-reports exceed the
+        # realised quality they deliver. Positive means the pool is overconfident.
+        won = [o for o in self.outcomes if o.self_report is not None and o.quality is not None]
+        if won:
+            mean_sr = sum(o.self_report for o in won) / len(won)
+            mean_wq = sum(o.quality for o in won) / len(won)
+            overconfidence_gap = mean_sr - mean_wq
+        else:
+            overconfidence_gap = 0.0
         return {
             "tasks": n,
             "completed": counts.get("COMPLETED", 0),
+            "completion_rate": counts.get("COMPLETED", 0) / n if n else 0.0,
             "failed": counts.get("FAILED", 0),
             "infeasible_rate": counts.get("INFEASIBLE", 0) / n if n else 0.0,
             "stall_rate": counts.get("STALLED", 0) / n if n else 0.0,
             "deflection_rate": counts.get("DEFLECTED", 0) / n if n else 0.0,
+            "integrity_violations": integrity_violations,
+            "overconfidence_gap": overconfidence_gap,
             "mean_quality": sum(qualities) / len(qualities) if qualities else 0.0,
             "coordinator_work": claim_attempts,
             "contention": claim_attempts / successful_claims if successful_claims else 0.0,
@@ -74,13 +94,38 @@ class BatchResult:
         }
 
 
-def _fires(agent: Agent, task: Task, temperature: float, rng: random.Random) -> bool:
-    p = p_fire(agent, task, temperature)
-    if p >= 1.0:
+def _fires_on(delta: float, temperature: float, rng: random.Random) -> bool:
+    """Deterministic threshold firing, with an Arrhenius soft threshold for T > 0."""
+    if delta >= 0.0:
         return True
-    if p <= 0.0:
+    if temperature <= 0.0:
         return False
-    return rng.random() < p
+    return rng.random() < math.exp(delta / temperature)
+
+
+def _bid(mode: str, c_self: float, c_true: float, agent: Agent) -> float:
+    """The selection score used to rank the firing agents (E6 family).
+
+    Only signals available at allocation time may enter the bid: the agent's
+    self-reported compatibility and its observable track record. True capability
+    is not observed; the track record ``R`` is its historical proxy.
+
+    - ``raw``: the self-report alone (``c_hat / L``), the naive auction.
+    - ``reliability``: the self-report discounted by the track record
+      (``c_hat * R / L``), the treatment that adds a competence signal.
+    - ``true``: the full-information reference (``c * C / L``), the oracle that
+      knows both the true fit and the true capability.
+
+    Latency breaks near-ties as in E6.
+    """
+    lat = max(agent.latency, EPS)
+    if mode == "true":
+        cap = 0.0 if agent.capability < 0.0 else 1.0 if agent.capability > 1.0 else agent.capability
+        return c_true * cap / lat
+    if mode == "raw":
+        return c_self / lat
+    # reliability
+    return c_self * reliability(agent) / lat
 
 
 def run_batch(
@@ -92,11 +137,22 @@ def run_batch(
     gate: GateConfig | None = None,
     gate_enabled: bool = True,
     observability_k: int | None = None,
+    selection_mode: str = "reliability",
 ) -> BatchResult:
     """Allocate a batch of tasks under a decentralised condition.
 
-    ``gate_enabled`` toggles the Rejection Gate for the ablation (H4). When it is
-    False the winner executes regardless of reliability.
+    Each evaluated agent computes its true compatibility ``c`` (E3) and a
+    self-report ``c_hat`` (E13). Firing and the bid use the self-report; realised
+    quality (E12) uses the true compatibility, so self-assessment miscalibration
+    corrupts the allocation without changing the ground truth.
+
+    ``selection_mode`` chooses the bid: ``reliability`` (``c_hat * C * R``, the
+    default treatment), ``raw`` (``c_hat * C``, no track record), or ``true``
+    (``c * C * R``, the oracle that knows its own fit and so also fires on ``c``).
+
+    ``gate_enabled`` toggles the Rejection Gate for the ablation (H4): it deflects
+    an unreliable winner and an out-of-scope action. With the gate off an
+    out-of-scope action executes and is recorded as an integrity violation.
 
     ``observability_k`` (A2) bounds how many tasks each agent observes. With it set,
     an agent evaluates at most ``k`` tasks, so per-agent work and the store hotspot
@@ -104,6 +160,8 @@ def run_batch(
     """
     if condition not in ("cta", "pull_based"):
         raise ValueError(f"unknown condition: {condition}")
+    if selection_mode not in SELECTION_MODES:
+        raise ValueError(f"unknown selection_mode: {selection_mode}")
     gate_cfg = gate if gate is not None else GateConfig()
     outcomes: list[TaskOutcome] = []
 
@@ -125,9 +183,22 @@ def run_batch(
             outcomes.append(TaskOutcome(task.task_id, "INFEASIBLE", None, None, 0))
             continue
 
+        # True fit and the agent's self-report for each eligible agent.
+        true_c = {a.agent_id: compatibility(a, task) for a in elig}
+        self_c = {
+            a.agent_id: self_reported_compatibility(
+                true_c[a.agent_id], a.calibration_bias, a.calibration_noise, rng
+            )
+            for a in elig
+        }
+
         if condition == "cta":
-            firing = [a for a in elig if _fires(a, task, temperature, rng)]
-        else:  # pull_based: every eligible agent is willing
+            firing = []
+            for a in elig:
+                c_fire = true_c[a.agent_id] if selection_mode == "true" else self_c[a.agent_id]
+                if _fires_on(c_fire - task.activation_energy, temperature, rng):
+                    firing.append(a)
+        else:  # pull_based: every eligible agent is willing, ranked on true fit
             firing = elig
 
         if not firing:
@@ -136,7 +207,11 @@ def run_batch(
 
         winner = max(
             firing,
-            key=lambda a: (binding_energy(a, task), -a.latency, a.agent_id),
+            key=lambda a: (
+                _bid(selection_mode, self_c[a.agent_id], true_c[a.agent_id], a),
+                -a.latency,
+                a.agent_id,
+            ),
         )
 
         gate_active = condition == "cta" and gate_enabled
@@ -144,8 +219,25 @@ def run_batch(
             outcomes.append(TaskOutcome(task.task_id, "DEFLECTED", None, None, len(firing)))
             continue
 
-        q = realised_quality(compatibility(winner, task), winner.capability, rng)
+        # Integrity check: does the winner act within the task scope (E11)?
+        in_scope = rng.random() >= winner.out_of_scope_prob
+        if not in_scope and gate_active:
+            # The gate prevents the out-of-scope write; no violation is recorded.
+            outcomes.append(TaskOutcome(task.task_id, "DEFLECTED", None, None, len(firing)))
+            continue
+
+        q = realised_quality(true_c[winner.agent_id], winner.capability, rng)
         status = "COMPLETED" if is_success(q) else "FAILED"
-        outcomes.append(TaskOutcome(task.task_id, status, winner.agent_id, q, len(firing)))
+        outcomes.append(
+            TaskOutcome(
+                task.task_id,
+                status,
+                winner.agent_id,
+                q,
+                len(firing),
+                violation=not in_scope,
+                self_report=self_c[winner.agent_id],
+            )
+        )
 
     return BatchResult(outcomes, total_work=total_work, peak_agent_work=per_agent_work)

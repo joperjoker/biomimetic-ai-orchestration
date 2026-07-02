@@ -96,6 +96,84 @@ def with_injected_unreliable(
     return out
 
 
+def with_miscalibration(
+    agents: list[Agent], bias: float, noise: float, rng: random.Random
+) -> list[Agent]:
+    """Set a self-assessment bias and noise (E13), concentrated in weak agents.
+
+    Overconfidence is stronger for less capable agents, the documented pattern
+    (weaker performers overestimate themselves): the per-agent bias is
+    ``bias * (1 - capability)``, so a fully capable agent stays calibrated while a
+    weak one inflates its self-report the most. ``bias`` scales the effect and
+    ``noise`` is the random error. With ``bias`` and ``noise`` zero the self-report
+    equals the true fit. This is what makes miscalibration corrupt the ranking: a
+    weak agent can outbid a strong one on self-report alone.
+    """
+    del rng  # the bias is a deterministic function of capability; no draw needed
+    out: list[Agent] = []
+    for a in agents:
+        cap = 0.0 if a.capability < 0.0 else 1.0 if a.capability > 1.0 else a.capability
+        out.append(
+            dataclasses.replace(a, calibration_bias=bias * (1.0 - cap), calibration_noise=noise)
+        )
+    return out
+
+
+def with_capability_spread(agents: list[Agent], low: float = 0.2) -> list[Agent]:
+    """Widen the competence spread by remapping capability to ``[low, 1.0]``.
+
+    The base population has a narrow competence band (about 0.5 to 1.0). Real
+    agent fleets are more varied, and a wide competence spread is what makes the
+    choice of competence signal matter. This is the documented stress regime for
+    the calibration study; it does not change the base population used elsewhere.
+    """
+    out: list[Agent] = []
+    for a in agents:
+        cap = 0.0 if a.capability < 0.0 else 1.0 if a.capability > 1.0 else a.capability
+        # Base capability sits in [0.5, 1.0]; remap linearly to [low, 1.0].
+        stretched = low + (cap - 0.5) / 0.5 * (1.0 - low)
+        stretched = 0.0 if stretched < 0.0 else 1.0 if stretched > 1.0 else stretched
+        out.append(dataclasses.replace(a, capability=stretched))
+    return out
+
+
+def with_track_record(
+    agents: list[Agent], rng: random.Random, attempts: int = 30
+) -> list[Agent]:
+    """Give each agent a track record that reflects its true capability.
+
+    Draws ``successes`` from ``attempts`` Bernoulli trials with success
+    probability equal to the agent's capability, so reliability ``R`` (E4)
+    correlates with true competence. This makes the track-record correction
+    informative: discounting a bid by ``R`` favours genuinely capable agents,
+    which is the mechanism tested against raw self-reports (H8).
+    """
+    out: list[Agent] = []
+    for a in agents:
+        p = 0.0 if a.capability < 0.0 else 1.0 if a.capability > 1.0 else a.capability
+        successes = sum(1 for _ in range(attempts) if rng.random() < p)
+        out.append(dataclasses.replace(a, successes=successes, attempts=attempts))
+    return out
+
+
+def with_injected_adversarial(
+    agents: list[Agent], fraction: float, rng: random.Random, out_of_scope_prob: float = 0.9
+) -> list[Agent]:
+    """Give a fraction of agents a high chance of acting outside the task scope.
+
+    Used to test the integrity gate as a safety backstop (H4): with the gate on
+    these out-of-scope actions should be deflected as prevented violations; with
+    it off they execute and are recorded as integrity violations.
+    """
+    out: list[Agent] = []
+    for a in agents:
+        if rng.random() < fraction:
+            out.append(dataclasses.replace(a, out_of_scope_prob=out_of_scope_prob))
+        else:
+            out.append(a)
+    return out
+
+
 def generate_tasks(
     m: int,
     n_domains: int,

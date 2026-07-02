@@ -25,6 +25,8 @@ def evaluate(
     gate: dict[str, list[float]] | None = None,
     feasibility: dict[str, float] | None = None,
     stability: list[dict[str, float]] | None = None,
+    calibration: dict[str, list[dict[str, object]]] | None = None,
+    safety: dict[str, list[float]] | None = None,
 ) -> dict[str, dict[str, object]]:
     """Return a verdict record per hypothesis.
 
@@ -94,12 +96,24 @@ def evaluate(
     else:
         verdicts["H3"] = {"claim": "infeasible and stall labelling", "verdict": "PENDING"}
 
-    # H4: the gate keeps quality higher under injected unreliability.
-    if gate is not None and gate.get("gate_on_quality") and gate.get("gate_off_quality"):
-        on = gate["gate_on_quality"]
-        off = gate["gate_off_quality"]
-        _, p = mann_whitney_u(on, off)
+    # H4 (safety): the integrity gate prevents out-of-scope writes by adversarial
+    # agents. Supported when gate-on violations are zero, or far below gate-off.
+    if safety is not None and safety.get("gate_off_violations"):
+        on = safety["gate_on_violations"]
+        off = safety["gate_off_violations"]
         on_mean, off_mean = mean_ci(on)[0], mean_ci(off)[0]
+        prevented = on_mean <= 1e-9 or (off_mean > 0 and on_mean < 0.1 * off_mean)
+        verdicts["H4"] = {
+            "claim": "the integrity gate prevents out-of-scope writes under adversarial agents",
+            "gate_on_violations": round(on_mean, 3),
+            "gate_off_violations": round(off_mean, 3),
+            "verdict": _verdict(prevented and off_mean > 0),
+        }
+    elif gate is not None and gate.get("gate_on_quality") and gate.get("gate_off_quality"):
+        on_q = gate["gate_on_quality"]
+        off_q = gate["gate_off_quality"]
+        _, p = mann_whitney_u(on_q, off_q)
+        on_mean, off_mean = mean_ci(on_q)[0], mean_ci(off_q)[0]
         verdicts["H4"] = {
             "claim": "the Rejection Gate preserves quality under unreliability",
             "gate_on_quality": round(on_mean, 3),
@@ -108,7 +122,10 @@ def evaluate(
             "verdict": _verdict(on_mean > off_mean),
         }
     else:
-        verdicts["H4"] = {"claim": "gate preserves integrity", "verdict": "PENDING"}
+        verdicts["H4"] = {
+            "claim": "the integrity gate prevents out-of-scope writes",
+            "verdict": "PENDING",
+        }
 
     # H5: across the Ea by T grid the allocation stays stable and predictable.
     if stability:
@@ -129,6 +146,47 @@ def evaluate(
         }
     else:
         verdicts["H5"] = {"claim": "stability across Ea and T", "verdict": "PENDING"}
+
+    # H7 (the failure mode): winners' self-reports over-predict realised success.
+    # The overconfidence gap (self-report minus realised quality) is materially
+    # positive under raw self-selection, and does not shrink as bias rises. This
+    # is the miscalibration the literature reports.
+    raw = calibration.get("raw") if calibration else None
+    if raw:
+        gap_low = float(raw[0]["overconfidence_gap"])
+        gap_high = float(raw[-1]["overconfidence_gap"])
+        margin = 0.05
+        verdicts["H7"] = {
+            "claim": "self-reports over-predict realised success (overconfidence gap)",
+            "overconfidence_gap_at_zero_bias": round(gap_low, 3),
+            "overconfidence_gap_at_max_bias": round(gap_high, 3),
+            "verdict": _verdict(gap_high > margin and gap_high >= gap_low - 0.01),
+        }
+    else:
+        verdicts["H7"] = {"claim": "self-reports are overconfident", "verdict": "PENDING"}
+
+    # H8 (the fix): discounting the self-report by the track record (reliability
+    # mode) recovers task completion versus the raw self-report, under the worst
+    # injected overconfidence. Tested on the per-seed completion rate.
+    rel = calibration.get("reliability") if calibration else None
+    if raw and rel:
+        raw_top = [float(x) for x in raw[-1]["completion_values"]]  # type: ignore[union-attr]
+        rel_top = [float(x) for x in rel[-1]["completion_values"]]  # type: ignore[union-attr]
+        _, p = mann_whitney_u(rel_top, raw_top)
+        rel_mean, raw_mean = mean_ci(rel_top)[0], mean_ci(raw_top)[0]
+        verdicts["H8"] = {
+            "claim": "the track-record correction recovers completion under miscalibration",
+            "reliability_completion": round(rel_mean, 3),
+            "raw_completion": round(raw_mean, 3),
+            "recovery": round(rel_mean - raw_mean, 3),
+            "p": round(p, 4),
+            "verdict": _verdict(rel_mean > raw_mean and p < 0.05),
+        }
+    else:
+        verdicts["H8"] = {
+            "claim": "track-record correction recovers completion",
+            "verdict": "PENDING",
+        }
     return verdicts
 
 

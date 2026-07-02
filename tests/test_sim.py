@@ -4,7 +4,14 @@ import random
 
 from cta.baselines import greedy_assignment, optimal_assignment, run_central
 from cta.engine import run_batch
-from cta.generators import generate_agents, generate_tasks
+from cta.generators import (
+    generate_agents,
+    generate_tasks,
+    with_capability_spread,
+    with_injected_adversarial,
+    with_miscalibration,
+    with_track_record,
+)
 from cta.quality import is_success, realised_quality
 from cta.scoring import Agent, Task, binding_energy, eligible
 
@@ -90,6 +97,51 @@ def test_partial_observability_bounds_peak_agent_work():
     assert bounded["peak_agent_work"] == 16
     # The bounded per-node load is far below the central N*M load.
     assert bounded["peak_per_node"] < len(agents) * len(tasks)
+
+
+def test_selection_uses_self_report_but_scores_true_fit():
+    # Under a wide competence spread and overconfident self-reports, the raw
+    # self-report auction completes fewer tasks than the track-record correction,
+    # because raw selection is blind to competence while quality depends on it.
+    agents = generate_agents(60, 4, 0.8, random.Random(7))
+    agents = with_capability_spread(agents, 0.2)
+    agents = with_track_record(agents, random.Random(7 + 40_000))
+    agents = with_miscalibration(agents, 0.4, 0.05, random.Random(7 + 60_000))
+    tasks = generate_tasks(48, 4, random.Random(8), 0.2)
+    raw = run_batch(
+        agents, tasks, random.Random(9), condition="cta", selection_mode="raw"
+    ).summary()
+    rel = run_batch(
+        agents, tasks, random.Random(9), condition="cta", selection_mode="reliability"
+    ).summary()
+    assert rel["completion_rate"] > raw["completion_rate"]
+    # Winners over-report: their self-report exceeds the quality they deliver.
+    assert raw["overconfidence_gap"] > 0.0
+
+
+def test_gate_prevents_out_of_scope_writes():
+    agents = generate_agents(40, 4, 0.8, random.Random(11))
+    agents = with_injected_adversarial(agents, 0.5, random.Random(11 + 70_000))
+    tasks = generate_tasks(30, 4, random.Random(12), 0.2)
+    on = run_batch(
+        agents, tasks, random.Random(13), condition="cta", gate_enabled=True
+    ).summary()
+    off = run_batch(
+        agents, tasks, random.Random(13), condition="cta", gate_enabled=False
+    ).summary()
+    # With the gate on, no out-of-scope write executes; with it off, some do.
+    assert on["integrity_violations"] == 0
+    assert off["integrity_violations"] > 0
+
+
+def test_unknown_selection_mode_rejected():
+    agents = generate_agents(5, 3, 0.8, random.Random(1))
+    tasks = generate_tasks(3, 3, random.Random(2))
+    try:
+        run_batch(agents, tasks, random.Random(3), selection_mode="bogus")
+    except ValueError:
+        return
+    raise AssertionError("expected ValueError for an unknown selection mode")
 
 
 def test_run_central_completes_some():

@@ -8,7 +8,7 @@ Chemotactic Task Allocation (CTA): decentralised, signal-driven orchestration of
 
 ## North Star
 
-The one claim under test: decentralised, signal-driven self-selection relieves the central-orchestrator bottleneck while holding match quality and safety. Every addition serves that claim or is marked a consideration.
+The one claim under test: decentralised, signal-driven self-selection relieves the central-orchestrator bottleneck while holding match quality and safety. Sharpened after a literature comparison (decentralised self-selection is well covered): the contribution is calibration robustness. Self-assessment miscalibration is the failure mode of self-selection (the compatibility bid is the agent's own self-report, E13), and a track-record correction (the reliability R, E4) recovers the completion that miscalibration costs, with the integrity gate as a safety backstop. Motivated by MarketBench (Fradkin and Krishnan, 2026). Every addition serves that claim or is marked a consideration.
 
 ## Decisions locked
 
@@ -32,6 +32,7 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 - Code, Phases H, I, and J: `src/cta/viz.py` (pure-SVG line charts, zero dependencies), `src/cta/report.py` (hypothesis verdicts H1 to H6 and a Results Markdown writer), and `src/cta/cli.py` (`cta autorun`, the one-command autonomous run). Registered as the `cta` console script. Running `cta autorun` produces `results/summary.json`, `results/RESULTS.md`, and SVG figures. At demo scale H1 and H2 are supported, H6 is not supported (reported faithfully), and H3 to H5 are pending the concurrent engine and further sweeps. This is the "start"-ready milestone.
 - Code, Phases F and G: `src/cta/stats.py` (confidence intervals, Mann-Whitney U with tie correction via `statistics.NormalDist`, Cliff's delta, Holm-Bonferroni) and `src/cta/harness.py` (the four conditions run across seeds, with a scaling sweep and a heterogeneity sweep, and aggregation to mean and 95 per cent confidence interval). Tests in `tests/test_analysis.py`. Pure standard library.
 - Code, Phases C to E (in-process): `src/cta/quality.py` (ground-truth Q, E12), `src/cta/generators.py` (seeded agent and task populations with the heterogeneity control), `src/cta/engine.py` (the fast event-loop `run_batch` for the decentralised conditions `cta` and `pull_based`, returning per-task outcomes and a summary), and `src/cta/baselines.py` (central greedy and optimal assignment, with the optimal using scipy when available or a brute-force optimum for small instances). Tests in `tests/test_sim.py`. All 33 tests pass; `ruff` clean. An end-to-end smoke over 200 agents and 150 tasks runs and shows the expected shape (CTA matches pull-based quality at much lower coordinator work, and beats central greedy on mean quality).
+- Repositioning around calibration robustness (after a literature comparison): the engine now separates the agent's self-reported compatibility `c_hat` (E13, drives firing and the bid) from the true compatibility (drives realised quality), with a `selection_mode` of `raw` (self-report only), `reliability` (self-report discounted by the track record R), or `true` (full-information oracle). Added `src/cta/harness.py::calibration_sweep` and `safety_ablation`, the `with_miscalibration`, `with_track_record`, `with_capability_spread`, and `with_injected_adversarial` generators, and the `overconfidence_gap`, `completion_rate`, and `integrity_violations` measures. Two new hypotheses: H7 (self-reports over-predict realised success, the failure mode) and H8 (the track-record correction recovers completion, from about 0.37 to about 0.87, p about 0.009). H4 reframed to safety (the gate prevents every out-of-scope write under adversarial agents). At demo scale H1, H2, H3, H4, H5, H7, H8 are supported and only H6 is not. References MarketBench (Fradkin and Krishnan, 2026, arXiv:2604.23897) and the confidence-calibration collaboration paper (Zhang et al., 2026, arXiv:2603.03752), both verified. Fifty-six tests pass; `ruff` clean.
 
 ## Now runnable end to end
 
@@ -46,8 +47,8 @@ loop (Stage 2) runs via `cta.autoresearch`.
 
 ## Next steps (ordered)
 
-1. Fix the trust story (B): reframe the gate and H4 around safety, testing adversarial or out-of-scope agents and measuring prevented violations, or decouple reliability from selection for a clean ablation. Revisit the H6 lens.
-2. Run the full protocol (`cta autorun --full`) and fill the paper's Results and Discussion from the full-scale output; commit the figures.
+1. Run the full protocol (`cta autorun --full`) and fill the paper's Results and Discussion from the full-scale output; commit the figures. Revisit the H6 heterogeneity lens (still not supported).
+2. Deepen the calibration study: sweep the competence spread and the noise as well as the bias, add a calibration-error (Brier or ECE) measure over winners, and vary the track-record window to show how much history the correction needs.
 3. Build the concurrent-process swarm engine over the store for faithful contention, and the LLM-driven proposer plus the live Claude Code pilot (Stage 2, opt-in, cost-gated).
 4. Product packaging polish and the pre-publication safety checklist, then publish to public GitHub (a human step pending GitHub connector authorisation).
 

@@ -16,6 +16,7 @@ Conventions:
 from __future__ import annotations
 
 import math
+import random
 from collections.abc import Sequence
 from dataclasses import dataclass
 
@@ -66,6 +67,14 @@ class Agent:
     successes: int = 0
     attempts: int = 0
     latency: float = 1.0
+    # E13 self-assessment: the agent reports its own compatibility with a bias
+    # (positive is overconfidence) and Gaussian noise. Defaults are perfect
+    # calibration, so the self-report equals the true compatibility.
+    calibration_bias: float = 0.0
+    calibration_noise: float = 0.0
+    # The chance the agent attempts an action outside the task scope, used to test
+    # the integrity gate as a safety backstop. Default is always in scope.
+    out_of_scope_prob: float = 0.0
 
 
 def _clip01(x: float) -> float:
@@ -134,6 +143,26 @@ def compatibility(
         + w_scope * math.log(max(s_scope, COMPAT_FLOOR))
     ) / total
     return _clip01(math.exp(log_c))
+
+
+def self_reported_compatibility(
+    true_c: float,
+    bias: float,
+    noise: float,
+    rng: random.Random,
+) -> float:
+    """E13: the compatibility the agent believes it has, ``c_hat``.
+
+    The agent does not observe its true fit. It reports ``clip01(true_c + bias +
+    noise * N(0, 1))``, where ``bias`` shifts the estimate (positive is
+    overconfidence) and ``noise`` scales the random error. With both zero the
+    self-report equals the true compatibility, so the default preserves the
+    idealised behaviour. Firing and the bid use this self-report; realised
+    quality (E12) uses the true compatibility, so miscalibration corrupts the
+    allocation without changing the ground truth.
+    """
+    gap = 0.0 if noise <= 0.0 else noise * rng.gauss(0.0, 1.0)
+    return _clip01(true_c + bias + gap)
 
 
 def reliability(agent: Agent) -> float:

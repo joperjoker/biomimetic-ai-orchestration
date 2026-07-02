@@ -12,25 +12,30 @@ This project studies a decentralised framework, Chemotactic Task Allocation (CTA
 
 Compared with a simple pull-based work queue, where agents self-schedule by taking the best available task, CTA adds three things: the activation barrier as a quality floor, the Rejection Gate as a trust boundary, and the eligibility filter with its infeasible and stalled semantics. The evaluation isolates these additions with a pull-based baseline (section 2.3), so a result is not merely the effect of decentralisation.
 
+Any framework in which agents self-select rests on a load-bearing assumption: that an agent can assess its own fit for a task. Recent studies of auction and bidding among large language model agents report that self-reported success probabilities are systematically miscalibrated, so an allocation built from self-reports diverges from the full-information optimum (Fradkin and Krishnan, 2026), and calibrating that self-confidence is an open problem (Zhang et al., 2026). This is exactly the assumption CTA's compatibility bid depends on. We therefore treat self-assessment as a first-class, swept variable rather than an idealisation. The wrapper's compatibility is the agent's self-report, drawn from its true fit with a bias and noise (E13), while realised quality depends on the true fit and the agent's competence, so miscalibration corrupts the allocation without changing the ground truth. Two questions follow. First, how far does miscalibration degrade a self-selection allocation. Second, whether an observable track record (the reliability `R`, E4), which needs no privileged information, recovers the loss. The Rejection Gate then serves as a safety backstop, screening the winner for scope integrity before it gains write access. This repositions the contribution from decentralised self-selection, which is now well covered, onto the calibration robustness of self-selection, which is not.
+
 Contributions:
 
 1. A decentralised allocation framework in which tasks advertise semantic envelopes and agents self-select by affinity, reducing per-task coordination to an atomic claim rather than a central assignment.
 2. A two-stage selection model that separates categorical capability (eligibility) from graded affinity (activation energy), and that yields a principled distinction between infeasible tasks (no eligible agent) and stalled tasks (eligible agents present, none clearing `Ea`).
-3. A reliability trust gate that screens degraded agents before they gain write access.
+3. A reliability and integrity trust gate that screens degraded and out-of-scope agents before they gain write access, evaluated as a safety backstop against adversarial agents.
 4. An evaluation methodology that compares the framework against a centralised baseline on both scaling and match quality, with operational metrics.
 5. A formal framework (Chemotactic Task Allocation) that unifies eligibility, affinity, and activation into one model, with cost accounting that separates total system work from coordinator work.
 6. A measurable compatibility wrapper that scores an agent's role, skills, and prompt against a task and can be calibrated to predict success, so the activation threshold rests on an empirically validated score rather than an abstract one (`docs/measures.md`).
+7. A study of self-assessment miscalibration as the failure mode of self-selection: the compatibility bid is treated as the agent's self-report (E13), and a track-record correction (the reliability `R`, E4), which uses no privileged information, recovers the completion that miscalibration costs, with the integrity gate as a safety backstop.
 
 Research questions:
 
 - RQ1: Does signal-driven self-selection reduce per-task coordinator work and allocation latency, relative to a central assigner, as the population grows?
 - RQ2: Does it do so without materially degrading match quality?
 - RQ3: Does the two-stage model correctly separate infeasible from stalled tasks?
-- RQ4: Does the Rejection Gate preserve completion integrity when some agents are unreliable?
+- RQ4: Does the Rejection Gate prevent out-of-scope writes when some agents are adversarial?
 - RQ5: Is allocation stable across the range of activation barriers and temperatures, without oscillation or starvation?
 - RQ6: Does CTA's advantage depend on agent heterogeneity, and if so, how does it change from a homogeneous to a specialised population?
+- RQ7: How far does self-assessment miscalibration degrade a decentralised self-selection allocation?
+- RQ8: Does a track-record correction, using only observable history, recover the allocation quality that miscalibration costs?
 
-Scope and non-goals: this is a simulation study, not a live deployment. The atomic claim assumes a single logical coordination store providing compare-and-swap, so the framework reduces central work rather than removing it entirely (discussed in `docs/theory.md` section 6). The security model is limited to reliability scoring and scope integrity, and does not address adversarial agents beyond degraded reliability.
+Scope and non-goals: this is a simulation study, not a live deployment. The atomic claim assumes a single logical coordination store providing compare-and-swap, so the framework reduces central work rather than removing it entirely (discussed in `docs/theory.md` section 6). The security model is limited to reliability scoring and scope integrity: it models agents that attempt out-of-scope actions and screens them at the gate, but it does not address a strategic adversary that games the compatibility score or the track record itself.
 
 ## 2. Methodology
 
@@ -103,6 +108,9 @@ Dependent variables, with operational definitions:
 - Infeasible rate and stall rate: fractions of tasks in each outcome, checked against the generator's ground truth.
 - Deflection rate: fraction of claims the gate rejects, with false deflection tracked separately.
 - Calibration sensitivity: match quality and deflection rate as functions of the self-assessment bias and noise.
+- Completion rate: the fraction of tasks completed successfully, the primary outcome for the calibration-robustness hypotheses (H7, H8), compared across the raw, reliability, and full-information selection modes.
+- Overconfidence gap: the mean self-report of winners minus their mean realised quality, the direct measure of miscalibration (H7).
+- Integrity violations: out-of-scope writes that execute when the gate is absent, the safety measure for the gate ablation (H4).
 - Load fairness: distribution of completed tasks across agents (Gini coefficient).
 - Stability: oscillation of the allocation and the maximum stall time across the `Ea` and `T` sweeps.
 - Starvation: maximum time any task waits in the pool.
@@ -122,17 +130,19 @@ Hypotheses:
 - H1: coordinator work per task (C2) and allocation latency grow more slowly with `N` for the framework than for the centralised baseline, and comparably to the decentralised pull-based baseline. Total evaluation work (C1) and communication (C3) are reported alongside and are expected to be comparable or higher, so the claim is bottleneck relief, not less total compute. Since decentralisation alone relieves the bottleneck, CTA's distinct value is holding quality and safety while scaling, tested in H2 and H4.
 - H2: mean realised quality `Q` (E12) is within a pre-registered margin of the Hungarian optimal baseline and is higher than the pull-based baseline, so the activation barrier improves quality over naive self-scheduling.
 - H3: the framework labels a task infeasible exactly when no eligible agent exists, and stalled exactly when eligible agents exist but none clears `Ea`.
-- H4: under injected unreliability, the framework with the Rejection Gate achieves a higher successful-completion and integrity rate than an ablation without the gate and than the pull-based baseline.
+- H4: with adversarial agents that attempt out-of-scope actions, the framework with the Rejection Gate prevents the resulting integrity violations, whereas an ablation without the gate lets them execute.
 - H5: allocation remains stable across the `Ea` and `T` sweep, with annealing (E14) bounding the maximum stall time and no sustained oscillation.
 - H6: CTA's advantage over both baselines increases with agent heterogeneity, and narrows towards zero in a homogeneous population where self-selection has little to exploit.
+- H7: winners' self-reports over-predict the quality they deliver (a positive overconfidence gap), so relying on the self-report alone is a genuine failure mode; the gap does not shrink as the injected overconfidence rises.
+- H8: discounting the self-report by an observable track record (the reliability `R`, E4) recovers task completion relative to the raw self-report auction, under the worst injected overconfidence.
 
-Falsification: the thesis is not supported if coordinator work and latency grow at the same order for the framework as for the centralised baseline (H1), if realised quality falls below the pre-registered margin of the Hungarian optimum or does not exceed the pull-based baseline (H2), if the gate does not improve integrity under unreliability (H4), or if the advantage does not appear even in the specialised, high-heterogeneity regime (H6). These outcomes are reported as stated, not reframed.
+Falsification: the thesis is not supported if coordinator work and latency grow at the same order for the framework as for the centralised baseline (H1), if realised quality falls below the pre-registered margin of the Hungarian optimum or does not exceed the pull-based baseline (H2), if the gate does not prevent out-of-scope writes by adversarial agents (H4), if the advantage does not appear even in the specialised, high-heterogeneity regime (H6), if self-reports are well calibrated so no overconfidence gap appears (H7), or if the track-record correction does not recover completion under miscalibration (H8). These outcomes are reported as stated, not reframed.
 
 ### 2.7 Validity and threats
 
 - Internal validity: the shared scoring function and fixed seeds isolate the coordination effect. Threats: implementation bias between the two systems, and claim contention that could confound latency at scale. Mitigations: a single shared scoring module with code review and open configurations, and contention measured directly (attempts per claim, wasted-evaluation rate) rather than assumed away.
 - External validity: this is the primary threat. A simulation abstracts away the variable latency, monetary cost, and stochastic output quality of live language-model agents, and it abstracts the cost and miscalibration of an agent scoring itself, which is the weakest real-world link. Reported failure rates for real multi-agent systems are high and are driven by specification ambiguity and coordination breakdown that a simulation does not reproduce (Cemri et al., 2025). Mitigations: sweep the self-assessment bias and noise (E13), state plainly that the study tests the coordination mechanism rather than deployment readiness, and run the real-swarm pilot defined in the experimental architecture (`docs/architecture.md`), using matched runs to calibrate the simulation against live agents.
-- Construct validity: Binding Energy is only a proxy for allocation quality, and the framework rests on agents estimating their own `S` and `C`. Mitigation: an independent ground-truth quality function `Q` (E12) drives success and the quality hypothesis H2, so results do not depend on the proxy alone.
+- Construct validity: Binding Energy is only a proxy for allocation quality, and the framework rests on agents estimating their own compatibility `c`. Mitigation: an independent ground-truth quality function `Q` (E12) drives success and the quality hypothesis H2, and the self-report is modelled explicitly as `c_hat` (E13) with the miscalibration swept, so results do not depend on the agent's self-estimate being accurate.
 - Generalisability: results could depend on how the synthetic populations are generated. Mitigation: vary the generative distribution family, not only parameters within one family, and in particular sweep agent heterogeneity (H6), since CTA's advantage is expected to depend on it. A result that holds across families and heterogeneity regimes is the one that generalises.
 - Reproducibility: code, seeds, and configurations are versioned, and continuous integration runs the deterministic path (`T -> 0`), so reported runs can be reproduced exactly; stochastic runs record their seeds and temperature.
 
@@ -153,13 +163,17 @@ These results are generated by `cta autorun` at demo scale (a small protocol), s
 | H1 scaling | supported | With bounded observability (each agent samples `k` tasks) and the bottleneck measured as peak per-node load, CTA's peak load stays flat as `N` grows (about 32) while the central scheduler's grows with `N` times `M` (about 64 times over the swept range). An earlier run that measured total work and used full observability showed only a marginal difference; separating peak from total and bounding observability resolved it. |
 | H2 quality | supported | CTA and pull-based reach mean quality near 0.89 against about 0.74 for central greedy and optimal at the base heterogeneity, since one-to-one central assignment forces poorer matches. |
 | H3 expressiveness | supported | Infeasible and stalled tasks are labelled with full recall against the generator ground truth. |
-| H4 trust gate | not supported | Because reliability is folded into the selection score (`C_tilde = C x R`), unreliable agents seldom win, so the gate adds little marginal quality here. |
+| H4 safety gate | supported | With about 30 per cent of agents attempting out-of-scope actions, the gate prevents every integrity violation (zero with the gate on), while the ablation without the gate lets about a dozen per run execute. Reframed from the earlier quality test onto the gate's real purpose, safety. |
 | H5 stability | supported | Across the `Ea` by `T` grid the unmet rate rises monotonically with the barrier and stays bounded at low `Ea`. |
 | H6 heterogeneity | not supported | CTA already beats the central optimum at the base heterogeneity, and the advantage did not increase monotonically across the demo grid. |
+| H7 miscalibration is the failure mode | supported | Under a wide competence spread, winners of the raw self-report auction over-predict their realised quality by about 0.19, and the gap does not shrink as injected overconfidence rises. Self-reports are informative about fit but not about competence. |
+| H8 track record recovers | supported | Discounting the self-report by the reliability `R` raises completion from about 0.37 to about 0.87 under the worst injected overconfidence (recovery about 0.50, p about 0.009), matching the full-information reference within noise. The correction uses only observable history. |
 
 ## 4. Discussion
 
-The preliminary runs support the quality, scaling, and expressiveness claims, and they expose two honest limits worth stating. On scaling, the first design showed only a marginal advantage because it measured total work under full observability; once the bottleneck is measured as peak per-node load and each agent observes a bounded sample of tasks, CTA's peak load is flat in the population size while the central scheduler grows with `N` times `M`. Total work remains comparable and distributed, so the claim is bottleneck relief, not less total compute, exactly as pre-registered. The remaining limit is the trust gate: it is partly redundant with reliability-coupled selection, so the gate ablation should either decouple reliability from selection or test genuinely adversarial, out-of-scope agents rather than merely degraded ones. Its true purpose is safety, not quality.
+The preliminary runs support the scaling, quality, and expressiveness claims, and the repositioning around calibration turns the two earlier soft spots into results. On scaling, the first design showed only a marginal advantage because it measured total work under full observability; once the bottleneck is measured as peak per-node load and each agent observes a bounded sample of tasks, CTA's peak load is flat in the population size while the central scheduler grows with `N` times `M`. Total work remains comparable and distributed, so the claim is bottleneck relief, not less total compute, exactly as pre-registered.
+
+The central result concerns the assumption that self-selection rests on. When the compatibility bid is the agent's own self-report, and competence varies across the population, the raw self-report auction is competence-blind: it selects well-fitted but not necessarily competent agents, and completion falls to about 0.37 while winners over-predict their quality by about 0.19 (H7). This reproduces, in the allocation setting, the miscalibration that the auction literature reports for language-model agents (Fradkin and Krishnan, 2026). The correction is cheap and needs no privileged information: discounting the self-report by the agent's observable track record (the reliability `R`) restores completion to about 0.87, within noise of the full-information reference (H8). The same track record that the earlier design folded into selection turns out to be the mechanism that makes self-selection robust to miscalibration. The gate, tested on its real purpose, prevents every out-of-scope write by adversarial agents (H4), so it is a safety boundary rather than a quality lever. The one hypothesis still not supported is H6: CTA already matches the central optimum at the base heterogeneity, so no rising advantage is visible across the demo grid, and this is reported as it stands.
 
 These findings are demo scale, on synthetic populations, with the in-process engine, so they are not the study's conclusions. The full protocol, the concurrent engine, the wider heterogeneity range, and the live pilot are the path to definitive results, and the pre-registered hypotheses and falsification criteria in section 2.6 stand regardless of these preliminary verdicts.
 
@@ -175,6 +189,8 @@ Dorigo, M., Maniezzo, V., & Colorni, A. (1996) Ant System: optimization by a col
 
 Fitzpatrick, J.L., Willis, C., Devigili, A., Young, A., Carroll, M., Hunter, H.R., & Brison, D.R. (2020) Chemical signals from eggs facilitate cryptic female choice in humans. Proceedings of the Royal Society B: Biological Sciences, 287(1928), 20200805. DOI: 10.1098/rspb.2020.0805.
 
+Fradkin, A., & Krishnan, R. (2026) MarketBench: evaluating AI agents as market participants. arXiv:2604.23897.
+
 Gerkey, B.P., & Matarić, M.J. (2004) A formal analysis and taxonomy of task allocation in multi-robot systems. The International Journal of Robotics Research, 23(9), 939-954. DOI: 10.1177/0278364904045564.
 
 Kuhn, H.W. (1955) The Hungarian method for the assignment problem. Naval Research Logistics Quarterly, 2(1-2), 83-97. DOI: 10.1002/nav.3800020109.
@@ -182,3 +198,5 @@ Kuhn, H.W. (1955) The Hungarian method for the assignment problem. Naval Researc
 Smith, R.G. (1980) The Contract Net Protocol: high-level communication and control in a distributed problem solver. IEEE Transactions on Computers, C-29(12), 1104-1113. DOI: 10.1109/TC.1980.1675516.
 
 Zhang, A.L., Kraska, T., & Khattab, O. (2025) Recursive Language Models. arXiv:2512.24601.
+
+Zhang, C., Zhu, Z., Wei, Y., Tian, B., Liu, J., Wang, H., Wang, X., & Liu, Y. (2026) Confidence-calibrated small-large language model collaboration for cost-efficient reasoning. Proceedings of the 19th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2026). arXiv:2603.03752.

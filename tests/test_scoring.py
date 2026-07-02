@@ -1,6 +1,7 @@
 """Known-value and behaviour tests for the CTA scoring model (E1 to E11)."""
 
 import math
+import random
 
 from cta.scoring import (
     Agent,
@@ -16,6 +17,7 @@ from cta.scoring import (
     p_fire,
     reliability,
     select_winner,
+    self_reported_compatibility,
 )
 
 
@@ -69,6 +71,18 @@ def test_compatibility_is_deterministic():
     task = Task("t", requirement_vector=(0.3, 0.7), required_skills=frozenset({"go"}))
     a = _agent(skills=frozenset({"go"}), capability_vector=(0.3, 0.7))
     assert compatibility(a, task) == compatibility(a, task)
+
+
+def test_self_reported_compatibility_calibration():
+    # With no bias and no noise the self-report equals the true compatibility.
+    assert self_reported_compatibility(0.6, 0.0, 0.0, random.Random(1)) == 0.6
+    # Positive bias raises the self-report (overconfidence); it stays clipped to 1.
+    assert math.isclose(self_reported_compatibility(0.6, 0.3, 0.0, random.Random(1)), 0.9)
+    assert self_reported_compatibility(0.9, 0.5, 0.0, random.Random(1)) == 1.0
+    # Noise makes it stochastic but deterministic under a seeded generator.
+    a = self_reported_compatibility(0.6, 0.0, 0.1, random.Random(7))
+    b = self_reported_compatibility(0.6, 0.0, 0.1, random.Random(7))
+    assert a == b
 
 
 def test_reliability_laplace():

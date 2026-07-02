@@ -15,14 +15,14 @@
   },
   "base_quality": {
     "cta": {
-      "mean": 0.8893595333651889,
-      "ci_low": 0.8736556097171103,
-      "ci_high": 0.9050634570132675
+      "mean": 0.8779259398557124,
+      "ci_low": 0.8530456242982395,
+      "ci_high": 0.9028062554131854
     },
     "pull_based": {
-      "mean": 0.8893595333651889,
-      "ci_low": 0.8736556097171103,
-      "ci_high": 0.9050634570132675
+      "mean": 0.8779259398557124,
+      "ci_low": 0.8530456242982395,
+      "ci_high": 0.9028062554131854
     },
     "central_greedy": {
       "mean": 0.7444288927381789,
@@ -177,25 +177,25 @@
     "cta": [
       {
         "metric": "mean_quality",
-        "mean": 0.8279000407201244,
-        "ci_low": 0.8050282603886858,
-        "ci_high": 0.8507718210515629,
+        "mean": 0.8379825402744034,
+        "ci_low": 0.7970239486391576,
+        "ci_high": 0.8789411319096493,
         "n": 5,
         "heterogeneity": 0.0
       },
       {
         "metric": "mean_quality",
-        "mean": 0.8754341483320097,
-        "ci_low": 0.8647406248753444,
-        "ci_high": 0.886127671788675,
+        "mean": 0.8614089914146449,
+        "ci_low": 0.8330579179014211,
+        "ci_high": 0.8897600649278686,
         "n": 5,
         "heterogeneity": 0.5
       },
       {
         "metric": "mean_quality",
-        "mean": 0.8916431931320503,
-        "ci_low": 0.8760464780994567,
-        "ci_high": 0.907239908164644,
+        "mean": 0.8787079463890987,
+        "ci_low": 0.8529280996100421,
+        "ci_high": 0.9044877931681552,
         "n": 5,
         "heterogeneity": 1.0
       }
@@ -229,18 +229,18 @@
   },
   "gate_ablation": {
     "gate_on_quality": [
-      0.8598624446405934,
-      0.9198270490468607,
-      0.8696351738649603,
-      0.8752937145096004,
-      0.9194847107315536
+      0.8215230761653782,
+      0.8674361685424257,
+      0.8237483486091182,
+      0.869799388989862,
+      0.8964677108490531
     ],
     "gate_off_quality": [
-      0.8598624446405934,
-      0.9198270490468607,
-      0.8696351738649603,
-      0.8752937145096004,
-      0.9194847107315536
+      0.8215230761653782,
+      0.8674361685424257,
+      0.8237483486091182,
+      0.869799388989862,
+      0.8964677108490531
     ]
   },
   "feasibility": {
@@ -252,93 +252,432 @@
       "activation_energy": 0.1,
       "temperature": 0.0,
       "unmet_rate": 0.0,
-      "mean_quality": 0.9019846608453939
+      "mean_quality": 0.9065191319893892
     },
     {
       "activation_energy": 0.1,
       "temperature": 0.1,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8842696751758871
+      "mean_quality": 0.8569480939313818
     },
     {
       "activation_energy": 0.1,
       "temperature": 0.3,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8842696751758871
+      "mean_quality": 0.8569480939313818
     },
     {
       "activation_energy": 0.2,
       "temperature": 0.0,
       "unmet_rate": 0.0,
-      "mean_quality": 0.9019846608453939
+      "mean_quality": 0.9065191319893892
     },
     {
       "activation_energy": 0.2,
       "temperature": 0.1,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8842696751758871
+      "mean_quality": 0.8569480939313818
     },
     {
       "activation_energy": 0.2,
       "temperature": 0.3,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8842696751758871
+      "mean_quality": 0.8569480939313818
     },
     {
       "activation_energy": 0.3,
       "temperature": 0.0,
       "unmet_rate": 0.0,
-      "mean_quality": 0.9019846608453939
+      "mean_quality": 0.9065191319893892
     },
     {
       "activation_energy": 0.3,
       "temperature": 0.1,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8842696751758871
+      "mean_quality": 0.8569480939313818
     },
     {
       "activation_energy": 0.3,
       "temperature": 0.3,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8842696751758871
+      "mean_quality": 0.8569480939313818
     },
     {
       "activation_energy": 0.5,
       "temperature": 0.0,
       "unmet_rate": 0.0,
-      "mean_quality": 0.9019846608453939
+      "mean_quality": 0.9065191319893892
     },
     {
       "activation_energy": 0.5,
       "temperature": 0.1,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8842696751758871
+      "mean_quality": 0.8569480939313818
     },
     {
       "activation_energy": 0.5,
       "temperature": 0.3,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8842696751758871
+      "mean_quality": 0.8569480939313818
     },
     {
       "activation_energy": 0.7,
       "temperature": 0.0,
       "unmet_rate": 0.0,
-      "mean_quality": 0.9019846608453939
+      "mean_quality": 0.9065191319893892
     },
     {
       "activation_energy": 0.7,
       "temperature": 0.1,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8842696751758871
+      "mean_quality": 0.8569480939313818
     },
     {
       "activation_energy": 0.7,
       "temperature": 0.3,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8842696751758871
+      "mean_quality": 0.8569480939313818
     }
   ],
+  "calibration": {
+    "raw": [
+      {
+        "bias": 0.0,
+        "mean_quality": 0.8595509384152784,
+        "completion_rate": 0.3916666666666667,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.18697079217434667,
+        "quality_values": [
+          0.8498422734424724,
+          0.9040256971153869,
+          0.8122336145156148,
+          0.8311294230355357,
+          0.9005236839673817
+        ],
+        "completion_values": [
+          0.3125,
+          0.4791666666666667,
+          0.375,
+          0.375,
+          0.4166666666666667
+        ]
+      },
+      {
+        "bias": 0.1,
+        "mean_quality": 0.8558521910466002,
+        "completion_rate": 0.37916666666666665,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.1852623848284077,
+        "quality_values": [
+          0.8340921335555737,
+          0.9162592289400923,
+          0.820011334975417,
+          0.8311294230355357,
+          0.8777688347263821
+        ],
+        "completion_values": [
+          0.375,
+          0.3958333333333333,
+          0.4166666666666667,
+          0.375,
+          0.3333333333333333
+        ]
+      },
+      {
+        "bias": 0.2,
+        "mean_quality": 0.8563142704267991,
+        "completion_rate": 0.38333333333333336,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.18294285532621707,
+        "quality_values": [
+          0.8340921335555737,
+          0.9162592289400923,
+          0.820011334975417,
+          0.8311294230355357,
+          0.8800792316273764
+        ],
+        "completion_values": [
+          0.375,
+          0.3958333333333333,
+          0.4166666666666667,
+          0.375,
+          0.3541666666666667
+        ]
+      },
+      {
+        "bias": 0.3,
+        "mean_quality": 0.855330222214757,
+        "completion_rate": 0.375,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.18957401179274502,
+        "quality_values": [
+          0.8340921335555737,
+          0.9162592289400923,
+          0.8186369522354171,
+          0.8313702606990896,
+          0.8762925356436126
+        ],
+        "completion_values": [
+          0.375,
+          0.3958333333333333,
+          0.4375,
+          0.3541666666666667,
+          0.3125
+        ]
+      },
+      {
+        "bias": 0.4,
+        "mean_quality": 0.8557263652515138,
+        "completion_rate": 0.37083333333333335,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.1924464386750842,
+        "quality_values": [
+          0.836072848739357,
+          0.9162592289400923,
+          0.8186369522354171,
+          0.8313702606990896,
+          0.8762925356436126
+        ],
+        "completion_values": [
+          0.3541666666666667,
+          0.3958333333333333,
+          0.4375,
+          0.3541666666666667,
+          0.3125
+        ]
+      }
+    ],
+    "reliability": [
+      {
+        "bias": 0.0,
+        "mean_quality": 0.8755248907624603,
+        "completion_rate": 0.8666666666666666,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.13598321851649686,
+        "quality_values": [
+          0.8672722838847494,
+          0.8925219855790182,
+          0.8767937083604631,
+          0.8647102393221073,
+          0.8763262366659627
+        ],
+        "completion_values": [
+          0.9166666666666666,
+          0.7916666666666666,
+          0.8541666666666666,
+          0.875,
+          0.8958333333333334
+        ]
+      },
+      {
+        "bias": 0.1,
+        "mean_quality": 0.875520453775052,
+        "completion_rate": 0.8666666666666666,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.14360105870835377,
+        "quality_values": [
+          0.8672722838847494,
+          0.8949550219415932,
+          0.8767937083604631,
+          0.8622550180224913,
+          0.8763262366659627
+        ],
+        "completion_values": [
+          0.9166666666666666,
+          0.75,
+          0.8541666666666666,
+          0.9166666666666666,
+          0.8958333333333334
+        ]
+      },
+      {
+        "bias": 0.2,
+        "mean_quality": 0.8751414962394335,
+        "completion_rate": 0.8666666666666666,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.14835748446360636,
+        "quality_values": [
+          0.8672722838847494,
+          0.8949550219415932,
+          0.874898920682371,
+          0.8622550180224913,
+          0.8763262366659627
+        ],
+        "completion_values": [
+          0.9166666666666666,
+          0.75,
+          0.8541666666666666,
+          0.9166666666666666,
+          0.8958333333333334
+        ]
+      },
+      {
+        "bias": 0.3,
+        "mean_quality": 0.8753855634048952,
+        "completion_rate": 0.8666666666666666,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.1503057104824142,
+        "quality_values": [
+          0.8672722838847494,
+          0.8949550219415932,
+          0.8761192565096787,
+          0.8622550180224913,
+          0.8763262366659627
+        ],
+        "completion_values": [
+          0.9166666666666666,
+          0.75,
+          0.8541666666666666,
+          0.9166666666666666,
+          0.8958333333333334
+        ]
+      },
+      {
+        "bias": 0.4,
+        "mean_quality": 0.8753855634048952,
+        "completion_rate": 0.8666666666666666,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.15158702479787317,
+        "quality_values": [
+          0.8672722838847494,
+          0.8949550219415932,
+          0.8761192565096787,
+          0.8622550180224913,
+          0.8763262366659627
+        ],
+        "completion_values": [
+          0.9166666666666666,
+          0.75,
+          0.8541666666666666,
+          0.9166666666666666,
+          0.8958333333333334
+        ]
+      }
+    ],
+    "true": [
+      {
+        "bias": 0.0,
+        "mean_quality": 0.8731958189355444,
+        "completion_rate": 0.8041666666666666,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.13601329066372864,
+        "quality_values": [
+          0.8931595129862054,
+          0.8933464862581989,
+          0.8503305220387036,
+          0.8527766893049149,
+          0.8763658840896994
+        ],
+        "completion_values": [
+          0.7291666666666666,
+          0.8333333333333334,
+          0.6666666666666666,
+          0.875,
+          0.9166666666666666
+        ]
+      },
+      {
+        "bias": 0.1,
+        "mean_quality": 0.8731958189355444,
+        "completion_rate": 0.8041666666666666,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.14280732600837556,
+        "quality_values": [
+          0.8931595129862054,
+          0.8933464862581989,
+          0.8503305220387036,
+          0.8527766893049149,
+          0.8763658840896994
+        ],
+        "completion_values": [
+          0.7291666666666666,
+          0.8333333333333334,
+          0.6666666666666666,
+          0.875,
+          0.9166666666666666
+        ]
+      },
+      {
+        "bias": 0.2,
+        "mean_quality": 0.8731958189355444,
+        "completion_rate": 0.8041666666666666,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.1471246996184827,
+        "quality_values": [
+          0.8931595129862054,
+          0.8933464862581989,
+          0.8503305220387036,
+          0.8527766893049149,
+          0.8763658840896994
+        ],
+        "completion_values": [
+          0.7291666666666666,
+          0.8333333333333334,
+          0.6666666666666666,
+          0.875,
+          0.9166666666666666
+        ]
+      },
+      {
+        "bias": 0.3,
+        "mean_quality": 0.8731958189355444,
+        "completion_rate": 0.8041666666666666,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.14975768614909515,
+        "quality_values": [
+          0.8931595129862054,
+          0.8933464862581989,
+          0.8503305220387036,
+          0.8527766893049149,
+          0.8763658840896994
+        ],
+        "completion_values": [
+          0.7291666666666666,
+          0.8333333333333334,
+          0.6666666666666666,
+          0.875,
+          0.9166666666666666
+        ]
+      },
+      {
+        "bias": 0.4,
+        "mean_quality": 0.8731958189355444,
+        "completion_rate": 0.8041666666666666,
+        "unmet_rate": 0.0,
+        "overconfidence_gap": 0.1511457426924149,
+        "quality_values": [
+          0.8931595129862054,
+          0.8933464862581989,
+          0.8503305220387036,
+          0.8527766893049149,
+          0.8763658840896994
+        ],
+        "completion_values": [
+          0.7291666666666666,
+          0.8333333333333334,
+          0.6666666666666666,
+          0.875,
+          0.9166666666666666
+        ]
+      }
+    ]
+  },
+  "safety": {
+    "gate_on_violations": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "gate_off_violations": [
+      16,
+      0,
+      17,
+      15,
+      10
+    ]
+  },
   "verdicts": {
     "H1": {
       "claim": "peak per-node load grows more slowly for CTA than central",
@@ -348,8 +687,8 @@
     },
     "H2": {
       "claim": "CTA quality is not worse than pull-based and within margin of the optimum",
-      "cta_mean_quality": 0.889,
-      "pull_mean_quality": 0.889,
+      "cta_mean_quality": 0.878,
+      "pull_mean_quality": 0.878,
       "optimal_mean_quality": 0.744,
       "cliffs_delta_vs_pull": 0.0,
       "p_vs_pull": 1.0,
@@ -357,8 +696,8 @@
     },
     "H6": {
       "claim": "CTA advantage over the optimum increases with heterogeneity",
-      "advantage_low_h": 0.155,
-      "advantage_high_h": 0.144,
+      "advantage_low_h": 0.165,
+      "advantage_high_h": 0.132,
       "verdict": "NOT SUPPORTED"
     },
     "H3": {
@@ -368,16 +707,29 @@
       "verdict": "SUPPORTED"
     },
     "H4": {
-      "claim": "the Rejection Gate preserves quality under unreliability",
-      "gate_on_quality": 0.889,
-      "gate_off_quality": 0.889,
-      "p": 1.0,
-      "verdict": "NOT SUPPORTED"
+      "claim": "the integrity gate prevents out-of-scope writes under adversarial agents",
+      "gate_on_violations": 0.0,
+      "gate_off_violations": 11.6,
+      "verdict": "SUPPORTED"
     },
     "H5": {
       "claim": "allocation is stable and the barrier behaves monotonically",
       "unmet_at_low_ea": 0.0,
       "unmet_at_high_ea": 0.0,
+      "verdict": "SUPPORTED"
+    },
+    "H7": {
+      "claim": "self-reports over-predict realised success (overconfidence gap)",
+      "overconfidence_gap_at_zero_bias": 0.187,
+      "overconfidence_gap_at_max_bias": 0.192,
+      "verdict": "SUPPORTED"
+    },
+    "H8": {
+      "claim": "the track-record correction recovers completion under miscalibration",
+      "reliability_completion": 0.867,
+      "raw_completion": 0.371,
+      "recovery": 0.496,
+      "p": 0.0086,
       "verdict": "SUPPORTED"
     }
   }

@@ -123,7 +123,34 @@ B(a, t) = c(a, t) x C_tilde(a, t) / max(L_est(a, t), eps)
 
 Compatibility decides whether an agent may take a task; `B` decides which of the willing agents wins. The tie breaker is the lower `L_est`, then the lower agent identifier.
 
-## 11. What is measured versus assumed
+## 11. Self-reported compatibility, integrity, and the calibration metrics
+
+The agent does not observe its true compatibility. It reports a self-assessed value (E13):
+
+```
+c_hat(a, t) = clip01(c(a, t) + bias(a) + noise(a) x N(0, 1))
+```
+
+where `bias(a)` is the agent's overconfidence (positive over-predicts) and `noise(a)` its random error. In the stress regime the bias is concentrated in less capable agents, `bias(a) = beta x (1 - C(a))`, the documented pattern where weaker performers overestimate themselves. Firing (`c_hat >= Ea`) and the bid use `c_hat`; realised quality `Q` uses the true `c`, so miscalibration corrupts the allocation without touching the ground truth.
+
+The bid may use only signals available at allocation time. Three modes are compared:
+
+- `raw`: the self-report alone, `c_hat / L`, the naive auction.
+- `reliability`: the self-report discounted by the observable track record, `c_hat x R / L`, the correction.
+- `true`: the full-information reference, `c x C / L`, the oracle that knows the true fit and competence.
+
+Integrity is a per-execution draw: the winner acts out of scope with probability `out_of_scope_prob(a)`. The Rejection Gate (E11) deflects an out-of-scope action as a prevented violation; without the gate the action executes and is counted as an integrity violation.
+
+Derived measures for the calibration study, each a query over the event log:
+
+| Measure | Definition |
+|---------|------------|
+| completion rate | completed tasks / total tasks |
+| overconfidence gap | mean winner `c_hat` minus mean winner realised `Q` |
+| recovery | completion under `reliability` minus completion under `raw` |
+| integrity violations | out-of-scope actions that executed (gate off) |
+
+## 12. What is measured versus assumed
 
 | Quantity | Measured from | Assumed or configured |
 |----------|---------------|-----------------------|
@@ -137,7 +164,7 @@ Compatibility decides whether an agent may take a task; `B` decides which of the
 | `Ea` | `comp` and `risk` | `Ea_base` and its weights |
 | `Q` | tests, lint, types, scope | the term weights and `q_min` |
 
-## 12. Calibration procedure
+## 13. Calibration procedure
 
 1. Generate a labelled set of `(agent, task, sub-scores, realised Q, success)` from simulation and a small live batch.
 2. Fit the logistic compatibility model and the `Q` term weights.

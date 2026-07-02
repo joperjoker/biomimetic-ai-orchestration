@@ -16,10 +16,12 @@ from cta.harness import (
     CONDITIONS,
     CellParams,
     Protocol,
+    calibration_sweep,
     feasibility_check,
     gate_ablation,
     heterogeneity_sweep,
     run_seeds,
+    safety_ablation,
     scaling_sweep,
     stability_grid,
 )
@@ -81,9 +83,32 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
     gate = gate_ablation(protocol.base, protocol.seeds)
     feasibility = feasibility_check(protocol.base)
     stability = stability_grid(protocol.base, max(2, protocol.seeds // 2))
-    verdicts = evaluate(base_values, scaling, hetero, gate, feasibility, stability)
+    calibration = calibration_sweep(protocol.base, protocol.seeds)
+    safety = safety_ablation(protocol.base, protocol.seeds)
+    verdicts = evaluate(
+        base_values, scaling, hetero, gate, feasibility, stability, calibration, safety
+    )
 
-    figures = ["figures/scaling_peak_per_node.svg", "figures/heterogeneity_quality.svg"]
+    # Calibration figure: task completion versus overconfidence, one line per mode.
+    calibration_series = {
+        mode: [(float(pt["bias"]), float(pt["completion_rate"])) for pt in points]
+        for mode, points in calibration.items()
+    }
+    save_svg(
+        line_chart(
+            calibration_series,
+            title="Task completion vs self-assessment overconfidence",
+            xlabel="self-report bias (overconfidence)",
+            ylabel="task completion rate",
+        ),
+        figures_dir / "calibration_quality.svg",
+    )
+
+    figures = [
+        "figures/scaling_peak_per_node.svg",
+        "figures/heterogeneity_quality.svg",
+        "figures/calibration_quality.svg",
+    ]
     write_results_md(out / "RESULTS.md", verdicts, scaling, figures)
 
     summary = {
@@ -101,6 +126,8 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
         "gate_ablation": gate,
         "feasibility": feasibility,
         "stability": stability,
+        "calibration": calibration,
+        "safety": safety,
         "verdicts": verdicts,
     }
     (out).mkdir(parents=True, exist_ok=True)
