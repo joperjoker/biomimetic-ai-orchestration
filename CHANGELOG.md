@@ -27,6 +27,7 @@ All notable changes to this project are recorded in this file. The format follow
 
 - Implementation started (Phase A): the `cta` package with `src/cta/scoring.py`, the measurable model E1 to E11 as pure, dependency-light functions (compatibility from role, skills, and prompt; eligibility; reliability; effective capability; Binding Energy; activation and firing; tie breaker; winner selection; gate), with twenty-one unit tests. Packaged via `pyproject.toml` with a `src` layout.
 - `STATUS.md`: a running log of completed work, locked decisions, and the ordered next steps for the whole research.
+- Implementation Phase B: `src/cta/store.py`, the self-contained SQLite store (WAL) with the transactional atomic claim, the tasks, agents, events, and attempts tables, and a reliability read. A concurrency test confirms exactly one winner among 32 contending claimers.
 
 ### Changed
 
