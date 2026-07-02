@@ -25,17 +25,18 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 - References verified online (nine references, DOIs added).
 - Consistency passes: notation (`c`, `C_tilde`, coordinator work), Recursive Language Models naming, activation on compatibility, platform text, all reconciled and guarded by tests.
 - Code, Phase A: `src/cta/scoring.py`, the measurable model E1 to E11 as pure functions (compatibility, eligibility, reliability, effective capability, Binding Energy, activation and firing, tie breaker, winner selection, gate). Twenty-one unit tests in `tests/test_scoring.py`.
-- Code, Phase B: `src/cta/store.py`, the self-contained SQLite store (WAL mode) with the transactional atomic claim, the four tables (tasks, agents, events, attempts), event append, attempt recording, and a reliability read. A concurrency test in `tests/test_store_atomic.py` confirms that among 32 contending claimers exactly one wins. All tests pass; `ruff` clean.
+- Code, Phase B: `src/cta/store.py`, the self-contained SQLite store (WAL mode) with the transactional atomic claim, the four tables (tasks, agents, events, attempts), event append, attempt recording, and a reliability read. A concurrency test in `tests/test_store_atomic.py` confirms that among 32 contending claimers exactly one wins.
+- Code, Phases C to E (in-process): `src/cta/quality.py` (ground-truth Q, E12), `src/cta/generators.py` (seeded agent and task populations with the heterogeneity control), `src/cta/engine.py` (the fast event-loop `run_batch` for the decentralised conditions `cta` and `pull_based`, returning per-task outcomes and a summary), and `src/cta/baselines.py` (central greedy and optimal assignment, with the optimal using scipy when available or a brute-force optimum for small instances). Tests in `tests/test_sim.py`. All 33 tests pass; `ruff` clean. An end-to-end smoke over 200 agents and 150 tasks runs and shows the expected shape (CTA matches pull-based quality at much lower coordinator work, and beats central greedy on mean quality).
 
 ## Not done yet
 
-- Code Phases C to M: ground-truth quality; population generators (with heterogeneity); synthetic and Claude Code agents; the simulation engines (event loop and concurrent swarm); baselines (Hungarian, greedy, pull-based); the Rejection Gate module wiring; the experiment harness and configs; metrics and statistics; visualisation; the report generator; `cta autorun`; the Auto-Researcher LLM loop and the context layer; the live pilot; product packaging.
+- Code Phases still open: the concurrent-process swarm engine over the store (for faithful contention); the Claude Code agent workers (Stage 2); the experiment harness and configs; metrics and statistics; visualisation; the report generator; `cta autorun`; the Auto-Researcher LLM loop and the context layer; the live pilot; product packaging. The optimal baseline uses scipy for large instances, which is an optional extra.
 - No results, figures, or filled Results and Discussion sections yet.
 
 ## Next steps (ordered)
 
-1. Phase C to E: the ground-truth quality model, seeded population generators (with heterogeneity), the synthetic and Claude Code agents, the two simulation engines (event loop and concurrent swarm over the store), and the three baselines (Hungarian, greedy, pull-based).
-2. Phase F to I: harness and configs, metrics and statistics, visualisation, and the report generator that fills the paper.
+1. Finish Phase D: the concurrent-process swarm engine over the store (real contention), and the Claude Code agent worker for Stage 2.
+2. Phase F to I: the experiment harness and configs, metrics and statistics (from the event log), visualisation, and the report generator that fills the paper.
 3. Phase J: `cta autorun`, the demo config, and the CI smoke run. After this the system is ready and the user can say "start" to run the autonomous research.
 4. Phase K and L: the Auto-Researcher LLM loop (with the context layer and guardrails) and the opt-in live pilot, run in order after Stage 1.
 5. Phase M: product packaging, `REPRODUCE.md`, README quickstart, and the pre-publication safety checklist, then publish to public GitHub (a human step pending GitHub connector authorisation).
