@@ -115,7 +115,15 @@ ruff check .
 pytest
 ```
 
-At this stage the modules are not yet implemented, so the test suite contains a foundation guard that checks the structure, the key documents, and the style constraints.
+Run the autonomous research (Stage 1, deterministic, no external service):
+
+```
+cta autorun --out results
+```
+
+This runs the sweeps across the four conditions, computes the statistics,
+evaluates the hypotheses, and writes `results/summary.json`, `results/RESULTS.md`,
+and SVG figures. See `REPRODUCE.md` for detail.
 
 ## Status
 

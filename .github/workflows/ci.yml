@@ -26,3 +26,6 @@ jobs:
 
       - name: Run tests
         run: pytest
+
+      - name: Autorun smoke (deterministic, no external service)
+        run: cta autorun --out results_ci

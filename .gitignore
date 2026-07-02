@@ -1,3 +1,8 @@
+# CI and local run outputs (the committed demo lives in results/)
+results_ci/
+*.db
+*.sqlite
+
 # Python
 __pycache__/
 *.py[cod]
