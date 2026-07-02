@@ -22,6 +22,9 @@ def evaluate(
     base_values: dict[str, dict[str, list[float]]],
     scaling: dict[str, list[dict[str, float]]],
     heterogeneity: dict[str, list[dict[str, float]]],
+    gate: dict[str, list[float]] | None = None,
+    feasibility: dict[str, float] | None = None,
+    stability: list[dict[str, float]] | None = None,
 ) -> dict[str, dict[str, object]]:
     """Return a verdict record per hypothesis.
 
@@ -77,18 +80,55 @@ def evaluate(
             "verdict": _verdict(high > low),
         }
 
-    verdicts["H3"] = {
-        "claim": "infeasible and stall labelling",
-        "verdict": "PENDING (needs labelled generator ground truth)",
-    }
-    verdicts["H4"] = {
-        "claim": "gate preserves integrity under unreliability",
-        "verdict": "PENDING (needs the gate ablation run)",
-    }
-    verdicts["H5"] = {
-        "claim": "stability across Ea and T",
-        "verdict": "PENDING (needs the Ea by T sweep)",
-    }
+    # H3: the engine labels infeasible and stalled tasks correctly against truth.
+    if feasibility is not None:
+        ok = feasibility.get("infeasible_recall", 0.0) >= 0.999 and feasibility.get(
+            "stalled_recall", 0.0
+        ) >= 0.999
+        verdicts["H3"] = {
+            "claim": "the engine labels infeasible and stalled tasks correctly",
+            "infeasible_recall": round(feasibility.get("infeasible_recall", 0.0), 3),
+            "stalled_recall": round(feasibility.get("stalled_recall", 0.0), 3),
+            "verdict": _verdict(ok),
+        }
+    else:
+        verdicts["H3"] = {"claim": "infeasible and stall labelling", "verdict": "PENDING"}
+
+    # H4: the gate keeps quality higher under injected unreliability.
+    if gate is not None and gate.get("gate_on_quality") and gate.get("gate_off_quality"):
+        on = gate["gate_on_quality"]
+        off = gate["gate_off_quality"]
+        _, p = mann_whitney_u(on, off)
+        on_mean, off_mean = mean_ci(on)[0], mean_ci(off)[0]
+        verdicts["H4"] = {
+            "claim": "the Rejection Gate preserves quality under unreliability",
+            "gate_on_quality": round(on_mean, 3),
+            "gate_off_quality": round(off_mean, 3),
+            "p": round(p, 4),
+            "verdict": _verdict(on_mean > off_mean),
+        }
+    else:
+        verdicts["H4"] = {"claim": "gate preserves integrity", "verdict": "PENDING"}
+
+    # H5: across the Ea by T grid the allocation stays stable and predictable.
+    if stability:
+        by_ea: dict[float, list[float]] = {}
+        for cell in stability:
+            by_ea.setdefault(cell["activation_energy"], []).append(cell["unmet_rate"])
+        eas = sorted(by_ea)
+        mean_unmet = [sum(by_ea[e]) / len(by_ea[e]) for e in eas]
+        monotone = all(
+            mean_unmet[i] <= mean_unmet[i + 1] + 0.05 for i in range(len(mean_unmet) - 1)
+        )
+        low_ea_ok = mean_unmet[0] < 0.4 if mean_unmet else False
+        verdicts["H5"] = {
+            "claim": "allocation is stable and the barrier behaves monotonically",
+            "unmet_at_low_ea": round(mean_unmet[0], 3) if mean_unmet else None,
+            "unmet_at_high_ea": round(mean_unmet[-1], 3) if mean_unmet else None,
+            "verdict": _verdict(monotone and low_ea_ok),
+        }
+    else:
+        verdicts["H5"] = {"claim": "stability across Ea and T", "verdict": "PENDING"}
     return verdicts
 
 

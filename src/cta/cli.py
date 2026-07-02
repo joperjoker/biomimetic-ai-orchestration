@@ -16,9 +16,12 @@ from cta.harness import (
     CONDITIONS,
     CellParams,
     Protocol,
+    feasibility_check,
+    gate_ablation,
     heterogeneity_sweep,
     run_seeds,
     scaling_sweep,
+    stability_grid,
 )
 from cta.report import evaluate, write_results_md
 from cta.stats import mean_ci
@@ -75,7 +78,10 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
         figures_dir / "heterogeneity_quality.svg",
     )
 
-    verdicts = evaluate(base_values, scaling, hetero)
+    gate = gate_ablation(protocol.base, protocol.seeds)
+    feasibility = feasibility_check(protocol.base)
+    stability = stability_grid(protocol.base, max(2, protocol.seeds // 2))
+    verdicts = evaluate(base_values, scaling, hetero, gate, feasibility, stability)
 
     figures = ["figures/scaling_coordinator_work.svg", "figures/heterogeneity_quality.svg"]
     write_results_md(out / "RESULTS.md", verdicts, scaling, figures)
@@ -92,6 +98,9 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
         },
         "scaling_coordinator_work": scaling,
         "heterogeneity_quality": hetero,
+        "gate_ablation": gate,
+        "feasibility": feasibility,
+        "stability": stability,
         "verdicts": verdicts,
     }
     (out).mkdir(parents=True, exist_ok=True)

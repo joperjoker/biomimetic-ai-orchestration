@@ -16,7 +16,8 @@ from dataclasses import dataclass, field
 
 from cta.baselines import run_central
 from cta.engine import run_batch
-from cta.generators import generate_agents, generate_tasks
+from cta.generators import generate_agents, generate_tasks, with_injected_unreliable
+from cta.scoring import Task, compatibility, eligible
 from cta.stats import mean_ci
 
 CONDITIONS = ("cta", "pull_based", "central_greedy", "central_optimal")
@@ -100,6 +101,114 @@ def scaling_sweep(
             points.append(agg)
         out[condition] = points
     return out
+
+
+def gate_ablation(
+    base: CellParams, seeds: int, unreliable_fraction: float = 0.4
+) -> dict[str, list[float]]:
+    """H4: compare mean quality with the gate on and off under injected unreliability."""
+    on_q: list[float] = []
+    off_q: list[float] = []
+    for seed in range(seeds):
+        agents = generate_agents(
+            base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed)
+        )
+        agents = with_injected_unreliable(
+            agents, unreliable_fraction, random.Random(seed + 50_000)
+        )
+        tasks = generate_tasks(
+            base.n_tasks, base.n_domains, random.Random(seed + 10_000), base.activation_energy
+        )
+        on = run_batch(
+            agents, tasks, random.Random(seed + 20_000), condition="cta", gate_enabled=True
+        ).summary()
+        off = run_batch(
+            agents, tasks, random.Random(seed + 20_000), condition="cta", gate_enabled=False
+        ).summary()
+        on_q.append(on["mean_quality"])
+        off_q.append(off["mean_quality"])
+    return {"gate_on_quality": on_q, "gate_off_quality": off_q}
+
+
+def feasibility_check(base: CellParams, seed: int = 0) -> dict[str, float]:
+    """H3: check that the engine labels infeasible and stalled tasks correctly.
+
+    Builds a mixed task set with known ground truth (some require a tool no agent
+    has; some carry an unreachable activation energy) and compares the labels the
+    engine assigns against the truth.
+    """
+    agents = generate_agents(base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed))
+    feasible = generate_tasks(base.n_tasks, base.n_domains, random.Random(seed + 1), 0.2)
+    infeasible = [
+        Task(
+            task_id=f"infeasible_{k}",
+            required_tools=frozenset({"deploy"}),  # no agent holds this tool
+            scope=frozenset({"src/**"}),
+            requirement_vector=tuple(1.0 if d == 0 else 0.0 for d in range(base.n_domains)),
+            activation_energy=0.2,
+        )
+        for k in range(10)
+    ]
+    stalled = [
+        Task(
+            task_id=f"stalled_{k}",
+            required_tools=frozenset({"edit", "test"}),
+            scope=frozenset({"src/**"}),
+            requirement_vector=tuple(1.0 if d == 0 else 0.0 for d in range(base.n_domains)),
+            activation_energy=0.999,  # unreachable barrier
+        )
+        for k in range(10)
+    ]
+    tasks = feasible + infeasible + stalled
+    result = run_batch(agents, tasks, random.Random(seed + 2), condition="cta")
+    label = {o.task_id: o.status for o in result.outcomes}
+
+    def truth(task: Task) -> str:
+        elig = [a for a in agents if eligible(a, task)]
+        if not elig:
+            return "INFEASIBLE"
+        if max(compatibility(a, task) for a in elig) < task.activation_energy:
+            return "STALLED"
+        return "FEASIBLE"
+
+    inf_correct = sum(1 for t in infeasible if label[t.task_id] == "INFEASIBLE" == truth(t))
+    stall_correct = sum(1 for t in stalled if label[t.task_id] == "STALLED" == truth(t))
+    return {
+        "infeasible_recall": inf_correct / len(infeasible),
+        "stalled_recall": stall_correct / len(stalled),
+    }
+
+
+def stability_grid(
+    base: CellParams,
+    seeds: int,
+    ea_values: tuple[float, ...] = (0.1, 0.2, 0.3, 0.5, 0.7),
+    t_values: tuple[float, ...] = (0.0, 0.1, 0.3),
+) -> list[dict[str, float]]:
+    """H5: sweep the activation barrier and temperature, recording stall and quality."""
+    grid: list[dict[str, float]] = []
+    for ea in ea_values:
+        for t in t_values:
+            params = CellParams(
+                n_agents=base.n_agents,
+                n_tasks=base.n_tasks,
+                n_domains=base.n_domains,
+                heterogeneity=base.heterogeneity,
+                activation_energy=ea,
+                temperature=t,
+            )
+            rows = run_seeds("cta", params, seeds)
+            stall = sum(r["stall_rate"] + r["infeasible_rate"] for r in rows) / len(rows)
+            quality = sum(r["mean_quality"] for r in rows) / len(rows)
+            grid.append(
+                {
+                    "activation_energy": ea,
+                    "temperature": t,
+                    "unmet_rate": stall,
+                    "mean_quality": quality,
+                }
+            )
+    return grid
 
 
 def heterogeneity_sweep(

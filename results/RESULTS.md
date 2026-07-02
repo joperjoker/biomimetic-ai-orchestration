@@ -10,9 +10,9 @@ pending.
 | --- | --- | --- |
 | H1 | SUPPORTED | coordinator work grows more slowly for CTA than central |
 | H2 | SUPPORTED | CTA quality is not worse than pull-based and within margin of the optimum |
-| H3 | PENDING (needs labelled generator ground truth) | infeasible and stall labelling |
-| H4 | PENDING (needs the gate ablation run) | gate preserves integrity under unreliability |
-| H5 | PENDING (needs the Ea by T sweep) | stability across Ea and T |
+| H3 | SUPPORTED | the engine labels infeasible and stalled tasks correctly |
+| H4 | NOT SUPPORTED | the Rejection Gate preserves quality under unreliability |
+| H5 | SUPPORTED | allocation is stable and the barrier behaves monotonically |
 | H6 | NOT SUPPORTED | CTA advantage over the optimum increases with heterogeneity |
 
 ## Figures

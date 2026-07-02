@@ -9,6 +9,7 @@ library so the core needs no numerical dependencies.
 
 from __future__ import annotations
 
+import dataclasses
 import random
 
 from cta.scoring import Agent, Task
@@ -74,6 +75,25 @@ def generate_agents(
             )
         )
     return agents
+
+
+def with_injected_unreliable(
+    agents: list[Agent], fraction: float, rng: random.Random
+) -> list[Agent]:
+    """Replace a fraction of agents with unreliable ones (poor record, low capability).
+
+    Used for the gate ablation (H4): the gate should deflect these before they win
+    and fail, so the gate-on condition should keep quality higher than gate-off.
+    """
+    out: list[Agent] = []
+    for a in agents:
+        if rng.random() < fraction:
+            out.append(
+                dataclasses.replace(a, successes=0, attempts=20, capability=a.capability * 0.3)
+            )
+        else:
+            out.append(a)
+    return out
 
 
 def generate_tasks(

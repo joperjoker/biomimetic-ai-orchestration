@@ -81,8 +81,13 @@ def run_batch(
     condition: str = "cta",
     temperature: float = 0.0,
     gate: GateConfig | None = None,
+    gate_enabled: bool = True,
 ) -> BatchResult:
-    """Allocate a batch of tasks under a decentralised condition."""
+    """Allocate a batch of tasks under a decentralised condition.
+
+    ``gate_enabled`` toggles the Rejection Gate for the ablation (H4). When it is
+    False the winner executes regardless of reliability.
+    """
     if condition not in ("cta", "pull_based"):
         raise ValueError(f"unknown condition: {condition}")
     gate_cfg = gate if gate is not None else GateConfig()
@@ -108,7 +113,8 @@ def run_batch(
             key=lambda a: (binding_energy(a, task), -a.latency, a.agent_id),
         )
 
-        if condition == "cta" and reliability(winner) < gate_cfg.acceptance_threshold:
+        gate_active = condition == "cta" and gate_enabled
+        if gate_active and reliability(winner) < gate_cfg.acceptance_threshold:
             outcomes.append(TaskOutcome(task.task_id, "DEFLECTED", None, None, len(firing)))
             continue
 

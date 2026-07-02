@@ -22,6 +22,10 @@ from dataclasses import dataclass
 EPS = 0.01
 """Latency floor, so Binding Energy stays bounded (E6)."""
 
+COMPAT_FLOOR = 1e-3
+"""Floor for a compatibility sub-score, so a zero is a strong (but finite) penalty
+in the geometric mean without pushing a perfect score above its true value."""
+
 
 @dataclass(frozen=True)
 class Task:
@@ -122,12 +126,12 @@ def compatibility(
     s_sem = cosine(agent.capability_vector, task.requirement_vector)
     s_skill = _coverage(task.required_skills, agent.skills)
     s_scope = _coverage(task.scope, agent.permitted_scope)
-    # Weighted geometric mean via logs, with EPS so a zero is a strong penalty
-    # rather than an undefined logarithm.
+    # Weighted geometric mean via logs. Each sub-score is floored (not offset) so a
+    # zero is a strong but finite penalty and a perfect score stays exactly 1.
     log_c = (
-        w_sem * math.log(s_sem + EPS)
-        + w_skill * math.log(s_skill + EPS)
-        + w_scope * math.log(s_scope + EPS)
+        w_sem * math.log(max(s_sem, COMPAT_FLOOR))
+        + w_skill * math.log(max(s_skill, COMPAT_FLOOR))
+        + w_scope * math.log(max(s_scope, COMPAT_FLOOR))
     ) / total
     return _clip01(math.exp(log_c))
 

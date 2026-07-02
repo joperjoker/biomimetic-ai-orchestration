@@ -15,24 +15,24 @@
   },
   "base_quality": {
     "cta": {
-      "mean": 0.8919326311208641,
-      "ci_low": 0.8646710580484157,
-      "ci_high": 0.9191942041933124
+      "mean": 0.8905815470901792,
+      "ci_low": 0.8630246023783761,
+      "ci_high": 0.9181384918019824
     },
     "pull_based": {
-      "mean": 0.8919326311208641,
-      "ci_low": 0.8646710580484157,
-      "ci_high": 0.9191942041933124
+      "mean": 0.8905815470901792,
+      "ci_low": 0.8630246023783761,
+      "ci_high": 0.9181384918019824
     },
     "central_greedy": {
-      "mean": 0.7489050751509989,
-      "ci_low": 0.7124288705824863,
-      "ci_high": 0.7853812797195115
+      "mean": 0.7444288927381789,
+      "ci_low": 0.7065459163973957,
+      "ci_high": 0.7823118690789621
     },
     "central_optimal": {
-      "mean": 0.7489050751509989,
-      "ci_low": 0.7124288705824863,
-      "ci_high": 0.7853812797195115
+      "mean": 0.7444288927381789,
+      "ci_low": 0.7065459163973957,
+      "ci_high": 0.7823118690789621
     }
   },
   "scaling_coordinator_work": {
@@ -177,17 +177,17 @@
     "cta": [
       {
         "metric": "mean_quality",
-        "mean": 0.8344963368763774,
-        "ci_low": 0.8067056431751755,
-        "ci_high": 0.8622870305775793,
+        "mean": 0.8274123927789863,
+        "ci_low": 0.8000110651810225,
+        "ci_high": 0.85481372037695,
         "n": 5,
         "heterogeneity": 0.0
       },
       {
         "metric": "mean_quality",
-        "mean": 0.8831504483403622,
-        "ci_low": 0.8592891536061035,
-        "ci_high": 0.9070117430746208,
+        "mean": 0.8797676936018659,
+        "ci_low": 0.8545952572555343,
+        "ci_high": 0.9049401299481975,
         "n": 5,
         "heterogeneity": 0.5
       },
@@ -203,30 +203,142 @@
     "central_optimal": [
       {
         "metric": "mean_quality",
-        "mean": 0.6812240384163113,
-        "ci_low": 0.6702616174744684,
-        "ci_high": 0.6921864593581541,
+        "mean": 0.6729607131714547,
+        "ci_low": 0.6611626788889111,
+        "ci_high": 0.6847587474539982,
         "n": 5,
         "heterogeneity": 0.0
       },
       {
         "metric": "mean_quality",
-        "mean": 0.7303150613693155,
-        "ci_low": 0.6979637220305906,
-        "ci_high": 0.7626664007080403,
+        "mean": 0.7218088778456259,
+        "ci_low": 0.6872138252692678,
+        "ci_high": 0.756403930421984,
         "n": 5,
         "heterogeneity": 0.5
       },
       {
         "metric": "mean_quality",
-        "mean": 0.7476068577753019,
-        "ci_low": 0.7098179345819834,
-        "ci_high": 0.7853957809686204,
+        "mean": 0.7471707893392646,
+        "ci_low": 0.7089533279193124,
+        "ci_high": 0.7853882507592168,
         "n": 5,
         "heterogeneity": 1.0
       }
     ]
   },
+  "gate_ablation": {
+    "gate_on_quality": [
+      0.8598624446405934,
+      0.9198270490468607,
+      0.8696351738649603,
+      0.8752937145096004,
+      0.9194847107315536
+    ],
+    "gate_off_quality": [
+      0.8598624446405934,
+      0.9198270490468607,
+      0.8696351738649603,
+      0.8752937145096004,
+      0.9194847107315536
+    ]
+  },
+  "feasibility": {
+    "infeasible_recall": 1.0,
+    "stalled_recall": 1.0
+  },
+  "stability": [
+    {
+      "activation_energy": 0.1,
+      "temperature": 0.0,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8829999223862126
+    },
+    {
+      "activation_energy": 0.1,
+      "temperature": 0.1,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8812789184847309
+    },
+    {
+      "activation_energy": 0.1,
+      "temperature": 0.3,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8812789184847309
+    },
+    {
+      "activation_energy": 0.2,
+      "temperature": 0.0,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8829999223862126
+    },
+    {
+      "activation_energy": 0.2,
+      "temperature": 0.1,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8812789184847309
+    },
+    {
+      "activation_energy": 0.2,
+      "temperature": 0.3,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8812789184847309
+    },
+    {
+      "activation_energy": 0.3,
+      "temperature": 0.0,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8829999223862126
+    },
+    {
+      "activation_energy": 0.3,
+      "temperature": 0.1,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8812789184847309
+    },
+    {
+      "activation_energy": 0.3,
+      "temperature": 0.3,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8812789184847309
+    },
+    {
+      "activation_energy": 0.5,
+      "temperature": 0.0,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8829999223862126
+    },
+    {
+      "activation_energy": 0.5,
+      "temperature": 0.1,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8812789184847309
+    },
+    {
+      "activation_energy": 0.5,
+      "temperature": 0.3,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8812789184847309
+    },
+    {
+      "activation_energy": 0.7,
+      "temperature": 0.0,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8829999223862126
+    },
+    {
+      "activation_energy": 0.7,
+      "temperature": 0.1,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8812789184847309
+    },
+    {
+      "activation_energy": 0.7,
+      "temperature": 0.3,
+      "unmet_rate": 0.0,
+      "mean_quality": 0.8812789184847309
+    }
+  ],
   "verdicts": {
     "H1": {
       "claim": "coordinator work grows more slowly for CTA than central",
@@ -236,30 +348,37 @@
     },
     "H2": {
       "claim": "CTA quality is not worse than pull-based and within margin of the optimum",
-      "cta_mean_quality": 0.892,
-      "pull_mean_quality": 0.892,
-      "optimal_mean_quality": 0.749,
+      "cta_mean_quality": 0.891,
+      "pull_mean_quality": 0.891,
+      "optimal_mean_quality": 0.744,
       "cliffs_delta_vs_pull": 0.0,
       "p_vs_pull": 1.0,
       "verdict": "SUPPORTED"
     },
     "H6": {
       "claim": "CTA advantage over the optimum increases with heterogeneity",
-      "advantage_low_h": 0.153,
-      "advantage_high_h": 0.144,
+      "advantage_low_h": 0.154,
+      "advantage_high_h": 0.145,
       "verdict": "NOT SUPPORTED"
     },
     "H3": {
-      "claim": "infeasible and stall labelling",
-      "verdict": "PENDING (needs labelled generator ground truth)"
+      "claim": "the engine labels infeasible and stalled tasks correctly",
+      "infeasible_recall": 1.0,
+      "stalled_recall": 1.0,
+      "verdict": "SUPPORTED"
     },
     "H4": {
-      "claim": "gate preserves integrity under unreliability",
-      "verdict": "PENDING (needs the gate ablation run)"
+      "claim": "the Rejection Gate preserves quality under unreliability",
+      "gate_on_quality": 0.889,
+      "gate_off_quality": 0.889,
+      "p": 1.0,
+      "verdict": "NOT SUPPORTED"
     },
     "H5": {
-      "claim": "stability across Ea and T",
-      "verdict": "PENDING (needs the Ea by T sweep)"
+      "claim": "allocation is stable and the barrier behaves monotonically",
+      "unmet_at_low_ea": 0.0,
+      "unmet_at_high_ea": 0.0,
+      "verdict": "SUPPORTED"
     }
   }
 }
