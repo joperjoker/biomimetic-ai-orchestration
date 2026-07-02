@@ -26,6 +26,7 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 - Consistency passes: notation (`c`, `C_tilde`, coordinator work), Recursive Language Models naming, activation on compatibility, platform text, all reconciled and guarded by tests.
 - Code, Phase A: `src/cta/scoring.py`, the measurable model E1 to E11 as pure functions (compatibility, eligibility, reliability, effective capability, Binding Energy, activation and firing, tie breaker, winner selection, gate). Twenty-one unit tests in `tests/test_scoring.py`.
 - Code, Phase B: `src/cta/store.py`, the self-contained SQLite store (WAL mode) with the transactional atomic claim, the four tables (tasks, agents, events, attempts), event append, attempt recording, and a reliability read. A concurrency test in `tests/test_store_atomic.py` confirms that among 32 contending claimers exactly one wins.
+- Code, Phases F and G: `src/cta/stats.py` (confidence intervals, Mann-Whitney U with tie correction via `statistics.NormalDist`, Cliff's delta, Holm-Bonferroni) and `src/cta/harness.py` (the four conditions run across seeds, with a scaling sweep and a heterogeneity sweep, and aggregation to mean and 95 per cent confidence interval). Tests in `tests/test_analysis.py`. Pure standard library.
 - Code, Phases C to E (in-process): `src/cta/quality.py` (ground-truth Q, E12), `src/cta/generators.py` (seeded agent and task populations with the heterogeneity control), `src/cta/engine.py` (the fast event-loop `run_batch` for the decentralised conditions `cta` and `pull_based`, returning per-task outcomes and a summary), and `src/cta/baselines.py` (central greedy and optimal assignment, with the optimal using scipy when available or a brute-force optimum for small instances). Tests in `tests/test_sim.py`. All 33 tests pass; `ruff` clean. An end-to-end smoke over 200 agents and 150 tasks runs and shows the expected shape (CTA matches pull-based quality at much lower coordinator work, and beats central greedy on mean quality).
 
 ## Not done yet
@@ -36,8 +37,8 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 ## Next steps (ordered)
 
 1. Finish Phase D: the concurrent-process swarm engine over the store (real contention), and the Claude Code agent worker for Stage 2.
-2. Phase F to I: the experiment harness and configs, metrics and statistics (from the event log), visualisation, and the report generator that fills the paper.
-3. Phase J: `cta autorun`, the demo config, and the CI smoke run. After this the system is ready and the user can say "start" to run the autonomous research.
+2. Phase H and I: visualisation (matplotlib, in the `viz` extra) and the report generator that fills the paper's Results and Discussion from the harness output.
+3. Phase J: the `cta autorun` command and a demo config that runs the sweeps, computes statistics, writes a results summary, and (with the `viz` extra) figures. After this the system is ready and the user can say "start".
 4. Phase K and L: the Auto-Researcher LLM loop (with the context layer and guardrails) and the opt-in live pilot, run in order after Stage 1.
 5. Phase M: product packaging, `REPRODUCE.md`, README quickstart, and the pre-publication safety checklist, then publish to public GitHub (a human step pending GitHub connector authorisation).
 
