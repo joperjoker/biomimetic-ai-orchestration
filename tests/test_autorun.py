@@ -47,8 +47,8 @@ def test_autorun_writes_artifacts(tmp_path):
     summary = autorun(str(out), demo=True)
     assert (out / "summary.json").is_file()
     assert (out / "RESULTS.md").is_file()
-    assert (out / "figures" / "scaling_coordinator_work.svg").is_file()
+    assert (out / "figures" / "scaling_peak_per_node.svg").is_file()
     assert (out / "figures" / "heterogeneity_quality.svg").is_file()
     loaded = json.loads((out / "summary.json").read_text(encoding="utf-8"))
-    assert "verdicts" in loaded and "scaling_coordinator_work" in loaded
+    assert "verdicts" in loaded and "scaling_peak_per_node" in loaded
     assert summary["verdicts"]["H1"]["verdict"] in ("SUPPORTED", "NOT SUPPORTED")

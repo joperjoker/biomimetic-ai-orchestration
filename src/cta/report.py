@@ -40,7 +40,7 @@ def evaluate(
         growth_cta = cta_cw[-1] / max(cta_cw[0], 1e-9)
         growth_cen = cen_cw[-1] / max(cen_cw[0], 1e-9)
         verdicts["H1"] = {
-            "claim": "coordinator work grows more slowly for CTA than central",
+            "claim": "peak per-node load grows more slowly for CTA than central",
             "cta_growth_factor": round(growth_cta, 2),
             "central_growth_factor": round(growth_cen, 2),
             "verdict": _verdict(growth_cta < growth_cen),
@@ -182,7 +182,7 @@ def write_results_md(
         for fig in figures:
             parts.append(f"![{Path(fig).stem}]({fig})")
             parts.append("")
-    parts.append("## Coordinator-work scaling")
+    parts.append("## Peak per-node load scaling")
     parts.append("")
     conditions = list(scaling.keys())
     ns = [pt["n_agents"] for pt in scaling[conditions[0]]] if conditions else []

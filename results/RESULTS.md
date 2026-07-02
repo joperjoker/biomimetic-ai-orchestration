@@ -8,7 +8,7 @@ pending.
 
 | Hypothesis | Verdict | Claim |
 | --- | --- | --- |
-| H1 | SUPPORTED | coordinator work grows more slowly for CTA than central |
+| H1 | SUPPORTED | peak per-node load grows more slowly for CTA than central |
 | H2 | SUPPORTED | CTA quality is not worse than pull-based and within margin of the optimum |
 | H3 | SUPPORTED | the engine labels infeasible and stalled tasks correctly |
 | H4 | NOT SUPPORTED | the Rejection Gate preserves quality under unreliability |
@@ -17,15 +17,15 @@ pending.
 
 ## Figures
 
-![scaling_coordinator_work](figures/scaling_coordinator_work.svg)
+![scaling_peak_per_node](figures/scaling_peak_per_node.svg)
 
 ![heterogeneity_quality](figures/heterogeneity_quality.svg)
 
-## Coordinator-work scaling
+## Peak per-node load scaling
 
 | N | cta | pull_based | central_greedy | central_optimal |
 | --- | --- | --- | --- | --- |
-| 40 | 326.0 | 1280.0 | 1280.0 | 1280.0 |
-| 80 | 1269.4 | 5120.0 | 5120.0 | 5120.0 |
-| 160 | 5115.6 | 20480.0 | 20480.0 | 20480.0 |
-| 320 | 20485.2 | 81920.0 | 81920.0 | 81920.0 |
+| 40 | 32.0 | 40.0 | 1280.0 | 1280.0 |
+| 80 | 32.0 | 49.6 | 5120.0 | 5120.0 |
+| 160 | 32.0 | 54.6 | 20480.0 | 20480.0 |
+| 320 | 32.0 | 56.6 | 81920.0 | 81920.0 |

@@ -48,7 +48,7 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
         rows = run_seeds(cond, protocol.base, protocol.seeds)
         base_values[cond] = {"mean_quality": [r["mean_quality"] for r in rows]}
 
-    scaling = scaling_sweep(CONDITIONS, protocol, metric="coordinator_work")
+    scaling = scaling_sweep(CONDITIONS, protocol, metric="peak_per_node")
     hetero = heterogeneity_sweep(("cta", "central_optimal"), protocol, metric="mean_quality")
 
     # Figures (pure SVG).
@@ -58,12 +58,12 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
     save_svg(
         line_chart(
             scaling_series,
-            title="Coordinator work vs agent count",
+            title="Peak per-node load vs agent count",
             xlabel="agents (log scale)",
-            ylabel="coordinator work",
+            ylabel="peak per-node load",
             logx=True,
         ),
-        figures_dir / "scaling_coordinator_work.svg",
+        figures_dir / "scaling_peak_per_node.svg",
     )
     hetero_series = {
         c: [(pt["heterogeneity"], pt["mean"]) for pt in hetero[c]] for c in hetero
@@ -83,7 +83,7 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
     stability = stability_grid(protocol.base, max(2, protocol.seeds // 2))
     verdicts = evaluate(base_values, scaling, hetero, gate, feasibility, stability)
 
-    figures = ["figures/scaling_coordinator_work.svg", "figures/heterogeneity_quality.svg"]
+    figures = ["figures/scaling_peak_per_node.svg", "figures/heterogeneity_quality.svg"]
     write_results_md(out / "RESULTS.md", verdicts, scaling, figures)
 
     summary = {
@@ -96,7 +96,7 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
             c: dict(zip(("mean", "ci_low", "ci_high"), mean_ci(v["mean_quality"]), strict=False))
             for c, v in base_values.items()
         },
-        "scaling_coordinator_work": scaling,
+        "scaling_peak_per_node": scaling,
         "heterogeneity_quality": hetero,
         "gate_ablation": gate,
         "feasibility": feasibility,

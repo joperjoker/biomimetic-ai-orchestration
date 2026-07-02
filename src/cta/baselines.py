@@ -136,5 +136,12 @@ def run_central(
         # The central scheduler scores all agent-task pairs at one node each round;
         # this is the coordinator work that the decentralised claim distributes.
         "coordinator_work": len(agents) * len(tasks),
+        # A single node does all the work, so the peak per-node load equals the
+        # total work: N times M. This is the bottleneck the decentralised design
+        # avoids by distributing evaluation across agents.
+        "total_work": len(agents) * len(tasks),
+        "peak_agent_work": len(agents) * len(tasks),
+        "peak_store_load": 0,
+        "peak_per_node": len(agents) * len(tasks),
         "method": assignment.method,
     }

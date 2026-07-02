@@ -15,14 +15,14 @@
   },
   "base_quality": {
     "cta": {
-      "mean": 0.8905815470901792,
-      "ci_low": 0.8630246023783761,
-      "ci_high": 0.9181384918019824
+      "mean": 0.8893595333651889,
+      "ci_low": 0.8736556097171103,
+      "ci_high": 0.9050634570132675
     },
     "pull_based": {
-      "mean": 0.8905815470901792,
-      "ci_low": 0.8630246023783761,
-      "ci_high": 0.9181384918019824
+      "mean": 0.8893595333651889,
+      "ci_low": 0.8736556097171103,
+      "ci_high": 0.9050634570132675
     },
     "central_greedy": {
       "mean": 0.7444288927381789,
@@ -35,78 +35,78 @@
       "ci_high": 0.7823118690789621
     }
   },
-  "scaling_coordinator_work": {
+  "scaling_peak_per_node": {
     "cta": [
       {
-        "metric": "coordinator_work",
-        "mean": 326.0,
-        "ci_low": 312.8667787253406,
-        "ci_high": 339.1332212746594,
+        "metric": "peak_per_node",
+        "mean": 32.0,
+        "ci_low": 32.0,
+        "ci_high": 32.0,
         "n": 5,
         "n_agents": 40
       },
       {
-        "metric": "coordinator_work",
-        "mean": 1269.4,
-        "ci_low": 1248.3671115204988,
-        "ci_high": 1290.4328884795013,
+        "metric": "peak_per_node",
+        "mean": 32.0,
+        "ci_low": 32.0,
+        "ci_high": 32.0,
         "n": 5,
         "n_agents": 80
       },
       {
-        "metric": "coordinator_work",
-        "mean": 5115.6,
-        "ci_low": 5089.241581187205,
-        "ci_high": 5141.958418812796,
+        "metric": "peak_per_node",
+        "mean": 32.0,
+        "ci_low": 32.0,
+        "ci_high": 32.0,
         "n": 5,
         "n_agents": 160
       },
       {
-        "metric": "coordinator_work",
-        "mean": 20485.2,
-        "ci_low": 20449.86950850616,
-        "ci_high": 20520.530491493842,
+        "metric": "peak_per_node",
+        "mean": 32.0,
+        "ci_low": 32.0,
+        "ci_high": 32.0,
         "n": 5,
         "n_agents": 320
       }
     ],
     "pull_based": [
       {
-        "metric": "coordinator_work",
-        "mean": 1280.0,
-        "ci_low": 1280.0,
-        "ci_high": 1280.0,
+        "metric": "peak_per_node",
+        "mean": 40.0,
+        "ci_low": 40.0,
+        "ci_high": 40.0,
         "n": 5,
         "n_agents": 40
       },
       {
-        "metric": "coordinator_work",
-        "mean": 5120.0,
-        "ci_low": 5120.0,
-        "ci_high": 5120.0,
+        "metric": "peak_per_node",
+        "mean": 49.6,
+        "ci_low": 47.67963532945788,
+        "ci_high": 51.52036467054212,
         "n": 5,
         "n_agents": 80
       },
       {
-        "metric": "coordinator_work",
-        "mean": 20480.0,
-        "ci_low": 20480.0,
-        "ci_high": 20480.0,
+        "metric": "peak_per_node",
+        "mean": 54.6,
+        "ci_low": 51.06119289089348,
+        "ci_high": 58.13880710910652,
         "n": 5,
         "n_agents": 160
       },
       {
-        "metric": "coordinator_work",
-        "mean": 81920.0,
-        "ci_low": 81920.0,
-        "ci_high": 81920.0,
+        "metric": "peak_per_node",
+        "mean": 56.6,
+        "ci_low": 55.81601440618398,
+        "ci_high": 57.38398559381602,
         "n": 5,
         "n_agents": 320
       }
     ],
     "central_greedy": [
       {
-        "metric": "coordinator_work",
+        "metric": "peak_per_node",
         "mean": 1280.0,
         "ci_low": 1280.0,
         "ci_high": 1280.0,
@@ -114,7 +114,7 @@
         "n_agents": 40
       },
       {
-        "metric": "coordinator_work",
+        "metric": "peak_per_node",
         "mean": 5120.0,
         "ci_low": 5120.0,
         "ci_high": 5120.0,
@@ -122,7 +122,7 @@
         "n_agents": 80
       },
       {
-        "metric": "coordinator_work",
+        "metric": "peak_per_node",
         "mean": 20480.0,
         "ci_low": 20480.0,
         "ci_high": 20480.0,
@@ -130,7 +130,7 @@
         "n_agents": 160
       },
       {
-        "metric": "coordinator_work",
+        "metric": "peak_per_node",
         "mean": 81920.0,
         "ci_low": 81920.0,
         "ci_high": 81920.0,
@@ -140,7 +140,7 @@
     ],
     "central_optimal": [
       {
-        "metric": "coordinator_work",
+        "metric": "peak_per_node",
         "mean": 1280.0,
         "ci_low": 1280.0,
         "ci_high": 1280.0,
@@ -148,7 +148,7 @@
         "n_agents": 40
       },
       {
-        "metric": "coordinator_work",
+        "metric": "peak_per_node",
         "mean": 5120.0,
         "ci_low": 5120.0,
         "ci_high": 5120.0,
@@ -156,7 +156,7 @@
         "n_agents": 80
       },
       {
-        "metric": "coordinator_work",
+        "metric": "peak_per_node",
         "mean": 20480.0,
         "ci_low": 20480.0,
         "ci_high": 20480.0,
@@ -164,7 +164,7 @@
         "n_agents": 160
       },
       {
-        "metric": "coordinator_work",
+        "metric": "peak_per_node",
         "mean": 81920.0,
         "ci_low": 81920.0,
         "ci_high": 81920.0,
@@ -177,25 +177,25 @@
     "cta": [
       {
         "metric": "mean_quality",
-        "mean": 0.8274123927789863,
-        "ci_low": 0.8000110651810225,
-        "ci_high": 0.85481372037695,
+        "mean": 0.8279000407201244,
+        "ci_low": 0.8050282603886858,
+        "ci_high": 0.8507718210515629,
         "n": 5,
         "heterogeneity": 0.0
       },
       {
         "metric": "mean_quality",
-        "mean": 0.8797676936018659,
-        "ci_low": 0.8545952572555343,
-        "ci_high": 0.9049401299481975,
+        "mean": 0.8754341483320097,
+        "ci_low": 0.8647406248753444,
+        "ci_high": 0.886127671788675,
         "n": 5,
         "heterogeneity": 0.5
       },
       {
         "metric": "mean_quality",
-        "mean": 0.8919326311208641,
-        "ci_low": 0.8646710580484157,
-        "ci_high": 0.9191942041933124,
+        "mean": 0.8916431931320503,
+        "ci_low": 0.8760464780994567,
+        "ci_high": 0.907239908164644,
         "n": 5,
         "heterogeneity": 1.0
       }
@@ -252,104 +252,104 @@
       "activation_energy": 0.1,
       "temperature": 0.0,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8829999223862126
+      "mean_quality": 0.9019846608453939
     },
     {
       "activation_energy": 0.1,
       "temperature": 0.1,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8812789184847309
+      "mean_quality": 0.8842696751758871
     },
     {
       "activation_energy": 0.1,
       "temperature": 0.3,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8812789184847309
+      "mean_quality": 0.8842696751758871
     },
     {
       "activation_energy": 0.2,
       "temperature": 0.0,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8829999223862126
+      "mean_quality": 0.9019846608453939
     },
     {
       "activation_energy": 0.2,
       "temperature": 0.1,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8812789184847309
+      "mean_quality": 0.8842696751758871
     },
     {
       "activation_energy": 0.2,
       "temperature": 0.3,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8812789184847309
+      "mean_quality": 0.8842696751758871
     },
     {
       "activation_energy": 0.3,
       "temperature": 0.0,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8829999223862126
+      "mean_quality": 0.9019846608453939
     },
     {
       "activation_energy": 0.3,
       "temperature": 0.1,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8812789184847309
+      "mean_quality": 0.8842696751758871
     },
     {
       "activation_energy": 0.3,
       "temperature": 0.3,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8812789184847309
+      "mean_quality": 0.8842696751758871
     },
     {
       "activation_energy": 0.5,
       "temperature": 0.0,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8829999223862126
+      "mean_quality": 0.9019846608453939
     },
     {
       "activation_energy": 0.5,
       "temperature": 0.1,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8812789184847309
+      "mean_quality": 0.8842696751758871
     },
     {
       "activation_energy": 0.5,
       "temperature": 0.3,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8812789184847309
+      "mean_quality": 0.8842696751758871
     },
     {
       "activation_energy": 0.7,
       "temperature": 0.0,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8829999223862126
+      "mean_quality": 0.9019846608453939
     },
     {
       "activation_energy": 0.7,
       "temperature": 0.1,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8812789184847309
+      "mean_quality": 0.8842696751758871
     },
     {
       "activation_energy": 0.7,
       "temperature": 0.3,
       "unmet_rate": 0.0,
-      "mean_quality": 0.8812789184847309
+      "mean_quality": 0.8842696751758871
     }
   ],
   "verdicts": {
     "H1": {
-      "claim": "coordinator work grows more slowly for CTA than central",
-      "cta_growth_factor": 62.84,
+      "claim": "peak per-node load grows more slowly for CTA than central",
+      "cta_growth_factor": 1.0,
       "central_growth_factor": 64.0,
       "verdict": "SUPPORTED"
     },
     "H2": {
       "claim": "CTA quality is not worse than pull-based and within margin of the optimum",
-      "cta_mean_quality": 0.891,
-      "pull_mean_quality": 0.891,
+      "cta_mean_quality": 0.889,
+      "pull_mean_quality": 0.889,
       "optimal_mean_quality": 0.744,
       "cliffs_delta_vs_pull": 0.0,
       "p_vs_pull": 1.0,
@@ -357,8 +357,8 @@
     },
     "H6": {
       "claim": "CTA advantage over the optimum increases with heterogeneity",
-      "advantage_low_h": 0.154,
-      "advantage_high_h": 0.145,
+      "advantage_low_h": 0.155,
+      "advantage_high_h": 0.144,
       "verdict": "NOT SUPPORTED"
     },
     "H3": {

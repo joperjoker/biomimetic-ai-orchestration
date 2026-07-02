@@ -78,6 +78,20 @@ def test_optimal_at_least_greedy_total_score():
     assert total(opt) >= total(greedy) - 1e-9
 
 
+def test_partial_observability_bounds_peak_agent_work():
+    agents = generate_agents(80, 4, 0.8, random.Random(41))
+    tasks = generate_tasks(60, 4, random.Random(42))
+    full = run_batch(agents, tasks, random.Random(43), condition="cta").summary()
+    bounded = run_batch(
+        agents, tasks, random.Random(43), condition="cta", observability_k=16
+    ).summary()
+    # Full observability: each agent evaluates every task; bounded: at most k.
+    assert full["peak_agent_work"] == 60
+    assert bounded["peak_agent_work"] == 16
+    # The bounded per-node load is far below the central N*M load.
+    assert bounded["peak_per_node"] < len(agents) * len(tasks)
+
+
 def test_run_central_completes_some():
     agents = generate_agents(8, 3, 0.8, random.Random(31))
     tasks = generate_tasks(6, 3, random.Random(32))

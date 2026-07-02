@@ -31,6 +31,7 @@ class CellParams:
     heterogeneity: float = 0.8
     activation_energy: float = 0.20
     temperature: float = 0.0
+    observability_k: int | None = 32  # bounded task sampling per agent (A2); None means full
 
 
 @dataclass
@@ -56,7 +57,12 @@ def run_cell(condition: str, params: CellParams, seed: int) -> dict[str, float]:
     exec_rng = random.Random(seed + 20_000)
     if condition in ("cta", "pull_based"):
         result = run_batch(
-            agents, tasks, exec_rng, condition=condition, temperature=params.temperature
+            agents,
+            tasks,
+            exec_rng,
+            condition=condition,
+            temperature=params.temperature,
+            observability_k=params.observability_k,
         )
         summary = result.summary()
     else:
@@ -94,6 +100,7 @@ def scaling_sweep(
                 heterogeneity=protocol.base.heterogeneity,
                 activation_energy=protocol.base.activation_energy,
                 temperature=protocol.base.temperature,
+                observability_k=protocol.base.observability_k,
             )
             rows = run_seeds(condition, params, protocol.seeds)
             agg = aggregate(rows, metric)
@@ -226,6 +233,7 @@ def heterogeneity_sweep(
                 heterogeneity=h,
                 activation_energy=protocol.base.activation_energy,
                 temperature=protocol.base.temperature,
+                observability_k=protocol.base.observability_k,
             )
             rows = run_seeds(condition, params, protocol.seeds)
             agg = aggregate(rows, metric)
