@@ -25,6 +25,9 @@ All notable changes to this project are recorded in this file. The format follow
 
 - Context and memory layer for the Auto-Researcher (the Recursive Language Models principle: Zhang, Kraska, and Khattab, 2025, arXiv:2512.24601): treat the event log and ledger as an external environment that is queried and recursively summarised under depth and budget caps, with deterministic and logged sub-calls, to mitigate context rot. Documented in `docs/architecture.md`, `docs/roadmap.md`, and the paper's analysis; a reliability technique of the research process, separate from the CTA contribution.
 
+- Implementation started (Phase A): the `cta` package with `src/cta/scoring.py`, the measurable model E1 to E11 as pure, dependency-light functions (compatibility from role, skills, and prompt; eligibility; reliability; effective capability; Binding Energy; activation and firing; tie breaker; winner selection; gate), with twenty-one unit tests. Packaged via `pyproject.toml` with a `src` layout.
+- `STATUS.md`: a running log of completed work, locked decisions, and the ordered next steps for the whole research.
+
 ### Changed
 
 - Consistency pass across the documents: standardised the effective-capability symbol on `C_tilde` and stated the reliability coupling as the default (ablatable); aligned the metric lists in `docs/theory.md` and `claude.md` with the authoritative set in `docs/paper.md` section 2.4 (realised quality with the Binding Energy proxy, and coordinator work); linked the Auto-Researcher loop and the experiment ledger into `docs/architecture.md` and the paper's analysis; unified "coordinator work" wording; and refreshed the README status and layout.

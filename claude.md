@@ -79,7 +79,7 @@ Variables:
 - `C` (Agent Capability): the agent's competence for the specific skills the task requires. Normalised to [0, 1].
 - `L` (Latency or compute cost penalty): the expected time and resource cost of the agent undertaking the task. Strictly greater than zero, floored at a small value (suggested 0.01) to keep the score bounded. `L` is a normalised relative cost with a typical value near 1, so `B` typically lies in [0, 1] and the absolute barrier `Ea` in [0, 1] is meaningful.
 
-Interpretation: Binding Energy rises with stronger signal match and higher capability, and falls as cost rises. Among the agents that clear the activation barrier (section 3.5), the highest Binding Energy wins. A worked numerical example is given in `docs/theory.md` section 2.1.
+Interpretation: Binding Energy rises with stronger compatibility and higher capability, and falls as cost rises. Among the agents that clear the activation barrier (section 3.5), the highest Binding Energy wins. A worked numerical example is given in `docs/theory.md` section 2.1.
 
 Decided rules (defaults, revisable):
 

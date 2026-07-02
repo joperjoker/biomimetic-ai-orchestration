@@ -1,10 +1,14 @@
 # Project manifest for biomimetic-ai-orchestration.
 # Language decision (Python 3.11+) is confirmed and recorded in claude.md section 7.
 
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "biomimetic-ai-orchestration"
 version = "0.0.1"
-description = "Decentralised, signal-driven multi-agent orchestration inspired by cryptic female choice."
+description = "Decentralised, signal-driven multi-agent orchestration of coding agents (Chemotactic Task Allocation)."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "The biomimetic-ai-orchestration authors" }]
@@ -12,6 +16,10 @@ license = "Apache-2.0"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.5"]
+viz = ["numpy>=1.26", "scipy>=1.11", "matplotlib>=3.8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.ruff]
 line-length = 100
@@ -23,3 +31,4 @@ select = ["E", "F", "I", "B", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]

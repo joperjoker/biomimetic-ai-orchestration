@@ -17,10 +17,10 @@ The activation barrier draws on a second source, the response threshold model of
 Eligible agents (section 3) rank their fit for a task using:
 
 ```
-Binding Energy = (S x C) / L
+Binding Energy B = (c x C) / L
 ```
 
-- `S` is now the compatibility `c`: the match produced by the task wrapper from the agent's role, skills, and prompt against the task requirements, in [0, 1] (`docs/measures.md`).
+- `c` is the compatibility: the match produced by the task wrapper from the agent's role, skills, and prompt against the task requirements, in [0, 1] (`docs/measures.md`). It replaces the earlier abstract signal.
 - `C` (Agent Capability): normalised competence for the required skills, in [0, 1].
 - `L` (Latency or compute cost penalty): expected cost of the agent taking the task, strictly positive, floored at a small value (suggested 0.01) so the score stays bounded. `L` is a normalised relative cost with a typical value near 1, so `B` typically lies in [0, 1] and the absolute barrier `Ea` in [0, 1] is meaningful; a near-zero-cost agent simply clears the barrier.
 
@@ -36,7 +36,7 @@ Three eligible agents evaluate the same task (the example uses base capability, 
 | B | 0.60 | 0.95 | 1.00 | (0.60 x 0.95) / 1.00 = 0.570 |
 | C | 0.95 | 0.50 | 0.50 | (0.95 x 0.50) / 0.50 = 0.950 |
 
-Agent C wins. The example shows that a strong signal match combined with low latency can beat raw capability (Agent B has the highest `C` yet loses). This is the intended behaviour: the framework rewards good fit and low cost, not capability alone.
+Agent C wins. The example shows that a strong compatibility combined with low latency can beat raw capability (Agent B has the highest `C` yet loses). This is the intended behaviour: the framework rewards good fit and low cost, not capability alone.
 
 ### 2.2 Edge cases and guards
 
