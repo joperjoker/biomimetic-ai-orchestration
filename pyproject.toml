@@ -18,6 +18,9 @@ license = "Apache-2.0"
 dev = ["pytest>=8", "ruff>=0.5"]
 viz = ["numpy>=1.26", "scipy>=1.11", "matplotlib>=3.8"]
 
+[project.scripts]
+cta = "cta.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

@@ -133,5 +133,8 @@ def run_central(
         "completed": completed,
         "infeasible_rate": (n - assigned) / n if n else 0.0,
         "mean_quality": sum(qualities) / len(qualities) if qualities else 0.0,
+        # The central scheduler scores all agent-task pairs at one node each round;
+        # this is the coordinator work that the decentralised claim distributes.
+        "coordinator_work": len(agents) * len(tasks),
         "method": assignment.method,
     }
