@@ -4,7 +4,7 @@ import json
 
 from cta.cli import autorun
 from cta.report import evaluate
-from cta.viz import line_chart
+from cta.viz import bar_chart, heatmap, line_chart
 
 
 def test_line_chart_is_svg():
@@ -17,6 +17,22 @@ def test_line_chart_is_svg():
     assert svg.startswith("<svg")
     assert svg.rstrip().endswith("</svg>")
     assert "polyline" in svg or "path" in svg
+
+
+def test_heatmap_and_bar_are_svg():
+    hm = heatmap(
+        [[0.1, 0.4], [0.2, 0.8]],
+        row_labels=["a", "b"],
+        col_labels=["x", "y"],
+        title="t",
+        xlabel="x",
+        ylabel="y",
+    )
+    assert hm.startswith("<svg") and hm.rstrip().endswith("</svg>")
+    assert "rect" in hm
+    bc = bar_chart(["m1", "m2"], {"one": [0.3, 0.6], "two": [0.5, 0.2]}, title="t", ylabel="v")
+    assert bc.startswith("<svg") and bc.rstrip().endswith("</svg>")
+    assert "rect" in bc
 
 
 def test_evaluate_returns_all_hypotheses():
@@ -55,11 +71,20 @@ def test_autorun_writes_artifacts(tmp_path):
     assert (out / "figures" / "calibration_quality.svg").is_file()
     assert (out / "figures" / "annealing_stall.svg").is_file()
     assert (out / "figures" / "track_record_recovery.svg").is_file()
+    assert (out / "figures" / "calibration_surface.svg").is_file()
+    assert (out / "figures" / "robustness_bars.svg").is_file()
     loaded = json.loads((out / "summary.json").read_text(encoding="utf-8"))
     assert "verdicts" in loaded and "scaling_peak_per_node" in loaded
     assert "calibration" in loaded and "safety" in loaded
     assert "annealing" in loaded and "temporal" in loaded and "track_record" in loaded
     assert "winner_brier" in loaded["verdicts"]["H7"]
+    # The generalisability pass compares verdicts across generator families.
+    assert loaded["robustness"]["domains"]["H8"] == loaded["robustness"]["latent"]["H8"]
+    assert "recovery_vs_spread" in loaded and "recovery_surface" in loaded
+    # The dashboard is a single self-contained HTML page with the figures inlined.
+    dash = (out / "dashboard.html").read_text(encoding="utf-8")
+    assert dash.startswith("<!doctype html>") and "<svg" in dash
+    assert "Hypotheses" in dash and "Generalisability" in dash
     assert summary["verdicts"]["H1"]["verdict"] in ("SUPPORTED", "NOT SUPPORTED")
     # The calibration, safety, and annealing hypotheses are evaluated by the full run.
     assert summary["verdicts"]["H7"]["verdict"] == "SUPPORTED"

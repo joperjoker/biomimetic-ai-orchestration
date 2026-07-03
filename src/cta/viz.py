@@ -90,6 +90,126 @@ def line_chart(
     return "\n".join(parts)
 
 
+def _mix(lo_hex: str, hi_hex: str, t: float) -> str:
+    """Linear blend between two hex colours at fraction ``t`` in [0, 1]."""
+    t = 0.0 if t < 0.0 else 1.0 if t > 1.0 else t
+    a = [int(lo_hex[i : i + 2], 16) for i in (1, 3, 5)]
+    b = [int(hi_hex[i : i + 2], 16) for i in (1, 3, 5)]
+    c = [round(a[k] + (b[k] - a[k]) * t) for k in range(3)]
+    return f"#{c[0]:02x}{c[1]:02x}{c[2]:02x}"
+
+
+def heatmap(
+    grid: Sequence[Sequence[float]],
+    row_labels: Sequence[str],
+    col_labels: Sequence[str],
+    title: str,
+    xlabel: str,
+    ylabel: str,
+) -> str:
+    """Render a grid of values as a colour-mapped heatmap with the values shown."""
+    rows = len(grid)
+    cols = len(grid[0]) if rows else 0
+    flat = [v for r in grid for v in r] or [0.0]
+    vlo, vhi = min(flat), max(flat)
+    cw, ch = 96, 54
+    ml, mt = 96, 52
+    w = ml + cols * cw + 40
+    h = mt + rows * ch + 64
+    parts = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
+        f'viewBox="0 0 {w} {h}" font-family="sans-serif" font-size="13">',
+        f'<rect width="{w}" height="{h}" fill="white"/>',
+        f'<text x="{w/2:.0f}" y="26" text-anchor="middle" font-size="16">{_esc(title)}</text>',
+    ]
+    for r in range(rows):
+        for c in range(cols):
+            v = grid[r][c]
+            t = 0.5 if vhi == vlo else (v - vlo) / (vhi - vlo)
+            x, y = ml + c * cw, mt + r * ch
+            fill = _mix("#eef4f9", "#2f6f9f", t)
+            txt = "#ffffff" if t > 0.55 else "#1a1a1a"
+            parts.append(
+                f'<rect x="{x}" y="{y}" width="{cw-2}" height="{ch-2}" fill="{fill}"/>'
+            )
+            parts.append(
+                f'<text x="{x+cw/2-1:.0f}" y="{y+ch/2+4:.0f}" text-anchor="middle" '
+                f'fill="{txt}">{_fmt(v)}</text>'
+            )
+    for c in range(cols):
+        parts.append(
+            f'<text x="{ml+c*cw+cw/2-1:.0f}" y="{mt-8}" text-anchor="middle">'
+            f'{_esc(str(col_labels[c]))}</text>'
+        )
+    for r in range(rows):
+        parts.append(
+            f'<text x="{ml-8}" y="{mt+r*ch+ch/2+4:.0f}" text-anchor="end">'
+            f'{_esc(str(row_labels[r]))}</text>'
+        )
+    parts.append(
+        f'<text x="{ml+cols*cw/2:.0f}" y="{h-16}" text-anchor="middle">{_esc(xlabel)}</text>'
+    )
+    parts.append(
+        f'<text x="20" y="{mt+rows*ch/2:.0f}" text-anchor="middle" '
+        f'transform="rotate(-90 20 {mt+rows*ch/2:.0f})">{_esc(ylabel)}</text>'
+    )
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
+def bar_chart(
+    categories: Sequence[str],
+    series: dict[str, Sequence[float]],
+    title: str,
+    ylabel: str,
+) -> str:
+    """Render a grouped bar chart (one group per category, one bar per series)."""
+    vals = [v for vs in series.values() for v in vs] or [0.0]
+    vhi = max(vals + [0.0])
+    vlo = min(vals + [0.0])
+    px0, px1 = _ML, _W - _MR
+    py0, py1 = _H - _MB, _MT
+    n_groups = len(categories)
+    n_series = max(1, len(series))
+    group_w = (px1 - px0) / max(1, n_groups)
+    bar_w = group_w * 0.8 / n_series
+    parts = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{_W}" height="{_H}" '
+        f'viewBox="0 0 {_W} {_H}" font-family="sans-serif" font-size="13">',
+        f'<rect width="{_W}" height="{_H}" fill="white"/>',
+        f'<text x="{_W/2:.0f}" y="22" text-anchor="middle" font-size="16">{_esc(title)}</text>',
+        f'<line x1="{px0}" y1="{_scale(0,vlo,vhi,py0,py1):.1f}" x2="{px1}" '
+        f'y2="{_scale(0,vlo,vhi,py0,py1):.1f}" stroke="#333"/>',
+        f'<line x1="{px0}" y1="{py0}" x2="{px0}" y2="{py1}" stroke="#333"/>',
+        f'<text x="18" y="{(py0+py1)/2:.0f}" text-anchor="middle" '
+        f'transform="rotate(-90 18 {(py0+py1)/2:.0f})">{_esc(ylabel)}</text>',
+    ]
+    for gi, cat in enumerate(categories):
+        gx = px0 + gi * group_w
+        for si, vs in enumerate(series.values()):
+            v = vs[gi] if gi < len(vs) else 0.0
+            colour = PALETTE[si % len(PALETTE)]
+            bx = gx + group_w * 0.1 + si * bar_w
+            y0 = _scale(0, vlo, vhi, py0, py1)
+            y1 = _scale(v, vlo, vhi, py0, py1)
+            top = min(y0, y1)
+            parts.append(
+                f'<rect x="{bx:.1f}" y="{top:.1f}" width="{bar_w*0.9:.1f}" '
+                f'height="{abs(y1-y0):.1f}" fill="{colour}"/>'
+            )
+        cx = gx + group_w / 2
+        parts.append(
+            f'<text x="{cx:.0f}" y="{py0+18}" text-anchor="middle">{_esc(str(cat))}</text>'
+        )
+    for si, label in enumerate(series):
+        ly = _MT + 6 + si * 22
+        clr = PALETTE[si % len(PALETTE)]
+        parts.append(f'<rect x="{px1+16}" y="{ly}" width="14" height="14" fill="{clr}"/>')
+        parts.append(f'<text x="{px1+34}" y="{ly+12}">{_esc(label)}</text>')
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
 def _flat(series: dict[str, Sequence[tuple[float, float]]]) -> list[tuple[float, float]]:
     return [pt for pts in series.values() for pt in pts] or [(0.0, 0.0)]
 

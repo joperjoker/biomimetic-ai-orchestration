@@ -1,10 +1,14 @@
 """Tests for the H3, H4, H5, H7, and H8 evaluations."""
 
+from dataclasses import replace
+
 from cta.harness import (
     CellParams,
     calibration_sweep,
     feasibility_check,
     gate_ablation,
+    recovery_vs_spread,
+    reduction_vs_recall,
     safety_ablation,
     stability_grid,
     track_record_sweep,
@@ -41,6 +45,33 @@ def test_calibration_sweep_recovers_completion():
     # Winners over-report under raw self-selection (positive overconfidence gap).
     assert raw_top["overconfidence_gap"] > 0.0
     assert len(raw_top["completion_values"]) == 3
+
+
+def test_recovery_grows_with_competence_spread():
+    base = CellParams(n_agents=60, n_tasks=48, n_domains=4, heterogeneity=0.8)
+    sweep = recovery_vs_spread(base, seeds=4, lows=(0.7, 0.1))
+    narrow, wide = sweep[0], sweep[-1]
+    # A wider competence spread (lower floor) gives the correction more to recover.
+    assert wide["recovery"] > narrow["recovery"]
+
+
+def test_violation_reduction_grows_with_recall():
+    base = CellParams(n_agents=60, n_tasks=48, n_domains=4, heterogeneity=0.8)
+    sweep = reduction_vs_recall(base, seeds=4, recalls=(0.5, 1.0))
+    assert sweep[-1]["reduction"] > sweep[0]["reduction"]
+    assert sweep[-1]["reduction"] >= 0.999  # perfect recall blocks everything
+
+
+def test_calibration_recovers_under_latent_family():
+    # The calibration finding (H8) must hold under a structurally different
+    # generator, not only the domains structure.
+    base = replace(
+        CellParams(n_agents=60, n_tasks=48, n_domains=4, heterogeneity=0.8), family="latent"
+    )
+    sweep = calibration_sweep(base, seeds=4, bias_values=(0.4,))
+    raw = sweep["raw"][-1]["completion_rate"]
+    rel = sweep["reliability"][-1]["completion_rate"]
+    assert rel > raw
 
 
 def test_track_record_sweep_recovery_grows_with_history():

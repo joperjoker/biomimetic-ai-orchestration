@@ -29,6 +29,14 @@ pending.
 
 ![track_record_recovery](figures/track_record_recovery.svg)
 
+![recovery_vs_spread](figures/recovery_vs_spread.svg)
+
+![gate_recall](figures/gate_recall.svg)
+
+![calibration_surface](figures/calibration_surface.svg)
+
+![robustness_bars](figures/robustness_bars.svg)
+
 ## Peak per-node load scaling
 
 | N | cta | pull_based | central_greedy | central_optimal | central_best |

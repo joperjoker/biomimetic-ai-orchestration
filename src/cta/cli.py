@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import argparse
 import json
+from dataclasses import replace
 from pathlib import Path
 
+from cta.dashboard import write_dashboard
 from cta.harness import (
     CONDITIONS,
     CellParams,
@@ -21,6 +23,9 @@ from cta.harness import (
     feasibility_check,
     gate_ablation,
     heterogeneity_sweep,
+    recovery_surface,
+    recovery_vs_spread,
+    reduction_vs_recall,
     run_seeds,
     safety_ablation,
     scaling_sweep,
@@ -30,7 +35,7 @@ from cta.harness import (
 )
 from cta.report import evaluate, write_results_md
 from cta.stats import mean_ci
-from cta.viz import line_chart, save_svg
+from cta.viz import bar_chart, heatmap, line_chart, save_svg
 
 
 def _demo_protocol() -> Protocol:
@@ -40,6 +45,25 @@ def _demo_protocol() -> Protocol:
         scaling_n=(40, 80, 160, 320),
         heterogeneity_grid=(0.0, 0.5, 1.0),
     )
+
+
+def _family_verdicts(protocol: Protocol, family: str) -> dict[str, dict[str, object]]:
+    """Verdicts for the population-dependent hypotheses under a generator family.
+
+    Re-runs the quality (H2), safety (H4), and calibration (H7, H8) evidence under
+    the given generative structure, so the robustness pass can compare verdicts
+    across families. H1 is structural (peak load is `N` times `M` by construction),
+    so it is not re-run here.
+    """
+    base_f = replace(protocol.base, family=family)
+    base_values = {
+        c: {"mean_quality": [r["mean_quality"] for r in run_seeds(c, base_f, protocol.seeds)]}
+        for c in ("cta", "pull_based", "central_best")
+    }
+    calibration = calibration_sweep(base_f, protocol.seeds)
+    safety = safety_ablation(base_f, protocol.seeds)
+    verdicts = evaluate(base_values, {}, {}, calibration=calibration, safety=safety)
+    return {h: verdicts[h] for h in ("H2", "H4", "H7", "H8") if h in verdicts}
 
 
 def autorun(
@@ -94,6 +118,10 @@ def autorun(
     annealing = annealing_curve(protocol.base, protocol.seeds)
     temporal = temporal_metrics(protocol.base, protocol.seeds)
     track_record = track_record_sweep(protocol.base, protocol.seeds)
+    # Sensitivity sweeps (bands, not single points).
+    recovery_spread = recovery_vs_spread(protocol.base, protocol.seeds)
+    recovery_grid = recovery_surface(protocol.base, protocol.seeds)
+    gate_recall_sweep = reduction_vs_recall(protocol.base, protocol.seeds)
     verdicts = evaluate(
         base_values,
         scaling,
@@ -105,6 +133,15 @@ def autorun(
         safety,
         annealing,
     )
+
+    # Generalisability: re-run the population-dependent hypotheses under a second,
+    # structurally different generator and compare the verdicts (section 2.7).
+    latent_verdicts = _family_verdicts(protocol, "latent")
+    robustness = {
+        "domains": {h: verdicts[h].get("verdict") for h in ("H2", "H4", "H7", "H8")},
+        "latent": {h: latent_verdicts[h].get("verdict") for h in latent_verdicts},
+        "latent_detail": latent_verdicts,
+    }
 
     # Calibration figure: task completion versus overconfidence, one line per mode.
     calibration_series = {
@@ -152,12 +189,73 @@ def autorun(
         figures_dir / "track_record_recovery.svg",
     )
 
+    # Sensitivity: recovery versus competence spread, and violation reduction
+    # versus gate recall (bands, not single points).
+    save_svg(
+        line_chart(
+            {"recovery": [(float(p["spread"]), float(p["recovery"])) for p in recovery_spread]},
+            title="Recovery vs competence spread",
+            xlabel="competence spread (1 - capability floor)",
+            ylabel="completion recovery",
+        ),
+        figures_dir / "recovery_vs_spread.svg",
+    )
+    recall_pts = [(float(p["gate_recall"]), float(p["reduction"])) for p in gate_recall_sweep]
+    save_svg(
+        line_chart(
+            {"reduction": recall_pts},
+            title="Violation reduction vs gate recall",
+            xlabel="gate detection recall",
+            ylabel="violation reduction",
+        ),
+        figures_dir / "gate_recall.svg",
+    )
+    # Surface: recovery over overconfidence bias by competence spread (a heatmap).
+    save_svg(
+        heatmap(
+            recovery_grid["recovery"],
+            row_labels=[f"bias {b}" for b in recovery_grid["biases"]],
+            col_labels=[f"low {low}" for low in recovery_grid["lows"]],
+            title="Recovery: overconfidence bias by competence spread",
+            xlabel="capability floor (lower is wider spread)",
+            ylabel="overconfidence bias",
+        ),
+        figures_dir / "calibration_surface.svg",
+    )
+    # Generalisability: a numeric comparison across the two generator families.
+    dq = base_values["cta"]["mean_quality"]
+    lq = robustness["latent_detail"].get("H2", {}).get("cta_mean_quality", 0.0)
+    save_svg(
+        bar_chart(
+            categories=["CTA quality", "H8 recovery", "H4 reduction"],
+            series={
+                "domains": [
+                    round(mean_ci(dq)[0], 3),
+                    float(verdicts["H8"].get("recovery", 0.0)),
+                    float(verdicts["H4"].get("reduction", 0.0)),
+                ],
+                "latent": [
+                    float(lq),
+                    float(robustness["latent_detail"].get("H8", {}).get("recovery", 0.0)),
+                    float(robustness["latent_detail"].get("H4", {}).get("reduction", 0.0)),
+                ],
+            },
+            title="Key outcomes across generator families",
+            ylabel="value",
+        ),
+        figures_dir / "robustness_bars.svg",
+    )
+
     figures = [
         "figures/scaling_peak_per_node.svg",
         "figures/heterogeneity_quality.svg",
         "figures/calibration_quality.svg",
         "figures/annealing_stall.svg",
         "figures/track_record_recovery.svg",
+        "figures/recovery_vs_spread.svg",
+        "figures/gate_recall.svg",
+        "figures/calibration_surface.svg",
+        "figures/robustness_bars.svg",
     ]
     write_results_md(out / "RESULTS.md", verdicts, scaling, figures)
 
@@ -181,10 +279,15 @@ def autorun(
         "annealing": annealing,
         "temporal": temporal,
         "track_record": track_record,
+        "recovery_vs_spread": recovery_spread,
+        "recovery_surface": recovery_grid,
+        "reduction_vs_recall": gate_recall_sweep,
+        "robustness": robustness,
         "verdicts": verdicts,
     }
     (out).mkdir(parents=True, exist_ok=True)
     (out / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    write_dashboard(out, out / "dashboard.html")
     return summary
 
 
@@ -194,6 +297,9 @@ def main(argv: list[str] | None = None) -> int:
     run = sub.add_parser("autorun", help="run the autonomous research protocol")
     run.add_argument("--out", default="results", help="output directory")
     run.add_argument("--full", action="store_true", help="run the full protocol (slower)")
+    dash = sub.add_parser("dashboard", help="rebuild the HTML dashboard from an existing run")
+    dash.add_argument("--out", default="results", help="results directory to read")
+    dash.add_argument("--to", default="results/dashboard.html", help="dashboard output path")
     args = parser.parse_args(argv)
 
     if args.command == "autorun":
@@ -201,7 +307,11 @@ def main(argv: list[str] | None = None) -> int:
         print("autorun complete. Verdicts:")
         for h, v in sorted(summary["verdicts"].items()):
             print(f"  {h}: {v.get('verdict')}")
-        print(f"Artifacts written to {args.out}/ (summary.json, RESULTS.md, figures/).")
+        print(f"Artifacts written to {args.out}/ (summary.json, RESULTS.md, figures/, dashboard).")
+        return 0
+    if args.command == "dashboard":
+        path = write_dashboard(args.out, args.to)
+        print(f"Dashboard written to {path}")
         return 0
     return 1
 

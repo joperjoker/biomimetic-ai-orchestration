@@ -134,6 +134,33 @@ def test_gate_prevents_out_of_scope_writes():
     assert off["integrity_violations"] > 0
 
 
+def test_latent_family_is_deterministic_and_distinct():
+    import statistics
+
+    from cta.scoring import compatibility
+
+    a1 = generate_agents(20, 4, 0.8, random.Random(1), family="latent")
+    a2 = generate_agents(20, 4, 0.8, random.Random(1), family="latent")
+    assert [a.capability_vector for a in a1] == [a.capability_vector for a in a2]
+    # The latent family has no discrete skill gate, so its compatibility is a
+    # smooth continuum rather than the near-binary one-hot matches of the domains
+    # family: the mean is higher and there are no exact zeros from missing skills.
+    tk = generate_tasks(20, 4, random.Random(2), family="latent")
+    dom = generate_agents(20, 4, 0.8, random.Random(1), family="domains")
+    dtk = generate_tasks(20, 4, random.Random(2), family="domains")
+    latent_c = [compatibility(a, t) for a in a1 for t in tk]
+    domain_c = [compatibility(a, t) for a in dom for t in dtk]
+    assert statistics.mean(latent_c) > statistics.mean(domain_c)
+
+
+def test_unknown_family_rejected():
+    try:
+        generate_agents(3, 4, 0.5, random.Random(1), family="bogus")
+    except ValueError:
+        return
+    raise AssertionError("expected ValueError for an unknown generator family")
+
+
 def test_brier_ece_calibration():
     # A perfectly calibrated predictor (predicts the outcome) scores zero.
     brier, ece = _brier_ece([1.0, 0.0, 1.0, 0.0], [1.0, 0.0, 1.0, 0.0])

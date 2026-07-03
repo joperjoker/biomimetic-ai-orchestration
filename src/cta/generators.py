@@ -10,9 +10,20 @@ library so the core needs no numerical dependencies.
 from __future__ import annotations
 
 import dataclasses
+import math
 import random
 
 from cta.scoring import Agent, Task
+
+FAMILIES = ("domains", "latent")
+"""The generative distribution families, for the generalisability pass (2.7).
+
+``domains`` is the original structure: one-hot task requirements and agents
+blended towards a home domain, so compatibility is near-binary. ``latent`` draws
+agent and task vectors as softmax-of-Gaussian directions in a continuous latent
+space with no discrete skill gate, so compatibility is a smooth function of
+alignment. A result that holds under both is not an artefact of the structure.
+"""
 
 
 def _one_hot(index: int, size: int) -> list[float]:
@@ -40,13 +51,38 @@ def _blend(
     return _normalise(mixed)
 
 
+def _informative_record(capability: float, rng: random.Random, attempts: int = 20) -> int:
+    """Successes drawn from the true capability, so R (E4) is a competence signal."""
+    return sum(1 for _ in range(attempts) if rng.random() < capability)
+
+
+def _softmax_direction(dim: int, temperature: float, rng: random.Random) -> tuple[float, ...]:
+    """A positive, normalised direction in latent space, peaked as temperature falls."""
+    raw = [rng.gauss(0.0, 1.0) for _ in range(dim)]
+    t = max(temperature, 1e-3)
+    ex = [math.exp(x / t) for x in raw]
+    s = sum(ex) or 1.0
+    return tuple(e / s for e in ex)
+
+
 def generate_agents(
     n: int,
     n_domains: int,
     heterogeneity: float,
     rng: random.Random,
+    family: str = "domains",
 ) -> list[Agent]:
-    """Generate ``n`` agents across ``n_domains`` with the given heterogeneity."""
+    """Generate ``n`` agents. ``family`` selects the generative structure (2.7)."""
+    if family not in FAMILIES:
+        raise ValueError(f"unknown generator family: {family}")
+    if family == "latent":
+        return _agents_latent(n, n_domains, heterogeneity, rng)
+    return _agents_domains(n, n_domains, heterogeneity, rng)
+
+
+def _agents_domains(
+    n: int, n_domains: int, heterogeneity: float, rng: random.Random
+) -> list[Agent]:
     agents: list[Agent] = []
     for i in range(n):
         home = rng.randrange(n_domains)
@@ -57,20 +93,48 @@ def generate_agents(
             # Broad, near-interchangeable skills when the population is homogeneous.
             skills = frozenset(f"skill_{d}" for d in range(n_domains))
         capability = 0.5 + 0.5 * rng.random()
-        # An informative track record: successes are drawn from the agent's true
-        # capability, so reliability R (E4) is a real competence signal rather than
-        # a uniform constant. This is the realistic setting and the one in which
-        # CTA's reliability-weighted selection can function; a uniform record would
-        # leave selection competence-blind. Unreliable and adversarial agents are
-        # injected separately for the ablations.
         attempts = 20
-        successes = sum(1 for _ in range(attempts) if rng.random() < capability)
+        successes = _informative_record(capability, rng, attempts)
         agents.append(
             Agent(
                 agent_id=f"agent_{i}",
                 role=f"role_{home}",
                 skills=skills,
                 prompt=f"agent specialised in domain {home}",
+                tools=frozenset({"edit", "test"}),
+                permitted_scope=frozenset({"src/**", "tests/**"}),
+                capability_vector=vec,
+                capability=capability,
+                successes=successes,
+                attempts=attempts,
+                latency=0.5 + rng.random(),
+            )
+        )
+    return agents
+
+
+def _agents_latent(
+    n: int, dim: int, heterogeneity: float, rng: random.Random
+) -> list[Agent]:
+    """Continuous latent structure: no discrete skill gate, smooth cosine fit.
+
+    The agent direction is peaked as heterogeneity rises. Eligibility is by tools
+    and scope only (all agents hold them), so compatibility is driven purely by the
+    smooth semantic cosine, a structurally different regime from the domains family.
+    """
+    agents: list[Agent] = []
+    temperature = max(0.05, 1.0 - 0.9 * heterogeneity)
+    for i in range(n):
+        vec = _softmax_direction(dim, temperature, rng)
+        capability = 0.5 + 0.5 * rng.random()
+        attempts = 20
+        successes = _informative_record(capability, rng, attempts)
+        agents.append(
+            Agent(
+                agent_id=f"agent_{i}",
+                role="latent",
+                skills=frozenset(),
+                prompt="latent agent",
                 tools=frozenset({"edit", "test"}),
                 permitted_scope=frozenset({"src/**", "tests/**"}),
                 capability_vector=vec,
@@ -185,19 +249,29 @@ def generate_tasks(
     n_domains: int,
     rng: random.Random,
     activation_energy: float = 0.20,
+    family: str = "domains",
 ) -> list[Task]:
-    """Generate ``m`` tasks, each anchored to a domain."""
+    """Generate ``m`` tasks. ``family`` selects the generative structure (2.7)."""
+    if family not in FAMILIES:
+        raise ValueError(f"unknown generator family: {family}")
     tasks: list[Task] = []
     for j in range(m):
-        domain = rng.randrange(n_domains)
-        req = _one_hot(domain, n_domains)
+        if family == "latent":
+            # A peaked latent direction; no discrete skill requirement, so fit is
+            # the smooth cosine of the agent and task directions.
+            req = _softmax_direction(n_domains, 0.3, rng)
+            required_skills: frozenset[str] = frozenset()
+        else:
+            domain = rng.randrange(n_domains)
+            req = tuple(_one_hot(domain, n_domains))
+            required_skills = frozenset({f"skill_{domain}"})
         tasks.append(
             Task(
                 task_id=f"task_{j}",
-                required_skills=frozenset({f"skill_{domain}"}),
+                required_skills=required_skills,
                 required_tools=frozenset({"edit", "test"}),
                 scope=frozenset({"src/**"}),
-                requirement_vector=tuple(req),
+                requirement_vector=req,
                 activation_energy=activation_energy,
                 priority=1.0,
             )

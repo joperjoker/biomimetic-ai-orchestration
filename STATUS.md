@@ -39,6 +39,8 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 
 - Tier 2 calibration depth: added Brier and ECE calibration-error metrics on winners (`engine._brier_ece`), reported under H7 (about 0.26 each under overconfidence); added `harness.track_record_sweep` (recovery and winner calibration versus the length of the reliability record, 2 to 40 prior attempts) with the `track_record_recovery.svg` figure and a `track_record` summary block. Finding: the correction is cheap in data, a two-attempt record already recovers most of the gap, and recovery and calibration both improve with a longer record. Sixty-two tests pass; `ruff` clean.
 
+- Generalisability, sensitivity, and a dashboard: added a second generator family (`latent`, smooth cosine compatibility, no skill gate) threaded through `CellParams.family`; re-ran the population-dependent hypotheses under both families (H4, H7, H8 hold under both; H2 not under either). Added sensitivity bands (`recovery_vs_spread`, `reduction_vs_recall`) and a `recovery_surface` heatmap, new pure-SVG `heatmap`/`bar_chart` renderers and four figures, and a self-contained HTML dashboard (`cta dashboard`) that inlines every figure with the verdicts and the cross-generator comparison. Fulfils the paper's 2.7 generalisability commitment. Sixty-eight tests pass; `ruff` clean.
+
 ## Now runnable end to end
 
 `pip install -e ".[dev]"` then `cta autorun` runs the full deterministic

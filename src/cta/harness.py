@@ -12,7 +12,7 @@ Conditions: ``cta`` and ``pull_based`` (decentralised, via the event loop) and
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from cta.baselines import run_central
 from cta.engine import run_batch
@@ -41,6 +41,7 @@ class CellParams:
     activation_energy: float = 0.20
     temperature: float = 0.0
     observability_k: int | None = 32  # bounded task sampling per agent (A2); None means full
+    family: str = "domains"  # generative distribution family (2.7): domains or latent
 
 
 @dataclass
@@ -58,10 +59,14 @@ def run_cell(condition: str, params: CellParams, seed: int) -> dict[str, float]:
     if condition not in CONDITIONS:
         raise ValueError(f"unknown condition: {condition}")
     agents = generate_agents(
-        params.n_agents, params.n_domains, params.heterogeneity, random.Random(seed)
+        params.n_agents, params.n_domains, params.heterogeneity, random.Random(seed), params.family
     )
     tasks = generate_tasks(
-        params.n_tasks, params.n_domains, random.Random(seed + 10_000), params.activation_energy
+        params.n_tasks,
+        params.n_domains,
+        random.Random(seed + 10_000),
+        params.activation_energy,
+        params.family,
     )
     exec_rng = random.Random(seed + 20_000)
     if condition in ("cta", "pull_based"):
@@ -106,14 +111,10 @@ def scaling_sweep(
     for condition in conditions:
         points: list[dict[str, float]] = []
         for n in protocol.scaling_n:
-            params = CellParams(
+            params = replace(
+                protocol.base,
                 n_agents=n,
                 n_tasks=max(1, int(n * protocol.base.n_tasks / max(1, protocol.base.n_agents))),
-                n_domains=protocol.base.n_domains,
-                heterogeneity=protocol.base.heterogeneity,
-                activation_energy=protocol.base.activation_energy,
-                temperature=protocol.base.temperature,
-                observability_k=protocol.base.observability_k,
             )
             rows = run_seeds(condition, params, protocol.seeds)
             agg = aggregate(rows, metric)
@@ -182,7 +183,8 @@ def calibration_sweep(
             eces: list[float] = []
             for seed in range(seeds):
                 agents = generate_agents(
-                    base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed)
+                    base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed),
+                    base.family,
                 )
                 agents = with_capability_spread(agents, capability_low)
                 agents = with_track_record(agents, random.Random(seed + 40_000))
@@ -192,6 +194,7 @@ def calibration_sweep(
                     base.n_domains,
                     random.Random(seed + 10_000),
                     base.activation_energy,
+                    base.family,
                 )
                 res = run_batch(
                     agents,
@@ -247,13 +250,17 @@ def track_record_sweep(
         rel_brier: list[float] = []
         for seed in range(seeds):
             agents = generate_agents(
-                base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed)
+                base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
             )
             agents = with_capability_spread(agents, capability_low)
             agents = with_track_record(agents, random.Random(seed + 40_000), attempts=window)
             agents = with_miscalibration(agents, bias, noise, random.Random(seed + 60_000))
             tasks = generate_tasks(
-                base.n_tasks, base.n_domains, random.Random(seed + 10_000), base.activation_energy
+                base.n_tasks,
+                base.n_domains,
+                random.Random(seed + 10_000),
+                base.activation_energy,
+                base.family,
             )
             raw = run_batch(
                 agents,
@@ -288,6 +295,91 @@ def track_record_sweep(
     return out
 
 
+def _recovery_at(
+    base: CellParams, seeds: int, low: float, bias: float, noise: float = 0.05
+) -> float:
+    """Mean completion recovery (reliability minus raw) at a spread and a bias."""
+    rec: list[float] = []
+    for seed in range(seeds):
+        agents = generate_agents(
+            base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
+        )
+        agents = with_capability_spread(agents, low)
+        agents = with_track_record(agents, random.Random(seed + 40_000))
+        agents = with_miscalibration(agents, bias, noise, random.Random(seed + 60_000))
+        tasks = generate_tasks(
+            base.n_tasks, base.n_domains, random.Random(seed + 10_000),
+            base.activation_energy, base.family,
+        )
+        raw = run_batch(
+            agents, tasks, random.Random(seed + 20_000), condition="cta",
+            observability_k=base.observability_k, selection_mode="raw",
+        ).summary()["completion_rate"]
+        rel = run_batch(
+            agents, tasks, random.Random(seed + 20_000), condition="cta",
+            observability_k=base.observability_k, selection_mode="reliability",
+        ).summary()["completion_rate"]
+        rec.append(rel - raw)
+    return sum(rec) / len(rec)
+
+
+def recovery_vs_spread(
+    base: CellParams,
+    seeds: int,
+    lows: tuple[float, ...] = (0.1, 0.2, 0.35, 0.5, 0.7),
+    bias: float = 0.4,
+) -> list[dict[str, float]]:
+    """Sensitivity of the correction's recovery to competence spread.
+
+    Lower ``capability_low`` means a wider competence spread. The recovery of the
+    track-record correction should grow as competence varies more, since that is
+    where a competence signal matters. This also probes the heterogeneity question
+    the pre-registered H6 asks, on the axis where CTA's mechanism can act.
+    """
+    return [
+        {
+            "capability_low": low,
+            "spread": round(1.0 - low, 3),
+            "recovery": _recovery_at(base, seeds, low, bias),
+        }
+        for low in lows
+    ]
+
+
+def recovery_surface(
+    base: CellParams,
+    seeds: int,
+    biases: tuple[float, ...] = (0.0, 0.2, 0.4, 0.6),
+    lows: tuple[float, ...] = (0.1, 0.3, 0.5, 0.7),
+) -> dict[str, object]:
+    """Recovery over the overconfidence bias by competence spread grid (a surface)."""
+    grid = [[_recovery_at(base, seeds, low, bias) for low in lows] for bias in biases]
+    return {"biases": list(biases), "lows": list(lows), "recovery": grid}
+
+
+def reduction_vs_recall(
+    base: CellParams,
+    seeds: int,
+    recalls: tuple[float, ...] = (0.5, 0.7, 0.9, 1.0),
+    adversarial_fraction: float = 0.3,
+) -> list[dict[str, float]]:
+    """Sensitivity of the safety result to the gate's detection recall (H4)."""
+    out: list[dict[str, float]] = []
+    for r in recalls:
+        res = safety_ablation(base, seeds, adversarial_fraction, gate_recall=r)
+        on = sum(res["gate_on_violations"]) / len(res["gate_on_violations"])
+        off = sum(res["gate_off_violations"]) / len(res["gate_off_violations"])
+        out.append(
+            {
+                "gate_recall": r,
+                "gate_on_violations": on,
+                "gate_off_violations": off,
+                "reduction": 1.0 - on / off if off > 0 else 0.0,
+            }
+        )
+    return out
+
+
 def safety_ablation(
     base: CellParams,
     seeds: int,
@@ -307,13 +399,17 @@ def safety_ablation(
     gate = GateConfig(scope_recall=gate_recall)
     for seed in range(seeds):
         agents = generate_agents(
-            base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed)
+            base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
         )
         agents = with_injected_adversarial(
             agents, adversarial_fraction, random.Random(seed + 70_000)
         )
         tasks = generate_tasks(
-            base.n_tasks, base.n_domains, random.Random(seed + 10_000), base.activation_energy
+            base.n_tasks,
+            base.n_domains,
+            random.Random(seed + 10_000),
+            base.activation_energy,
+            base.family,
         )
         on_res = run_batch(
             agents,
@@ -513,14 +609,7 @@ def stability_grid(
     grid: list[dict[str, float]] = []
     for ea in ea_values:
         for t in t_values:
-            params = CellParams(
-                n_agents=base.n_agents,
-                n_tasks=base.n_tasks,
-                n_domains=base.n_domains,
-                heterogeneity=base.heterogeneity,
-                activation_energy=ea,
-                temperature=t,
-            )
+            params = replace(base, activation_energy=ea, temperature=t)
             rows = run_seeds("cta", params, seeds)
             stall = sum(r["stall_rate"] + r["infeasible_rate"] for r in rows) / len(rows)
             quality = sum(r["mean_quality"] for r in rows) / len(rows)
@@ -543,15 +632,7 @@ def heterogeneity_sweep(
     for condition in conditions:
         points: list[dict[str, float]] = []
         for h in protocol.heterogeneity_grid:
-            params = CellParams(
-                n_agents=protocol.base.n_agents,
-                n_tasks=protocol.base.n_tasks,
-                n_domains=protocol.base.n_domains,
-                heterogeneity=h,
-                activation_energy=protocol.base.activation_energy,
-                temperature=protocol.base.temperature,
-                observability_k=protocol.base.observability_k,
-            )
+            params = replace(protocol.base, heterogeneity=h)
             rows = run_seeds(condition, params, protocol.seeds)
             agg = aggregate(rows, metric)
             agg["heterogeneity"] = h
