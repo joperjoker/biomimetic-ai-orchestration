@@ -130,6 +130,32 @@ def _brier_ece(preds: list[float], outcomes: list[float], bins: int = 10) -> tup
     return brier, ece
 
 
+def reliability_bins(
+    preds: list[float], outcomes: list[float], bins: int = 10
+) -> list[dict[str, float]]:
+    """Per-bin mean prediction, realised accuracy, and count, for a reliability diagram.
+
+    Bins the predictions into equal-width intervals over [0, 1] and, for each
+    non-empty bin, reports the mean predicted value and the fraction of successes.
+    A perfectly calibrated predictor lies on the diagonal (mean prediction equals
+    accuracy); points above the diagonal are underconfident, below are overconfident.
+    """
+    out: list[dict[str, float]] = []
+    for b in range(bins):
+        lo, hi = b / bins, (b + 1) / bins
+        idx = [i for i, p in enumerate(preds) if (lo <= p < hi) or (b == bins - 1 and p == 1.0)]
+        if not idx:
+            continue
+        out.append(
+            {
+                "mean_prediction": sum(preds[i] for i in idx) / len(idx),
+                "accuracy": sum(outcomes[i] for i in idx) / len(idx),
+                "count": len(idx),
+            }
+        )
+    return out
+
+
 def _fires_on(delta: float, temperature: float, rng: random.Random) -> bool:
     """Deterministic threshold firing, with an Arrhenius soft threshold for T > 0."""
     if delta >= 0.0:

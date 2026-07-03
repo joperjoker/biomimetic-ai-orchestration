@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
+<rect width="720" height="440" fill="white"/>
+<text x="360" y="22" text-anchor="middle" font-size="16">Recovery across fleet composition</text>
+<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
+<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
+<text x="315" y="422" text-anchor="middle">fraction of overconfident agents</text>
+<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">completion recovery</text>
+<path d="M70.0 173.4 L192.5 40.0 L315.0 156.2 L437.5 139.0 L560.0 151.9" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="70.0" cy="173.4" r="3" fill="#2f6f9f"/>
+<circle cx="192.5" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="315.0" cy="156.2" r="3" fill="#2f6f9f"/>
+<circle cx="437.5" cy="139.0" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="151.9" r="3" fill="#2f6f9f"/>
+<rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
+<text x="594" y="58">recovery</text>
+<text x="70" y="398" text-anchor="middle">0</text>
+<text x="560" y="398" text-anchor="middle">1</text>
+<text x="62" y="380" text-anchor="end">0</text>
+<text x="62" y="50" text-anchor="end">0.08</text>
+</svg>

@@ -1590,6 +1590,106 @@
     "competence_proxy_cost": 0.013633084281527097,
     "total_gap": 0.05485472819215553
   },
+  "fleet": {
+    "experiment": {
+      "raw_completion": 0.7635416666666667,
+      "reliability_completion": 0.8395833333333332,
+      "recovery": 0.07604166666666656,
+      "brier_raw": 0.16700634043721632,
+      "brier_reliability": 0.1427511079743689,
+      "bins_raw": [
+        {
+          "mean_prediction": 0.5602288227594765,
+          "accuracy": 0.625,
+          "count": 8
+        },
+        {
+          "mean_prediction": 0.664661870344072,
+          "accuracy": 0.8048780487804879,
+          "count": 41
+        },
+        {
+          "mean_prediction": 0.7654223169231962,
+          "accuracy": 0.7522123893805309,
+          "count": 113
+        },
+        {
+          "mean_prediction": 0.85293263851772,
+          "accuracy": 0.7873754152823921,
+          "count": 301
+        },
+        {
+          "mean_prediction": 0.9622172757981319,
+          "accuracy": 0.8307349665924276,
+          "count": 449
+        }
+      ],
+      "bins_reliability": [
+        {
+          "mean_prediction": 0.554675782019045,
+          "accuracy": 0.6666666666666666,
+          "count": 12
+        },
+        {
+          "mean_prediction": 0.667336729053164,
+          "accuracy": 0.9069767441860465,
+          "count": 43
+        },
+        {
+          "mean_prediction": 0.7633098509066933,
+          "accuracy": 0.8585858585858586,
+          "count": 99
+        },
+        {
+          "mean_prediction": 0.8501931406929508,
+          "accuracy": 0.8107255520504731,
+          "count": 317
+        },
+        {
+          "mean_prediction": 0.9659116800395701,
+          "accuracy": 0.852760736196319,
+          "count": 489
+        }
+      ]
+    },
+    "mix_sweep": [
+      {
+        "overconfident_fraction": 0.0,
+        "raw_completion": 0.8052083333333334,
+        "reliability_completion": 0.8552083333333333,
+        "recovery": 0.04999999999999993
+      },
+      {
+        "overconfident_fraction": 0.25,
+        "raw_completion": 0.7677083333333334,
+        "reliability_completion": 0.8499999999999999,
+        "recovery": 0.08229166666666643
+      },
+      {
+        "overconfident_fraction": 0.5,
+        "raw_completion": 0.7645833333333332,
+        "reliability_completion": 0.81875,
+        "recovery": 0.05416666666666681
+      },
+      {
+        "overconfident_fraction": 0.75,
+        "raw_completion": 0.7604166666666666,
+        "reliability_completion": 0.81875,
+        "recovery": 0.05833333333333335
+      },
+      {
+        "overconfident_fraction": 1.0,
+        "raw_completion": 0.7604166666666667,
+        "reliability_completion": 0.815625,
+        "recovery": 0.055208333333333304
+      }
+    ],
+    "safety": {
+      "gate_on_violations": 1.7,
+      "gate_off_violations": 11.7,
+      "reduction": 0.8547008547008547
+    }
+  },
   "robustness": {
     "domains": {
       "H2": "NOT SUPPORTED",

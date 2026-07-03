@@ -45,6 +45,8 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 
 - Live-pilot scaffold (Stage 2): `src/cta/pilot.py` now has a `PilotClient` seam (`assess`, `perform`), a deterministic `MockClient` that runs the whole pilot pipeline with no model calls, a guarded `ClaudeAgentClient` stub for the live path, and `run_pilot` which reuses eligibility, the barrier, reliability-weighted selection with an online track record, and the gate, reporting the calibration measures. Runnable via `cta pilot`. `tests/test_pilot.py` added. The live execution still needs the `llm` extra, real subagents, and budget approval, but the plumbing is ready and tested. Seventy-three tests pass; `ruff` clean.
 
+- Realistic fleet and the reliability diagram: `src/cta/realism.py` builds a mixed fleet from calibration archetypes grounded in MarketBench (overconfident/calibrated/underconfident) and runs it through the pilot pipeline with a success-based self-report. The track-record correction still recovers completion (about 0.06 to 0.08), improves calibration, and the gate still cuts violations by about 0.8; the recovery stays positive across fleet compositions. Added the missing calibration visualisation (`engine.reliability_bins` + a reliability diagram) and a fleet-mix figure, wired into `autorun`, the dashboard, and the paper. `tests/test_realism.py` added. Seventy-eight tests pass; `ruff` clean.
+
 ## Now runnable end to end
 
 `pip install -e ".[dev]"` then `cta autorun` runs the full deterministic

@@ -39,6 +39,10 @@ pending.
 
 ![h2_decomposition](figures/h2_decomposition.svg)
 
+![reliability_diagram](figures/reliability_diagram.svg)
+
+![fleet_mix](figures/fleet_mix.svg)
+
 ## Peak per-node load scaling
 
 | N | cta | pull_based | central_greedy | central_optimal | central_best |

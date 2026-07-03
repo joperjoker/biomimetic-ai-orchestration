@@ -36,6 +36,7 @@ from cta.harness import (
     track_record_sweep,
 )
 from cta.pilot import MockClient, run_pilot
+from cta.realism import adversarial_fleet_safety, fleet_experiment, fleet_mix_sweep
 from cta.report import evaluate, write_results_md
 from cta.stats import mean_ci
 from cta.viz import bar_chart, heatmap, line_chart, save_svg
@@ -126,6 +127,10 @@ def autorun(
     recovery_grid = recovery_surface(protocol.base, protocol.seeds)
     gate_recall_sweep = reduction_vs_recall(protocol.base, protocol.seeds)
     h2_gap = h2_decomposition(protocol.base, protocol.seeds)
+    # Realistic fleet grounded in measured LLM calibration (MarketBench archetypes).
+    fleet = fleet_experiment(seeds=protocol.seeds)
+    fleet_mix = fleet_mix_sweep(seeds=protocol.seeds)
+    fleet_safety = adversarial_fleet_safety(seeds=protocol.seeds)
     verdicts = evaluate(
         base_values,
         scaling,
@@ -266,6 +271,41 @@ def autorun(
         ),
         figures_dir / "h2_decomposition.svg",
     )
+    # Reliability diagram of the realistic fleet: mean predicted vs realised
+    # success, with the diagonal of perfect calibration. Points below the diagonal
+    # are overconfident. The correction pulls the retained winners toward it.
+    reliability_series = {
+        "raw self-report": [
+            (float(b["mean_prediction"]), float(b["accuracy"])) for b in fleet["bins_raw"]
+        ],
+        "reliability correction": [
+            (float(b["mean_prediction"]), float(b["accuracy"])) for b in fleet["bins_reliability"]
+        ],
+        "perfect calibration": [(0.0, 0.0), (1.0, 1.0)],
+    }
+    save_svg(
+        line_chart(
+            reliability_series,
+            title="Fleet calibration: predicted vs realised success",
+            xlabel="mean predicted success",
+            ylabel="realised success rate",
+        ),
+        figures_dir / "reliability_diagram.svg",
+    )
+    # Fleet-mix sweep: recovery as the fleet's overconfident fraction rises.
+    save_svg(
+        line_chart(
+            {
+                "recovery": [
+                    (float(p["overconfident_fraction"]), float(p["recovery"])) for p in fleet_mix
+                ]
+            },
+            title="Recovery across fleet composition",
+            xlabel="fraction of overconfident agents",
+            ylabel="completion recovery",
+        ),
+        figures_dir / "fleet_mix.svg",
+    )
 
     figures = [
         "figures/scaling_peak_per_node.svg",
@@ -278,6 +318,8 @@ def autorun(
         "figures/calibration_surface.svg",
         "figures/robustness_bars.svg",
         "figures/h2_decomposition.svg",
+        "figures/reliability_diagram.svg",
+        "figures/fleet_mix.svg",
     ]
     write_results_md(out / "RESULTS.md", verdicts, scaling, figures)
 
@@ -305,6 +347,7 @@ def autorun(
         "recovery_surface": recovery_grid,
         "reduction_vs_recall": gate_recall_sweep,
         "h2_decomposition": h2_gap,
+        "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
         "verdicts": verdicts,
     }

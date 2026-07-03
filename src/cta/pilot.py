@@ -154,15 +154,20 @@ def run_pilot(
     activation_energy: float = 0.20,
     gate: GateConfig | None = None,
     gate_enabled: bool = True,
+    selection: str = "reliability",
+    rng: random.Random | None = None,
 ) -> PilotResult:
     """Run the framework over a live (or mock) client, one task at a time.
 
     Selection is the same as the simulation: eligibility, then the activation
-    barrier on the self-report, then the reliability-weighted bid, then the gate.
-    The reliability estimate is updated online from realised outcomes, so the
-    track-record correction accumulates as the pilot proceeds.
+    barrier on the self-report, then the bid, then the gate. With
+    ``selection='reliability'`` the bid discounts the self-report by the online
+    track record (the correction); with ``'raw'`` it ranks on the self-report
+    alone (the naive auction). The reliability estimate is updated online from
+    realised outcomes, so the correction accumulates as the pilot proceeds.
     """
     cfg = gate if gate is not None else GateConfig()
+    grng = rng if rng is not None else random.Random(0)
     record = {a.agent_id: [a.successes, a.attempts] for a in agents}
 
     def reliability_live(agent_id: str) -> float:
@@ -180,14 +185,12 @@ def run_pilot(
         if not firing:
             outcomes.append(PilotOutcome(task.task_id, "STALLED", None, None, None, False))
             continue
-        winner = max(
-            firing,
-            key=lambda a: (
-                self_reports[a.agent_id] * reliability_live(a.agent_id) / max(a.latency, EPS),
-                -a.latency,
-                a.agent_id,
-            ),
-        )
+
+        def _bid(a: Agent, reports: dict[str, float] = self_reports) -> float:
+            r = reliability_live(a.agent_id) if selection == "reliability" else 1.0
+            return reports[a.agent_id] * r / max(a.latency, EPS)
+
+        winner = max(firing, key=lambda a: (_bid(a), -a.latency, a.agent_id))
         if gate_enabled and reliability_live(winner.agent_id) < cfg.acceptance_threshold:
             outcomes.append(
                 PilotOutcome(
@@ -196,7 +199,9 @@ def run_pilot(
             )
             continue
         quality, in_scope = client.perform(winner, task)
-        if gate_enabled and not in_scope:
+        # The gate detects an out-of-scope action with recall < 1 (an imperfect
+        # detector), so some slip through, as in the batch engine.
+        if not in_scope and gate_enabled and grng.random() < cfg.scope_recall:
             outcomes.append(
                 PilotOutcome(
                     task.task_id, "DEFLECTED", None, self_reports[winner.agent_id], None, False
