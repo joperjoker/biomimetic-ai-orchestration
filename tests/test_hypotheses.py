@@ -40,12 +40,20 @@ def test_calibration_sweep_recovers_completion():
     assert len(raw_top["completion_values"]) == 3
 
 
-def test_safety_ablation_gate_prevents_violations():
+def test_safety_ablation_gate_reduces_violations():
     base = CellParams(n_agents=60, n_tasks=48, n_domains=4, heterogeneity=0.8)
-    res = safety_ablation(base, seeds=3, adversarial_fraction=0.4)
-    # With the gate on there are no integrity violations; with it off there are.
-    assert all(v == 0 for v in res["gate_on_violations"])
-    assert sum(res["gate_off_violations"]) > 0
+    res = safety_ablation(base, seeds=3, adversarial_fraction=0.4, gate_recall=0.9)
+    on = sum(res["gate_on_violations"])
+    off = sum(res["gate_off_violations"])
+    # With an imperfect gate the violation count falls substantially but need not
+    # reach zero; without the gate every out-of-scope action executes.
+    assert off > 0
+    assert on < off
+    assert 1.0 - on / off >= 0.667
+
+    # A perfect-recall gate blocks every out-of-scope action.
+    perfect = safety_ablation(base, seeds=3, adversarial_fraction=0.4, gate_recall=1.0)
+    assert sum(perfect["gate_on_violations"]) == 0
 
 
 def test_stability_grid_shape_and_monotonicity():

@@ -16,6 +16,7 @@ from cta.harness import (
     CONDITIONS,
     CellParams,
     Protocol,
+    annealing_curve,
     calibration_sweep,
     feasibility_check,
     gate_ablation,
@@ -24,6 +25,7 @@ from cta.harness import (
     safety_ablation,
     scaling_sweep,
     stability_grid,
+    temporal_metrics,
 )
 from cta.report import evaluate, write_results_md
 from cta.stats import mean_ci
@@ -85,8 +87,18 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
     stability = stability_grid(protocol.base, max(2, protocol.seeds // 2))
     calibration = calibration_sweep(protocol.base, protocol.seeds)
     safety = safety_ablation(protocol.base, protocol.seeds)
+    annealing = annealing_curve(protocol.base, protocol.seeds)
+    temporal = temporal_metrics(protocol.base, protocol.seeds)
     verdicts = evaluate(
-        base_values, scaling, hetero, gate, feasibility, stability, calibration, safety
+        base_values,
+        scaling,
+        hetero,
+        gate,
+        feasibility,
+        stability,
+        calibration,
+        safety,
+        annealing,
     )
 
     # Calibration figure: task completion versus overconfidence, one line per mode.
@@ -104,10 +116,25 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
         figures_dir / "calibration_quality.svg",
     )
 
+    # Annealing figure: maximum stall time falls as the annealing rate rises (E14).
+    annealing_series = {
+        "max stall (rounds)": [(float(pt["rate"]), float(pt["max_stall"])) for pt in annealing],
+    }
+    save_svg(
+        line_chart(
+            annealing_series,
+            title="Stall time bounded by activation-energy annealing",
+            xlabel="annealing rate",
+            ylabel="maximum stall (rounds)",
+        ),
+        figures_dir / "annealing_stall.svg",
+    )
+
     figures = [
         "figures/scaling_peak_per_node.svg",
         "figures/heterogeneity_quality.svg",
         "figures/calibration_quality.svg",
+        "figures/annealing_stall.svg",
     ]
     write_results_md(out / "RESULTS.md", verdicts, scaling, figures)
 
@@ -128,6 +155,8 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
         "stability": stability,
         "calibration": calibration,
         "safety": safety,
+        "annealing": annealing,
+        "temporal": temporal,
         "verdicts": verdicts,
     }
     (out).mkdir(parents=True, exist_ok=True)

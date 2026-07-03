@@ -222,9 +222,12 @@ def run_batch(
         # Integrity check: does the winner act within the task scope (E11)?
         in_scope = rng.random() >= winner.out_of_scope_prob
         if not in_scope and gate_active:
-            # The gate prevents the out-of-scope write; no violation is recorded.
-            outcomes.append(TaskOutcome(task.task_id, "DEFLECTED", None, None, len(firing)))
-            continue
+            # The gate detects the out-of-scope action with recall < 1. When it
+            # catches it the write is prevented; when it misses, the action
+            # executes and is recorded as a violation that slipped past the gate.
+            if rng.random() < gate_cfg.scope_recall:
+                outcomes.append(TaskOutcome(task.task_id, "DEFLECTED", None, None, len(firing)))
+                continue
 
         q = realised_quality(true_c[winner.agent_id], winner.capability, rng)
         status = "COMPLETED" if is_success(q) else "FAILED"

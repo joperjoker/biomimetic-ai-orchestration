@@ -11,10 +11,10 @@ pending.
 | H1 | SUPPORTED | peak per-node load grows more slowly for CTA than central |
 | H2 | SUPPORTED | CTA quality is not worse than pull-based and within margin of the optimum |
 | H3 | SUPPORTED | the engine labels infeasible and stalled tasks correctly |
-| H4 | SUPPORTED | the integrity gate prevents out-of-scope writes under adversarial agents |
-| H5 | SUPPORTED | allocation is stable and the barrier behaves monotonically |
+| H4 | SUPPORTED | the integrity gate substantially reduces out-of-scope writes |
+| H5 | SUPPORTED | annealing bounds the stall time of feasible tasks |
 | H6 | NOT SUPPORTED | CTA advantage over the optimum increases with heterogeneity |
-| H7 | SUPPORTED | self-reports over-predict realised success (overconfidence gap) |
+| H7 | SUPPORTED | self-reports over-predict realised success because they omit competence |
 | H8 | SUPPORTED | the track-record correction recovers completion under miscalibration |
 
 ## Figures
@@ -24,6 +24,8 @@ pending.
 ![heterogeneity_quality](figures/heterogeneity_quality.svg)
 
 ![calibration_quality](figures/calibration_quality.svg)
+
+![annealing_stall](figures/annealing_stall.svg)
 
 ## Peak per-node load scaling
 

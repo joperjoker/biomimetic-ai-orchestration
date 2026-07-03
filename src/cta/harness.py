@@ -25,8 +25,9 @@ from cta.generators import (
     with_miscalibration,
     with_track_record,
 )
-from cta.scoring import Task, compatibility, eligible
+from cta.scoring import Agent, GateConfig, Task, compatibility, eligible
 from cta.stats import mean_ci
+from cta.temporal import TemporalConfig, run_temporal
 
 CONDITIONS = ("cta", "pull_based", "central_greedy", "central_optimal")
 
@@ -214,17 +215,22 @@ def calibration_sweep(
 
 
 def safety_ablation(
-    base: CellParams, seeds: int, adversarial_fraction: float = 0.3
+    base: CellParams,
+    seeds: int,
+    adversarial_fraction: float = 0.3,
+    gate_recall: float = 0.9,
 ) -> dict[str, list[float]]:
     """H4 (safety): count integrity violations with the gate on and off.
 
     A fraction of agents are adversarial (likely to act outside the task scope).
-    With the gate on their out-of-scope actions are deflected as prevented
-    violations; with it off they execute and are recorded, so gate-on counts
-    should be zero (or far below gate-off).
+    The gate detects an out-of-scope action with recall `gate_recall` below 1, so
+    with the gate on the violation count is reduced but not necessarily zero; with
+    the gate off every out-of-scope action executes. The result is the measured
+    reduction, not a tautological zero.
     """
     on: list[float] = []
     off: list[float] = []
+    gate = GateConfig(scope_recall=gate_recall)
     for seed in range(seeds):
         agents = generate_agents(
             base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed)
@@ -241,6 +247,7 @@ def safety_ablation(
             random.Random(seed + 20_000),
             condition="cta",
             observability_k=base.observability_k,
+            gate=gate,
             gate_enabled=True,
         ).summary()
         off_res = run_batch(
@@ -253,7 +260,124 @@ def safety_ablation(
         ).summary()
         on.append(on_res["integrity_violations"])
         off.append(off_res["integrity_violations"])
-    return {"gate_on_violations": on, "gate_off_violations": off}
+    return {"gate_on_violations": on, "gate_off_violations": off, "gate_recall": [gate_recall]}
+
+
+def temporal_metrics(base: CellParams, seeds: int) -> dict[str, list[float]]:
+    """Run the round-based engine on the base population for temporal measures.
+
+    Returns the per-seed allocation latency, throughput, maximum stall, and
+    completion, which the batch engine cannot produce because it has no time axis.
+    """
+    latency: list[float] = []
+    throughput: list[float] = []
+    max_stall: list[float] = []
+    completion: list[float] = []
+    for seed in range(seeds):
+        agents = generate_agents(
+            base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed)
+        )
+        tasks = generate_tasks(
+            base.n_tasks, base.n_domains, random.Random(seed + 10_000), base.activation_energy
+        )
+        res = run_temporal(
+            agents,
+            tasks,
+            random.Random(seed + 80_000),
+            TemporalConfig(observability_k=base.observability_k),
+        ).summary()
+        latency.append(res["mean_latency"])
+        throughput.append(res["throughput"])
+        max_stall.append(res["max_stall"])
+        completion.append(res["completion_rate"])
+    return {
+        "mean_latency": latency,
+        "throughput": throughput,
+        "max_stall": max_stall,
+        "completion_rate": completion,
+    }
+
+
+def _stall_scenario(
+    n_agents: int, n_tasks: int, rng: random.Random
+) -> tuple[list[Agent], list[Task]]:
+    """A controlled scenario where every eligible agent's fit is below the barrier.
+
+    Each agent is a generalist with a uniform capability vector, so its cosine to
+    any single-domain task requirement is a fixed 0.5 and its compatibility is
+    about 0.707, well under the stall tasks' barrier of 0.85. No agent can clear
+    the barrier at first, so the tasks are stalled but feasible: only annealing
+    (E14) can lower the barrier enough to resolve them.
+    """
+    n_domains = 4
+    uniform = tuple(1.0 / n_domains for _ in range(n_domains))
+    skills = frozenset(f"skill_{d}" for d in range(n_domains))
+    agents = [
+        Agent(
+            agent_id=f"gen_{i}",
+            role="generalist",
+            skills=skills,
+            tools=frozenset({"edit", "test"}),
+            permitted_scope=frozenset({"src/**", "tests/**"}),
+            capability_vector=uniform,
+            capability=0.6 + 0.3 * rng.random(),
+            successes=8,
+            attempts=10,
+            latency=0.5 + rng.random(),
+        )
+        for i in range(n_agents)
+    ]
+    tasks = [
+        Task(
+            task_id=f"stall_{k}",
+            required_skills=frozenset({f"skill_{k % n_domains}"}),
+            required_tools=frozenset({"edit", "test"}),
+            scope=frozenset({"src/**"}),
+            requirement_vector=tuple(1.0 if d == k % n_domains else 0.0 for d in range(n_domains)),
+            activation_energy=0.85,
+        )
+        for k in range(n_tasks)
+    ]
+    return agents, tasks
+
+
+def annealing_curve(
+    base: CellParams,
+    seeds: int,
+    rates: tuple[float, ...] = (0.0, 0.02, 0.05, 0.1, 0.2),
+) -> list[dict[str, float]]:
+    """H5: how the annealing rate bounds the stall time of feasible tasks.
+
+    On a controlled stall-prone scenario, sweep the annealing rate and record the
+    maximum stall and the unmet rate. At rate zero the barrier never relaxes, the
+    feasible tasks are never claimed, and they are unmet with an unbounded stall.
+    As the rate rises the barrier drops sooner, so the stall falls and every
+    feasible task is resolved. This is the E14 mechanism, measured.
+    """
+    n_agents = max(4, base.n_agents // 4)
+    n_tasks = max(4, base.n_tasks // 4)
+    out: list[dict[str, float]] = []
+    for rate in rates:
+        stalls: list[float] = []
+        unmets: list[float] = []
+        for seed in range(seeds):
+            agents, tasks = _stall_scenario(n_agents, n_tasks, random.Random(seed + 90_000))
+            res = run_temporal(
+                agents,
+                tasks,
+                random.Random(seed + 80_000),
+                TemporalConfig(annealing=rate > 0.0, anneal_rate=rate),
+            ).summary()
+            stalls.append(res["max_stall"])
+            unmets.append(res["unmet_rate"])
+        out.append(
+            {
+                "rate": rate,
+                "max_stall": sum(stalls) / len(stalls),
+                "unmet_rate": sum(unmets) / len(unmets),
+            }
+        )
+    return out
 
 
 def feasibility_check(base: CellParams, seed: int = 0) -> dict[str, float]:

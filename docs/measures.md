@@ -139,7 +139,9 @@ The bid may use only signals available at allocation time. Three modes are compa
 - `reliability`: the self-report discounted by the observable track record, `c_hat x R / L`, the correction.
 - `true`: the full-information reference, `c x C / L`, the oracle that knows the true fit and competence.
 
-Integrity is a per-execution draw: the winner acts out of scope with probability `out_of_scope_prob(a)`. The Rejection Gate (E11) deflects an out-of-scope action as a prevented violation; without the gate the action executes and is counted as an integrity violation.
+Integrity is a per-execution draw: the winner acts out of scope with probability `out_of_scope_prob(a)`. The Rejection Gate (E11) is an imperfect detector: it catches an out-of-scope action with recall `scope_recall < 1` and deflects it as a prevented violation, and misses it otherwise so the action executes and is counted as an integrity violation. Without the gate every out-of-scope action executes. The safety result is therefore the measured reduction in violations, not a tautological zero.
+
+The temporal engine adds the time-based quantities. A task open for `w` rounds has an annealed barrier `Ea_eff = max(Ea_min, Ea - anneal_rate x w)` (E14). Allocation latency is the rounds from advertisement to a successful claim, the stall time is the rounds a task waits before it is claimed, starvation is the maximum stall over feasible tasks, and throughput is completed tasks per round. An infeasible task (no eligible agent) is resolved at once and never annealed, so annealing bounds the stall of feasible tasks only.
 
 Derived measures for the calibration study, each a query over the event log:
 

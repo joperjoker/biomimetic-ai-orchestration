@@ -664,11 +664,11 @@
   },
   "safety": {
     "gate_on_violations": [
+      2,
       0,
-      0,
-      0,
-      0,
-      0
+      3,
+      1,
+      4
     ],
     "gate_off_violations": [
       16,
@@ -676,6 +676,66 @@
       17,
       15,
       10
+    ],
+    "gate_recall": [
+      0.9
+    ]
+  },
+  "annealing": [
+    {
+      "rate": 0.0,
+      "max_stall": 300.0,
+      "unmet_rate": 1.0
+    },
+    {
+      "rate": 0.02,
+      "max_stall": 8.0,
+      "unmet_rate": 0.0
+    },
+    {
+      "rate": 0.05,
+      "max_stall": 3.0,
+      "unmet_rate": 0.0
+    },
+    {
+      "rate": 0.1,
+      "max_stall": 2.0,
+      "unmet_rate": 0.0
+    },
+    {
+      "rate": 0.2,
+      "max_stall": 1.0,
+      "unmet_rate": 0.0
+    }
+  ],
+  "temporal": {
+    "mean_latency": [
+      0.041666666666666664,
+      0.125,
+      0.041666666666666664,
+      0.08333333333333333,
+      0.0
+    ],
+    "throughput": [
+      11.0,
+      11.333333333333334,
+      11.333333333333334,
+      7.25,
+      9.333333333333334
+    ],
+    "max_stall": [
+      1,
+      2,
+      1,
+      2,
+      0
+    ],
+    "completion_rate": [
+      0.6875,
+      0.7083333333333334,
+      0.7083333333333334,
+      0.6041666666666666,
+      0.5833333333333334
     ]
   },
   "verdicts": {
@@ -707,21 +767,23 @@
       "verdict": "SUPPORTED"
     },
     "H4": {
-      "claim": "the integrity gate prevents out-of-scope writes under adversarial agents",
-      "gate_on_violations": 0.0,
+      "claim": "the integrity gate substantially reduces out-of-scope writes",
+      "gate_on_violations": 2.0,
       "gate_off_violations": 11.6,
+      "reduction": 0.828,
       "verdict": "SUPPORTED"
     },
     "H5": {
-      "claim": "allocation is stable and the barrier behaves monotonically",
-      "unmet_at_low_ea": 0.0,
-      "unmet_at_high_ea": 0.0,
+      "claim": "annealing bounds the stall time of feasible tasks",
+      "unmet_without_annealing": 1.0,
+      "unmet_with_annealing": 0.0,
+      "max_stall_without_annealing": 300.0,
+      "max_stall_with_annealing": 1.0,
       "verdict": "SUPPORTED"
     },
     "H7": {
-      "claim": "self-reports over-predict realised success (overconfidence gap)",
-      "overconfidence_gap_at_zero_bias": 0.187,
-      "overconfidence_gap_at_max_bias": 0.192,
+      "claim": "self-reports over-predict realised success because they omit competence",
+      "overconfidence_gap": 0.192,
       "verdict": "SUPPORTED"
     },
     "H8": {

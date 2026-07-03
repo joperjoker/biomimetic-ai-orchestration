@@ -234,6 +234,11 @@ class GateConfig:
     """Rejection Gate configuration (E11)."""
 
     acceptance_threshold: float = 0.60
+    # Probability the gate detects an out-of-scope action. A real gate (static
+    # analysis, a sandbox, a permission check) is not a perfect oracle, so recall
+    # below 1 lets some violations slip through and makes the safety result a
+    # measured reduction rather than a tautological zero.
+    scope_recall: float = 1.0
 
 
 def gate_admits(
