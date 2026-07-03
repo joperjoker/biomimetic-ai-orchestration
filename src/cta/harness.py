@@ -29,7 +29,7 @@ from cta.scoring import Agent, GateConfig, Task, compatibility, eligible
 from cta.stats import mean_ci
 from cta.temporal import TemporalConfig, run_temporal
 
-CONDITIONS = ("cta", "pull_based", "central_greedy", "central_optimal")
+CONDITIONS = ("cta", "pull_based", "central_greedy", "central_optimal", "central_best")
 
 
 @dataclass(frozen=True)
@@ -75,7 +75,11 @@ def run_cell(condition: str, params: CellParams, seed: int) -> dict[str, float]:
         )
         summary = result.summary()
     else:
-        method = "greedy" if condition == "central_greedy" else "optimal"
+        method = {
+            "central_greedy": "greedy",
+            "central_optimal": "optimal",
+            "central_best": "best",
+        }[condition]
         summary = run_central(agents, tasks, exec_rng, method=method)
     summary["condition"] = condition
     summary["seed"] = seed

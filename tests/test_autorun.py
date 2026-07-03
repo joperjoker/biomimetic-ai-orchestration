@@ -23,7 +23,7 @@ def test_evaluate_returns_all_hypotheses():
     base = {
         "cta": {"mean_quality": [0.85, 0.86, 0.84]},
         "pull_based": {"mean_quality": [0.80, 0.79, 0.81]},
-        "central_optimal": {"mean_quality": [0.88, 0.87, 0.89]},
+        "central_best": {"mean_quality": [0.88, 0.87, 0.89]},
     }
     scaling = {
         "cta": [{"n_agents": 40, "mean": 100.0}, {"n_agents": 320, "mean": 300.0}],
@@ -31,7 +31,7 @@ def test_evaluate_returns_all_hypotheses():
     }
     hetero = {
         "cta": [{"heterogeneity": 0.0, "mean": 0.70}, {"heterogeneity": 1.0, "mean": 0.90}],
-        "central_optimal": [
+        "central_best": [
             {"heterogeneity": 0.0, "mean": 0.75},
             {"heterogeneity": 1.0, "mean": 0.80},
         ],

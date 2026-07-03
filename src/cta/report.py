@@ -50,10 +50,13 @@ def evaluate(
         }
 
     # H2: CTA quality is at least the pull-based quality (the barrier helps) and
-    # within a pre-registered margin of the central optimum.
+    # within a pre-registered margin of the full-information optimum. The optimum
+    # is central_best (each task to its globally best eligible agent, agent reuse
+    # allowed), which matches CTA's non-exclusive setting, rather than the
+    # one-to-one Hungarian assignment that is handicapped by forced spreading.
     cta_q = base_values.get("cta", {}).get("mean_quality", [])
     pull_q = base_values.get("pull_based", {}).get("mean_quality", [])
-    opt_q = base_values.get("central_optimal", {}).get("mean_quality", [])
+    opt_q = base_values.get("central_best", {}).get("mean_quality", [])
     if cta_q and pull_q and opt_q:
         _, p_pull = mann_whitney_u(cta_q, pull_q)
         cta_mean = mean_ci(cta_q)[0]
@@ -204,6 +207,25 @@ def evaluate(
             "claim": "track-record correction recovers completion",
             "verdict": "PENDING",
         }
+
+    # Multiple-comparison control across the family of hypotheses that rest on a
+    # p-value (H2 against the pull-based baseline, H8 the calibration recovery).
+    # Holm-Bonferroni is applied and the corrected value and significance are
+    # recorded alongside the raw p, so the reported inference matches section 2.6.
+    p_family: dict[str, float] = {}
+    if "p_vs_pull" in verdicts.get("H2", {}):
+        p_family["H2"] = float(verdicts["H2"]["p_vs_pull"])
+    if "p" in verdicts.get("H8", {}):
+        p_family["H8"] = float(verdicts["H8"]["p"])
+    if p_family:
+        corrected = holm_over_hypotheses(p_family)
+        for key, (adj_p, significant) in corrected.items():
+            verdicts[key]["p_holm"] = round(adj_p, 4)
+            verdicts[key]["significant_holm"] = significant
+        # H8's support rests on the corrected significance, not the raw p.
+        if "H8" in verdicts and "significant_holm" in verdicts["H8"]:
+            recovers = float(verdicts["H8"].get("recovery", 0.0)) > 0.0
+            verdicts["H8"]["verdict"] = _verdict(recovers and verdicts["H8"]["significant_holm"])
     return verdicts
 
 
@@ -211,7 +233,7 @@ def _advantage_by_heterogeneity(
     heterogeneity: dict[str, list[dict[str, float]]],
 ) -> list[tuple[float, float]]:
     cta = heterogeneity.get("cta", [])
-    opt = heterogeneity.get("central_optimal", [])
+    opt = heterogeneity.get("central_best", [])
     out: list[tuple[float, float]] = []
     for c_point, o_point in zip(cta, opt, strict=False):
         h = c_point.get("heterogeneity", 0.0)

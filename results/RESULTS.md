@@ -9,7 +9,7 @@ pending.
 | Hypothesis | Verdict | Claim |
 | --- | --- | --- |
 | H1 | SUPPORTED | peak per-node load grows more slowly for CTA than central |
-| H2 | SUPPORTED | CTA quality is not worse than pull-based and within margin of the optimum |
+| H2 | NOT SUPPORTED | CTA quality is not worse than pull-based and within margin of the optimum |
 | H3 | SUPPORTED | the engine labels infeasible and stalled tasks correctly |
 | H4 | SUPPORTED | the integrity gate substantially reduces out-of-scope writes |
 | H5 | SUPPORTED | annealing bounds the stall time of feasible tasks |
@@ -29,9 +29,10 @@ pending.
 
 ## Peak per-node load scaling
 
-| N | cta | pull_based | central_greedy | central_optimal |
-| --- | --- | --- | --- | --- |
-| 40 | 32.0 | 40.0 | 1280.0 | 1280.0 |
-| 80 | 32.0 | 49.6 | 5120.0 | 5120.0 |
-| 160 | 32.0 | 54.6 | 20480.0 | 20480.0 |
-| 320 | 32.0 | 56.6 | 81920.0 | 81920.0 |
+| N | cta | pull_based | central_greedy | central_optimal | central_best |
+| --- | --- | --- | --- | --- | --- |
+| 50 | 32.0 | 45.5 | 2000.0 | 2000.0 | 2000.0 |
+| 100 | 32.0 | 53.1 | 8000.0 | 8000.0 | 8000.0 |
+| 200 | 32.0 | 56.2 | 32000.0 | 32000.0 | 32000.0 |
+| 500 | 32.0 | 59.8 | 200000.0 | 200000.0 | 200000.0 |
+| 1000 | 32.0 | 61.0 | 800000.0 | 800000.0 | 800000.0 |

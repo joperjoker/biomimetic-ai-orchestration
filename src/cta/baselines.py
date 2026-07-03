@@ -58,6 +58,30 @@ def greedy_assignment(agents: list[Agent], tasks: list[Task]) -> Assignment:
     return Assignment(pairs, "greedy")
 
 
+def best_assignment(agents: list[Agent], tasks: list[Task]) -> Assignment:
+    """Assign each task to its globally best eligible agent, allowing agent reuse.
+
+    This is the fair full-information reference for CTA's setting, where an agent
+    may take more than one task, unlike the one-to-one ``greedy`` and ``optimal``
+    assignments. Each task is given the agent that maximises the expected realised
+    quality, the true fit times the true capability (E12), which is the quantity
+    the quality metric measures. It is therefore a genuine upper bound that CTA
+    should approach from below, not a handicapped one-to-one optimum forced to
+    spread work across weaker agents.
+    """
+    pairs: list[tuple[str, str]] = []
+    for t in tasks:
+        scored = [
+            (compatibility(a, t) * a.capability, a.agent_id)
+            for a in agents
+            if eligible(a, t) and compatibility(a, t) > 0.0
+        ]
+        if scored:
+            scored.sort(key=lambda x: (-x[0], x[1]))
+            pairs.append((scored[0][1], t.task_id))
+    return Assignment(pairs, "best")
+
+
 def _brute_force_optimal(agents: list[Agent], tasks: list[Task]) -> Assignment:
     matrix = _score_matrix(agents, tasks)
     n_a, n_t = len(agents), len(tasks)
@@ -113,6 +137,8 @@ def run_central(
     """Assign centrally, execute the assigned pairs, and summarise."""
     if method == "greedy":
         assignment = greedy_assignment(agents, tasks)
+    elif method == "best":
+        assignment = best_assignment(agents, tasks)
     else:
         assignment = optimal_assignment(agents, tasks)
     by_id = {a.agent_id: a for a in agents}

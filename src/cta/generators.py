@@ -56,6 +56,15 @@ def generate_agents(
         else:
             # Broad, near-interchangeable skills when the population is homogeneous.
             skills = frozenset(f"skill_{d}" for d in range(n_domains))
+        capability = 0.5 + 0.5 * rng.random()
+        # An informative track record: successes are drawn from the agent's true
+        # capability, so reliability R (E4) is a real competence signal rather than
+        # a uniform constant. This is the realistic setting and the one in which
+        # CTA's reliability-weighted selection can function; a uniform record would
+        # leave selection competence-blind. Unreliable and adversarial agents are
+        # injected separately for the ablations.
+        attempts = 20
+        successes = sum(1 for _ in range(attempts) if rng.random() < capability)
         agents.append(
             Agent(
                 agent_id=f"agent_{i}",
@@ -65,12 +74,9 @@ def generate_agents(
                 tools=frozenset({"edit", "test"}),
                 permitted_scope=frozenset({"src/**", "tests/**"}),
                 capability_vector=vec,
-                capability=0.5 + 0.5 * rng.random(),
-                # A light positive track record, so a fresh agent starts above the
-                # gate threshold (R about 0.71). Unreliable agents are injected
-                # separately for the gate ablation (H4).
-                successes=4,
-                attempts=5,
+                capability=capability,
+                successes=successes,
+                attempts=attempts,
                 latency=0.5 + rng.random(),
             )
         )

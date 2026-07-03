@@ -41,8 +41,11 @@ def _demo_protocol() -> Protocol:
     )
 
 
-def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
-    protocol = _demo_protocol() if demo else Protocol()
+def autorun(
+    out_dir: str, demo: bool = True, protocol: Protocol | None = None
+) -> dict[str, object]:
+    if protocol is None:
+        protocol = _demo_protocol() if demo else Protocol()
     out = Path(out_dir)
     figures_dir = out / "figures"
 
@@ -53,7 +56,7 @@ def autorun(out_dir: str, demo: bool = True) -> dict[str, object]:
         base_values[cond] = {"mean_quality": [r["mean_quality"] for r in rows]}
 
     scaling = scaling_sweep(CONDITIONS, protocol, metric="peak_per_node")
-    hetero = heterogeneity_sweep(("cta", "central_optimal"), protocol, metric="mean_quality")
+    hetero = heterogeneity_sweep(("cta", "central_best"), protocol, metric="mean_quality")
 
     # Figures (pure SVG).
     scaling_series = {
