@@ -14,6 +14,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from cta.dashboard import write_dashboard
+from cta.generators import generate_agents, generate_tasks
 from cta.harness import (
     CONDITIONS,
     CellParams,
@@ -34,6 +35,7 @@ from cta.harness import (
     temporal_metrics,
     track_record_sweep,
 )
+from cta.pilot import MockClient, run_pilot
 from cta.report import evaluate, write_results_md
 from cta.stats import mean_ci
 from cta.viz import bar_chart, heatmap, line_chart, save_svg
@@ -321,6 +323,10 @@ def main(argv: list[str] | None = None) -> int:
     dash = sub.add_parser("dashboard", help="rebuild the HTML dashboard from an existing run")
     dash.add_argument("--out", default="results", help="results directory to read")
     dash.add_argument("--to", default="results/dashboard.html", help="dashboard output path")
+    pil = sub.add_parser("pilot", help="run the Stage 2 pilot pipeline (mock client, no calls)")
+    pil.add_argument("--agents", type=int, default=20, help="number of agents")
+    pil.add_argument("--tasks", type=int, default=15, help="number of tasks")
+    pil.add_argument("--seed", type=int, default=0, help="random seed")
     args = parser.parse_args(argv)
 
     if args.command == "autorun":
@@ -333,6 +339,17 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "dashboard":
         path = write_dashboard(args.out, args.to)
         print(f"Dashboard written to {path}")
+        return 0
+    if args.command == "pilot":
+        import random
+
+        agents = generate_agents(args.agents, 4, 0.8, random.Random(args.seed))
+        tasks = generate_tasks(args.tasks, 4, random.Random(args.seed + 10_000), 0.2)
+        result = run_pilot(agents, tasks, MockClient(seed=args.seed))
+        print("pilot complete (mock client, no model calls). Summary:")
+        for k, v in result.summary().items():
+            print(f"  {k}: {v}")
+        print("Swap MockClient for ClaudeAgentClient to run live (opt-in, budget-gated).")
         return 0
     return 1
 

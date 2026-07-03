@@ -43,6 +43,8 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 
 - H2 gap decomposition: added a `quality` selection mode (Binding Energy without the latency term) and `harness.h2_decomposition`, which splits the H2 quality gap into a latency (cost-for-speed) component and a competence-proxy component. A quality-first CTA reaches about 0.93, within the margin of the optimum, so roughly three quarters of the gap is the deliberate quality-for-latency tradeoff. New `h2_decomposition.svg` figure and dashboard entry; the paper's H2 row and Discussion updated. Sixty-nine tests pass; `ruff` clean.
 
+- Live-pilot scaffold (Stage 2): `src/cta/pilot.py` now has a `PilotClient` seam (`assess`, `perform`), a deterministic `MockClient` that runs the whole pilot pipeline with no model calls, a guarded `ClaudeAgentClient` stub for the live path, and `run_pilot` which reuses eligibility, the barrier, reliability-weighted selection with an online track record, and the gate, reporting the calibration measures. Runnable via `cta pilot`. `tests/test_pilot.py` added. The live execution still needs the `llm` extra, real subagents, and budget approval, but the plumbing is ready and tested. Seventy-three tests pass; `ruff` clean.
+
 ## Now runnable end to end
 
 `pip install -e ".[dev]"` then `cta autorun` runs the full deterministic
