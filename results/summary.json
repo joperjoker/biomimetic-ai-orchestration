@@ -1582,6 +1582,14 @@
       "reduction": 1.0
     }
   ],
+  "h2_decomposition": {
+    "reliability_quality": 0.8825024626115766,
+    "quality_mode_quality": 0.923724106522205,
+    "optimum_quality": 0.9373571908037321,
+    "latency_cost": 0.041221643910628436,
+    "competence_proxy_cost": 0.013633084281527097,
+    "total_gap": 0.05485472819215553
+  },
   "robustness": {
     "domains": {
       "H2": "NOT SUPPORTED",

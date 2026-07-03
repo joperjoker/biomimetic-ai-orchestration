@@ -103,6 +103,7 @@ _FIGS = [
     ("gate_recall.svg", "The safety result degrades gracefully with the gate's detection recall, rather than depending on a perfect detector."),
     ("annealing_stall.svg", "Activation-energy annealing bounds the stall time of feasible tasks; without it they are never claimed."),
     ("robustness_bars.svg", "Key outcomes under two structurally different generator families; the calibration and safety results hold in both."),
+    ("h2_decomposition.svg", "The H2 quality gap: a quality-first CTA reaches the optimum's neighbourhood; the deployed cost-aware CTA gives up quality for lower latency by design."),
     ("heterogeneity_quality.svg", "Match quality across agent heterogeneity for CTA and the full-information optimum."),
 ]
 

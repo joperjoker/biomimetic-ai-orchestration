@@ -37,6 +37,8 @@ pending.
 
 ![robustness_bars](figures/robustness_bars.svg)
 
+![h2_decomposition](figures/h2_decomposition.svg)
+
 ## Peak per-node load scaling
 
 | N | cta | pull_based | central_greedy | central_optimal | central_best |

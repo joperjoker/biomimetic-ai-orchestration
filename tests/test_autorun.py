@@ -73,6 +73,7 @@ def test_autorun_writes_artifacts(tmp_path):
     assert (out / "figures" / "track_record_recovery.svg").is_file()
     assert (out / "figures" / "calibration_surface.svg").is_file()
     assert (out / "figures" / "robustness_bars.svg").is_file()
+    assert (out / "figures" / "h2_decomposition.svg").is_file()
     loaded = json.loads((out / "summary.json").read_text(encoding="utf-8"))
     assert "verdicts" in loaded and "scaling_peak_per_node" in loaded
     assert "calibration" in loaded and "safety" in loaded
@@ -81,6 +82,7 @@ def test_autorun_writes_artifacts(tmp_path):
     # The generalisability pass compares verdicts across generator families.
     assert loaded["robustness"]["domains"]["H8"] == loaded["robustness"]["latent"]["H8"]
     assert "recovery_vs_spread" in loaded and "recovery_surface" in loaded
+    assert "h2_decomposition" in loaded and "latency_cost" in loaded["h2_decomposition"]
     # The dashboard is a single self-contained HTML page with the figures inlined.
     dash = (out / "dashboard.html").read_text(encoding="utf-8")
     assert dash.startswith("<!doctype html>") and "<svg" in dash

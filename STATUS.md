@@ -41,6 +41,8 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 
 - Generalisability, sensitivity, and a dashboard: added a second generator family (`latent`, smooth cosine compatibility, no skill gate) threaded through `CellParams.family`; re-ran the population-dependent hypotheses under both families (H4, H7, H8 hold under both; H2 not under either). Added sensitivity bands (`recovery_vs_spread`, `reduction_vs_recall`) and a `recovery_surface` heatmap, new pure-SVG `heatmap`/`bar_chart` renderers and four figures, and a self-contained HTML dashboard (`cta dashboard`) that inlines every figure with the verdicts and the cross-generator comparison. Fulfils the paper's 2.7 generalisability commitment. Sixty-eight tests pass; `ruff` clean.
 
+- H2 gap decomposition: added a `quality` selection mode (Binding Energy without the latency term) and `harness.h2_decomposition`, which splits the H2 quality gap into a latency (cost-for-speed) component and a competence-proxy component. A quality-first CTA reaches about 0.93, within the margin of the optimum, so roughly three quarters of the gap is the deliberate quality-for-latency tradeoff. New `h2_decomposition.svg` figure and dashboard entry; the paper's H2 row and Discussion updated. Sixty-nine tests pass; `ruff` clean.
+
 ## Now runnable end to end
 
 `pip install -e ".[dev]"` then `cta autorun` runs the full deterministic

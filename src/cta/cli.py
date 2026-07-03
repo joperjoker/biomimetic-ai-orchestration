@@ -22,6 +22,7 @@ from cta.harness import (
     calibration_sweep,
     feasibility_check,
     gate_ablation,
+    h2_decomposition,
     heterogeneity_sweep,
     recovery_surface,
     recovery_vs_spread,
@@ -122,6 +123,7 @@ def autorun(
     recovery_spread = recovery_vs_spread(protocol.base, protocol.seeds)
     recovery_grid = recovery_surface(protocol.base, protocol.seeds)
     gate_recall_sweep = reduction_vs_recall(protocol.base, protocol.seeds)
+    h2_gap = h2_decomposition(protocol.base, protocol.seeds)
     verdicts = evaluate(
         base_values,
         scaling,
@@ -245,6 +247,23 @@ def autorun(
         ),
         figures_dir / "robustness_bars.svg",
     )
+    # H2 gap decomposition: deployed cost-aware CTA, a quality-first CTA, and the
+    # full-information optimum, so the quality shortfall is attributed to its cause.
+    save_svg(
+        bar_chart(
+            categories=["deployed (cost-aware)", "quality-first", "optimum"],
+            series={
+                "mean quality": [
+                    round(float(h2_gap["reliability_quality"]), 3),
+                    round(float(h2_gap["quality_mode_quality"]), 3),
+                    round(float(h2_gap["optimum_quality"]), 3),
+                ]
+            },
+            title="H2 gap: cost-awareness vs the competence proxy",
+            ylabel="mean realised quality",
+        ),
+        figures_dir / "h2_decomposition.svg",
+    )
 
     figures = [
         "figures/scaling_peak_per_node.svg",
@@ -256,6 +275,7 @@ def autorun(
         "figures/gate_recall.svg",
         "figures/calibration_surface.svg",
         "figures/robustness_bars.svg",
+        "figures/h2_decomposition.svg",
     ]
     write_results_md(out / "RESULTS.md", verdicts, scaling, figures)
 
@@ -282,6 +302,7 @@ def autorun(
         "recovery_vs_spread": recovery_spread,
         "recovery_surface": recovery_grid,
         "reduction_vs_recall": gate_recall_sweep,
+        "h2_decomposition": h2_gap,
         "robustness": robustness,
         "verdicts": verdicts,
     }

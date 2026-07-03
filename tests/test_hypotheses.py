@@ -7,6 +7,7 @@ from cta.harness import (
     calibration_sweep,
     feasibility_check,
     gate_ablation,
+    h2_decomposition,
     recovery_vs_spread,
     reduction_vs_recall,
     safety_ablation,
@@ -45,6 +46,19 @@ def test_calibration_sweep_recovers_completion():
     # Winners over-report under raw self-selection (positive overconfidence gap).
     assert raw_top["overconfidence_gap"] > 0.0
     assert len(raw_top["completion_values"]) == 3
+
+
+def test_h2_decomposition_splits_the_gap():
+    base = CellParams(n_agents=60, n_tasks=48, n_domains=4, heterogeneity=0.8)
+    d = h2_decomposition(base, seeds=6)
+    # Ordering: the deployed cost-aware bid is at or below a quality-first bid,
+    # which is at or below the full-information optimum.
+    assert d["reliability_quality"] <= d["quality_mode_quality"] + 1e-9
+    assert d["quality_mode_quality"] <= d["optimum_quality"] + 1e-9
+    # The two components sum to the total gap.
+    assert abs(d["latency_cost"] + d["competence_proxy_cost"] - d["total_gap"]) < 1e-9
+    # Most of the gap is the deliberate cost-for-speed tradeoff, not the proxy.
+    assert d["latency_cost"] > d["competence_proxy_cost"]
 
 
 def test_recovery_grows_with_competence_spread():

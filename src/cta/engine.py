@@ -32,7 +32,7 @@ from cta.scoring import (
     self_reported_compatibility,
 )
 
-SELECTION_MODES = ("reliability", "raw", "true")
+SELECTION_MODES = ("reliability", "raw", "true", "quality")
 
 
 @dataclass
@@ -149,10 +149,14 @@ def _bid(mode: str, c_self: float, c_true: float, agent: Agent) -> float:
     - ``raw``: the self-report alone (``c_hat / L``), the naive auction.
     - ``reliability``: the self-report discounted by the track record
       (``c_hat * R / L``), the treatment that adds a competence signal.
+    - ``quality``: the same but without the latency term (``c_hat * R``), a
+      quality-first variant used to separate the quality cost of cost-aware
+      selection (the ``/ L`` in Binding Energy) from the competence-proxy cost.
     - ``true``: the full-information reference (``c * C / L``), the oracle that
       knows both the true fit and the true capability.
 
-    Latency breaks near-ties as in E6.
+    Latency breaks near-ties as in E6, except in ``quality`` mode where it is
+    dropped from the bid entirely.
     """
     lat = max(agent.latency, EPS)
     if mode == "true":
@@ -160,6 +164,8 @@ def _bid(mode: str, c_self: float, c_true: float, agent: Agent) -> float:
         return c_true * cap / lat
     if mode == "raw":
         return c_self / lat
+    if mode == "quality":
+        return c_self * reliability(agent)
     # reliability
     return c_self * reliability(agent) / lat
 

@@ -550,6 +550,58 @@ def annealing_curve(
     return out
 
 
+def h2_decomposition(base: CellParams, seeds: int) -> dict[str, float]:
+    """Decompose the H2 quality gap into its two causes.
+
+    CTA deploys the ``reliability`` bid, which divides by cost (latency), so it
+    trades a little quality for speed. Comparing it against a ``quality`` bid (the
+    same competence-weighted score without the latency term) and against the
+    full-information optimum separates the two contributions:
+
+    - latency cost: quality gained by dropping cost-awareness (quality minus
+      reliability),
+    - competence-proxy cost: the residual gap the optimum still holds because it
+      knows true capability while CTA sees only the noisy track record (optimum
+      minus quality).
+    """
+    rel: list[float] = []
+    qual: list[float] = []
+    opt: list[float] = []
+    for seed in range(seeds):
+        agents = generate_agents(
+            base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
+        )
+        tasks = generate_tasks(
+            base.n_tasks, base.n_domains, random.Random(seed + 10_000),
+            base.activation_energy, base.family,
+        )
+        rel.append(
+            run_batch(
+                agents, tasks, random.Random(seed + 20_000), condition="cta",
+                observability_k=base.observability_k, selection_mode="reliability",
+            ).summary()["mean_quality"]
+        )
+        qual.append(
+            run_batch(
+                agents, tasks, random.Random(seed + 20_000), condition="cta",
+                observability_k=base.observability_k, selection_mode="quality",
+            ).summary()["mean_quality"]
+        )
+        best = run_central(agents, tasks, random.Random(seed + 20_000), method="best")
+        opt.append(best["mean_quality"])
+    rel_m = sum(rel) / len(rel)
+    qual_m = sum(qual) / len(qual)
+    opt_m = sum(opt) / len(opt)
+    return {
+        "reliability_quality": rel_m,
+        "quality_mode_quality": qual_m,
+        "optimum_quality": opt_m,
+        "latency_cost": qual_m - rel_m,
+        "competence_proxy_cost": opt_m - qual_m,
+        "total_gap": opt_m - rel_m,
+    }
+
+
 def feasibility_check(base: CellParams, seed: int = 0) -> dict[str, float]:
     """H3: check that the engine labels infeasible and stalled tasks correctly.
 
