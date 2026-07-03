@@ -47,6 +47,8 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 
 - Realistic fleet and the reliability diagram: `src/cta/realism.py` builds a mixed fleet from calibration archetypes grounded in MarketBench (overconfident/calibrated/underconfident) and runs it through the pilot pipeline with a success-based self-report. The track-record correction still recovers completion (about 0.06 to 0.08), improves calibration, and the gate still cuts violations by about 0.8; the recovery stays positive across fleet compositions. Added the missing calibration visualisation (`engine.reliability_bins` + a reliability diagram) and a fleet-mix figure, wired into `autorun`, the dashboard, and the paper. `tests/test_realism.py` added. Seventy-eight tests pass; `ruff` clean.
 
+- Live pilot executed with real Claude Code subagents: 3 agents x 13 coding micro-tasks with validated hidden tests, 39 real self-report-versus-outcome pairs. Real result: the agent is underconfident (stated ~0.92, delivered 1.0; gap ~-0.08, Brier 0.008), matching MarketBench's Claude finding and confirming real self-reports are miscalibrated. Suite, scorer, analyser, submissions, data, a real reliability diagram, `docs/live_pilot.md`, a paper paragraph, and `tests/test_live_pilot.py` are committed. Reproduce with `python -m pilot_tasks.analyse`. Next real-data step: a harder/larger suite and a mix of models to populate the overconfident region. Eighty-one tests pass; `ruff` clean.
+
 ## Now runnable end to end
 
 `pip install -e ".[dev]"` then `cta autorun` runs the full deterministic

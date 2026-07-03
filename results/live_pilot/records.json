@@ -1,0 +1,275 @@
+[
+ {
+  "agent": "agentA",
+  "task": "run_length_encode",
+  "confidence": 0.97,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "roman_to_int",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "is_balanced",
+  "confidence": 0.97,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "merge_intervals",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "expand_ranges",
+  "confidence": 0.8,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "chunk",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "deep_get",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "caesar",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "int_to_roman",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "valid_ipv4",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "next_bigger",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "spreadsheet_column",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentA",
+  "task": "format_duration",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "run_length_encode",
+  "confidence": 0.97,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "roman_to_int",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "is_balanced",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "merge_intervals",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "expand_ranges",
+  "confidence": 0.8,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "chunk",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "deep_get",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "caesar",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "int_to_roman",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "valid_ipv4",
+  "confidence": 0.91,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "next_bigger",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "spreadsheet_column",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentB",
+  "task": "format_duration",
+  "confidence": 0.91,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "run_length_encode",
+  "confidence": 0.97,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "roman_to_int",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "is_balanced",
+  "confidence": 0.97,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "merge_intervals",
+  "confidence": 0.94,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "expand_ranges",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "chunk",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "deep_get",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "caesar",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "int_to_roman",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "valid_ipv4",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "next_bigger",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "spreadsheet_column",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "agentC",
+  "task": "format_duration",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ }
+]

@@ -106,6 +106,7 @@ _FIGS = [
     ("h2_decomposition.svg", "The H2 quality gap: a quality-first CTA reaches the optimum's neighbourhood; the deployed cost-aware CTA gives up quality for lower latency by design."),
     ("reliability_diagram.svg", "A realistic fleet grounded in measured LLM calibration (MarketBench archetypes): predicted vs realised success. Points below the diagonal are overconfident; the correction pulls the retained winners toward it."),
     ("fleet_mix.svg", "The track-record correction keeps recovering completion across every realistic fleet composition, from all-calibrated to all-overconfident."),
+    ("reliability_live.svg", "Live pilot: a real Claude coding agent over 13 tasks x 3 runs. Its points sit above the diagonal (stated ~0.92, delivered 1.0), so it is underconfident, consistent with the well-calibrated Claude models MarketBench reports."),
     ("heterogeneity_quality.svg", "Match quality across agent heterogeneity for CTA and the full-information optimum."),
 ]
 
