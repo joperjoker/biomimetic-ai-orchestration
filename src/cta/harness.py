@@ -178,6 +178,8 @@ def calibration_sweep(
             comp_vals: list[float] = []
             unmet: list[float] = []
             gaps: list[float] = []
+            briers: list[float] = []
+            eces: list[float] = []
             for seed in range(seeds):
                 agents = generate_agents(
                     base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed)
@@ -204,6 +206,8 @@ def calibration_sweep(
                 comp_vals.append(res["completion_rate"])
                 unmet.append(res["stall_rate"] + res["infeasible_rate"])
                 gaps.append(res["overconfidence_gap"])
+                briers.append(res["winner_brier"])
+                eces.append(res["winner_ece"])
             out[mode].append(
                 {
                     "bias": bias,
@@ -211,10 +215,76 @@ def calibration_sweep(
                     "completion_rate": sum(comp_vals) / len(comp_vals),
                     "unmet_rate": sum(unmet) / len(unmet),
                     "overconfidence_gap": sum(gaps) / len(gaps),
+                    "winner_brier": sum(briers) / len(briers),
+                    "winner_ece": sum(eces) / len(eces),
                     "quality_values": q_vals,
                     "completion_values": comp_vals,
                 }
             )
+    return out
+
+
+def track_record_sweep(
+    base: CellParams,
+    seeds: int,
+    windows: tuple[int, ...] = (2, 5, 10, 20, 40),
+    bias: float = 0.4,
+    noise: float = 0.05,
+    capability_low: float = 0.2,
+) -> list[dict[str, float]]:
+    """How much history the track-record correction needs to work.
+
+    At a fixed high overconfidence, vary the length of the track record (the
+    number of prior attempts behind reliability `R`) and record the completion
+    recovery of the reliability correction over the raw self-report auction. A
+    short history makes `R` a coarse, noisy estimate of competence, so the
+    correction is weak; a longer history sharpens `R` and the recovery grows.
+    """
+    out: list[dict[str, float]] = []
+    for window in windows:
+        raw_comp: list[float] = []
+        rel_comp: list[float] = []
+        rel_brier: list[float] = []
+        for seed in range(seeds):
+            agents = generate_agents(
+                base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed)
+            )
+            agents = with_capability_spread(agents, capability_low)
+            agents = with_track_record(agents, random.Random(seed + 40_000), attempts=window)
+            agents = with_miscalibration(agents, bias, noise, random.Random(seed + 60_000))
+            tasks = generate_tasks(
+                base.n_tasks, base.n_domains, random.Random(seed + 10_000), base.activation_energy
+            )
+            raw = run_batch(
+                agents,
+                tasks,
+                random.Random(seed + 20_000),
+                condition="cta",
+                observability_k=base.observability_k,
+                selection_mode="raw",
+            ).summary()
+            rel = run_batch(
+                agents,
+                tasks,
+                random.Random(seed + 20_000),
+                condition="cta",
+                observability_k=base.observability_k,
+                selection_mode="reliability",
+            ).summary()
+            raw_comp.append(raw["completion_rate"])
+            rel_comp.append(rel["completion_rate"])
+            rel_brier.append(rel["winner_brier"])
+        raw_mean = sum(raw_comp) / len(raw_comp)
+        rel_mean = sum(rel_comp) / len(rel_comp)
+        out.append(
+            {
+                "window": window,
+                "raw_completion": raw_mean,
+                "reliability_completion": rel_mean,
+                "recovery": rel_mean - raw_mean,
+                "reliability_brier": sum(rel_brier) / len(rel_brier),
+            }
+        )
     return out
 
 

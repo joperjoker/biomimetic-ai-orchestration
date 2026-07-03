@@ -37,6 +37,8 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 
 - Tier 1 rigour and full run: applied the Holm-Bonferroni correction the paper promised (H2, H8 corrected, H8 verdict rests on the corrected significance); added the fair full-information baseline `central_best` (agent reuse, expected-quality objective) as the H2 and H6 reference; gave agents an informative track record so reliability is a real competence signal. Ran the full protocol (20 seeds, N from 50 to 1000) and filled the paper's Results and Discussion from it. Honest outcome: H1, H3, H4, H5, H7, H8 supported; H2 not supported (CTA reaches about 94 per cent of the fair optimum, 0.883 against 0.937, level with pull-based, the gap being Binding Energy's cost-awareness plus a noisy competence proxy); H6 not supported. `autorun` now accepts an optional protocol. Sixty tests pass; `ruff` clean.
 
+- Tier 2 calibration depth: added Brier and ECE calibration-error metrics on winners (`engine._brier_ece`), reported under H7 (about 0.26 each under overconfidence); added `harness.track_record_sweep` (recovery and winner calibration versus the length of the reliability record, 2 to 40 prior attempts) with the `track_record_recovery.svg` figure and a `track_record` summary block. Finding: the correction is cheap in data, a two-attempt record already recovers most of the gap, and recovery and calibration both improve with a longer record. Sixty-two tests pass; `ruff` clean.
+
 ## Now runnable end to end
 
 `pip install -e ".[dev]"` then `cta autorun` runs the full deterministic

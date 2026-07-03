@@ -149,7 +149,10 @@ Derived measures for the calibration study, each a query over the event log:
 |---------|------------|
 | completion rate | completed tasks / total tasks |
 | overconfidence gap | mean winner `c_hat` minus mean winner realised `Q` |
+| Brier score | mean squared error of winner `c_hat` against binary success |
+| ECE | binned expected calibration error of winner `c_hat` against success |
 | recovery | completion under `reliability` minus completion under `raw` |
+| track-record length | prior attempts behind `R`; swept to show the history the correction needs |
 | integrity violations | out-of-scope actions that executed (gate off) |
 
 ## 12. What is measured versus assumed

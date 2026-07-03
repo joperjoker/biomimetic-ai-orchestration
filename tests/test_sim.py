@@ -3,7 +3,7 @@
 import random
 
 from cta.baselines import greedy_assignment, optimal_assignment, run_central
-from cta.engine import run_batch
+from cta.engine import _brier_ece, run_batch
 from cta.generators import (
     generate_agents,
     generate_tasks,
@@ -132,6 +132,19 @@ def test_gate_prevents_out_of_scope_writes():
     # With the gate on, no out-of-scope write executes; with it off, some do.
     assert on["integrity_violations"] == 0
     assert off["integrity_violations"] > 0
+
+
+def test_brier_ece_calibration():
+    # A perfectly calibrated predictor (predicts the outcome) scores zero.
+    brier, ece = _brier_ece([1.0, 0.0, 1.0, 0.0], [1.0, 0.0, 1.0, 0.0])
+    assert brier == 0.0
+    assert ece == 0.0
+    # A confidently wrong predictor scores the worst possible Brier of one.
+    brier, ece = _brier_ece([1.0, 1.0], [0.0, 0.0])
+    assert brier == 1.0
+    assert ece == 1.0
+    # An empty sample is defined as zero.
+    assert _brier_ece([], []) == (0.0, 0.0)
 
 
 def test_unknown_selection_mode_rejected():

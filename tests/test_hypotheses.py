@@ -7,6 +7,7 @@ from cta.harness import (
     gate_ablation,
     safety_ablation,
     stability_grid,
+    track_record_sweep,
 )
 
 
@@ -40,6 +41,18 @@ def test_calibration_sweep_recovers_completion():
     # Winners over-report under raw self-selection (positive overconfidence gap).
     assert raw_top["overconfidence_gap"] > 0.0
     assert len(raw_top["completion_values"]) == 3
+
+
+def test_track_record_sweep_recovery_grows_with_history():
+    base = CellParams(n_agents=60, n_tasks=48, n_domains=4, heterogeneity=0.8)
+    sweep = track_record_sweep(base, seeds=4, windows=(2, 40))
+    short, long = sweep[0], sweep[-1]
+    # The correction recovers completion at both lengths, and a longer track
+    # record (a sharper reliability estimate) recovers more.
+    assert short["recovery"] > 0.0
+    assert long["recovery"] >= short["recovery"]
+    # A longer history also calibrates the retained winners better (lower Brier).
+    assert long["reliability_brier"] <= short["reliability_brier"] + 1e-9
 
 
 def test_safety_ablation_gate_reduces_violations():

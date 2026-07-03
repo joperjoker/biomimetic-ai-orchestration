@@ -70,8 +70,16 @@ class BatchResult:
             mean_sr = sum(o.self_report for o in won) / len(won)
             mean_wq = sum(o.quality for o in won) / len(won)
             overconfidence_gap = mean_sr - mean_wq
+            # Calibration of the self-report as a success predictor (winners only):
+            # the Brier score and the expected calibration error against the binary
+            # success outcome. This is the language the auction literature uses.
+            preds = [float(o.self_report) for o in won]
+            succ = [1.0 if o.status == "COMPLETED" else 0.0 for o in won]
+            winner_brier, winner_ece = _brier_ece(preds, succ)
         else:
             overconfidence_gap = 0.0
+            winner_brier = 0.0
+            winner_ece = 0.0
         return {
             "tasks": n,
             "completed": counts.get("COMPLETED", 0),
@@ -82,6 +90,8 @@ class BatchResult:
             "deflection_rate": counts.get("DEFLECTED", 0) / n if n else 0.0,
             "integrity_violations": integrity_violations,
             "overconfidence_gap": overconfidence_gap,
+            "winner_brier": winner_brier,
+            "winner_ece": winner_ece,
             "mean_quality": sum(qualities) / len(qualities) if qualities else 0.0,
             "coordinator_work": claim_attempts,
             "contention": claim_attempts / successful_claims if successful_claims else 0.0,
@@ -92,6 +102,32 @@ class BatchResult:
             "peak_store_load": peak_store_load,
             "peak_per_node": max(self.peak_agent_work, peak_store_load),
         }
+
+
+def _brier_ece(preds: list[float], outcomes: list[float], bins: int = 10) -> tuple[float, float]:
+    """Brier score and expected calibration error of predictions against outcomes.
+
+    ``preds`` are predicted success probabilities (here the self-reports) and
+    ``outcomes`` the binary successes. The Brier score is the mean squared error.
+    The ECE bins the predictions and sums the gap between mean prediction and
+    accuracy in each bin, weighted by the bin's share. Both are zero for a
+    perfectly calibrated predictor and rise with miscalibration.
+    """
+    m = len(preds)
+    if m == 0:
+        return 0.0, 0.0
+    brier = sum((p - o) ** 2 for p, o in zip(preds, outcomes, strict=False)) / m
+    ece = 0.0
+    for b in range(bins):
+        lo, hi = b / bins, (b + 1) / bins
+        # The last bin includes the right edge so a prediction of 1.0 is counted.
+        idx = [i for i, p in enumerate(preds) if (lo <= p < hi) or (b == bins - 1 and p == 1.0)]
+        if not idx:
+            continue
+        mean_p = sum(preds[i] for i in idx) / len(idx)
+        acc = sum(outcomes[i] for i in idx) / len(idx)
+        ece += (len(idx) / m) * abs(mean_p - acc)
+    return brier, ece
 
 
 def _fires_on(delta: float, temperature: float, rng: random.Random) -> bool:

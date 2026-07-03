@@ -54,10 +54,12 @@ def test_autorun_writes_artifacts(tmp_path):
     assert (out / "figures" / "heterogeneity_quality.svg").is_file()
     assert (out / "figures" / "calibration_quality.svg").is_file()
     assert (out / "figures" / "annealing_stall.svg").is_file()
+    assert (out / "figures" / "track_record_recovery.svg").is_file()
     loaded = json.loads((out / "summary.json").read_text(encoding="utf-8"))
     assert "verdicts" in loaded and "scaling_peak_per_node" in loaded
     assert "calibration" in loaded and "safety" in loaded
-    assert "annealing" in loaded and "temporal" in loaded
+    assert "annealing" in loaded and "temporal" in loaded and "track_record" in loaded
+    assert "winner_brier" in loaded["verdicts"]["H7"]
     assert summary["verdicts"]["H1"]["verdict"] in ("SUPPORTED", "NOT SUPPORTED")
     # The calibration, safety, and annealing hypotheses are evaluated by the full run.
     assert summary["verdicts"]["H7"]["verdict"] == "SUPPORTED"

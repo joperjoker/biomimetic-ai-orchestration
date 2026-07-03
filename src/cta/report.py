@@ -175,11 +175,14 @@ def evaluate(
     # this model it is dominated by the structural fit-versus-competence gap.
     raw = calibration.get("raw") if calibration else None
     if raw:
-        gap = max(float(pt["overconfidence_gap"]) for pt in raw)
+        top = max(raw, key=lambda pt: float(pt["overconfidence_gap"]))
+        gap = float(top["overconfidence_gap"])
         margin = 0.05
         verdicts["H7"] = {
             "claim": "self-reports over-predict realised success because they omit competence",
             "overconfidence_gap": round(gap, 3),
+            "winner_brier": round(float(top.get("winner_brier", 0.0)), 3),
+            "winner_ece": round(float(top.get("winner_ece", 0.0)), 3),
             "verdict": _verdict(gap > margin),
         }
     else:

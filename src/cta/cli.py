@@ -26,6 +26,7 @@ from cta.harness import (
     scaling_sweep,
     stability_grid,
     temporal_metrics,
+    track_record_sweep,
 )
 from cta.report import evaluate, write_results_md
 from cta.stats import mean_ci
@@ -92,6 +93,7 @@ def autorun(
     safety = safety_ablation(protocol.base, protocol.seeds)
     annealing = annealing_curve(protocol.base, protocol.seeds)
     temporal = temporal_metrics(protocol.base, protocol.seeds)
+    track_record = track_record_sweep(protocol.base, protocol.seeds)
     verdicts = evaluate(
         base_values,
         scaling,
@@ -133,11 +135,29 @@ def autorun(
         figures_dir / "annealing_stall.svg",
     )
 
+    # Track-record figure: raw and reliability completion versus history length.
+    track_series = {
+        "raw self-report": [(float(p["window"]), float(p["raw_completion"])) for p in track_record],
+        "reliability correction": [
+            (float(p["window"]), float(p["reliability_completion"])) for p in track_record
+        ],
+    }
+    save_svg(
+        line_chart(
+            track_series,
+            title="Completion recovery vs track-record length",
+            xlabel="track-record length (prior attempts)",
+            ylabel="task completion rate",
+        ),
+        figures_dir / "track_record_recovery.svg",
+    )
+
     figures = [
         "figures/scaling_peak_per_node.svg",
         "figures/heterogeneity_quality.svg",
         "figures/calibration_quality.svg",
         "figures/annealing_stall.svg",
+        "figures/track_record_recovery.svg",
     ]
     write_results_md(out / "RESULTS.md", verdicts, scaling, figures)
 
@@ -160,6 +180,7 @@ def autorun(
         "safety": safety,
         "annealing": annealing,
         "temporal": temporal,
+        "track_record": track_record,
         "verdicts": verdicts,
     }
     (out).mkdir(parents=True, exist_ok=True)

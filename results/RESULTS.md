@@ -27,6 +27,8 @@ pending.
 
 ![annealing_stall](figures/annealing_stall.svg)
 
+![track_record_recovery](figures/track_record_recovery.svg)
+
 ## Peak per-node load scaling
 
 | N | cta | pull_based | central_greedy | central_optimal | central_best |

@@ -491,6 +491,8 @@
         "completion_rate": 0.36354166666666665,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.19035042598837243,
+        "winner_brier": 0.24805651456610017,
+        "winner_ece": 0.24077349951212038,
         "quality_values": [
           0.9116731146806373,
           0.8809916497628398,
@@ -542,6 +544,8 @@
         "completion_rate": 0.35625000000000007,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.19697900008849614,
+        "winner_brier": 0.2524499119947234,
+        "winner_ece": 0.24579626046897785,
         "quality_values": [
           0.9224522722701147,
           0.8826166063681645,
@@ -593,6 +597,8 @@
         "completion_rate": 0.3635416666666667,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.20056964801038396,
+        "winner_brier": 0.24818108143149717,
+        "winner_ece": 0.24277121322306225,
         "quality_values": [
           0.9224522722701147,
           0.8826166063681645,
@@ -644,6 +650,8 @@
         "completion_rate": 0.3677083333333334,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.1991604762479497,
+        "winner_brier": 0.24156615743899817,
+        "winner_ece": 0.23720926199029643,
         "quality_values": [
           0.9224522722701147,
           0.8826166063681645,
@@ -695,6 +703,8 @@
         "completion_rate": 0.37187500000000007,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.19896453435217956,
+        "winner_brier": 0.23434592926724335,
+        "winner_ece": 0.2308423899415689,
         "quality_values": [
           0.9224522722701147,
           0.8826166063681645,
@@ -748,6 +758,8 @@
         "completion_rate": 0.7552083333333333,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.15187271736538638,
+        "winner_brier": 0.17208201240309715,
+        "winner_ece": 0.16160482545079669,
         "quality_values": [
           0.8882391173456166,
           0.9080208723011582,
@@ -799,6 +811,8 @@
         "completion_rate": 0.7593749999999999,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.15668824550406468,
+        "winner_brier": 0.17200445115630353,
+        "winner_ece": 0.16316376475780978,
         "quality_values": [
           0.8882391173456166,
           0.8971552301088458,
@@ -850,6 +864,8 @@
         "completion_rate": 0.7572916666666666,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.16010260271601823,
+        "winner_brier": 0.17563304189042303,
+        "winner_ece": 0.16882298443313248,
         "quality_values": [
           0.8882391173456166,
           0.8971552301088458,
@@ -901,6 +917,8 @@
         "completion_rate": 0.7583333333333333,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.16346489734309594,
+        "winner_brier": 0.1763546174934286,
+        "winner_ece": 0.17103371045105437,
         "quality_values": [
           0.8882391173456166,
           0.8934807076937651,
@@ -952,6 +970,8 @@
         "completion_rate": 0.7583333333333333,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.16522946903710484,
+        "winner_brier": 0.17636415468818425,
+        "winner_ece": 0.17256698293463343,
         "quality_values": [
           0.8882391173456166,
           0.8934807076937651,
@@ -1005,6 +1025,8 @@
         "completion_rate": 0.7468750000000002,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.13706094485371495,
+        "winner_brier": 0.14245936625174555,
+        "winner_ece": 0.13086017258161733,
         "quality_values": [
           0.886890363543499,
           0.9046489297450877,
@@ -1056,6 +1078,8 @@
         "completion_rate": 0.7468750000000002,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.14334897289089546,
+        "winner_brier": 0.14540488326621442,
+        "winner_ece": 0.13651380582627462,
         "quality_values": [
           0.886890363543499,
           0.9046489297450877,
@@ -1107,6 +1131,8 @@
         "completion_rate": 0.7468750000000002,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.14745768557001793,
+        "winner_brier": 0.1467330087965767,
+        "winner_ece": 0.1399870920288676,
         "quality_values": [
           0.886890363543499,
           0.9046489297450877,
@@ -1158,6 +1184,8 @@
         "completion_rate": 0.7468750000000002,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.14987756237172006,
+        "winner_brier": 0.1471148884163418,
+        "winner_ece": 0.14183164219673589,
         "quality_values": [
           0.886890363543499,
           0.9046489297450877,
@@ -1209,6 +1237,8 @@
         "completion_rate": 0.7468750000000002,
         "unmet_rate": 0.0,
         "overconfidence_gap": 0.1513578736514603,
+        "winner_brier": 0.14720738684798398,
+        "winner_ece": 0.14303294682703113,
         "quality_values": [
           0.886890363543499,
           0.9046489297450877,
@@ -1422,6 +1452,43 @@
       0.6041666666666666
     ]
   },
+  "track_record": [
+    {
+      "window": 2,
+      "raw_completion": 0.25312499999999993,
+      "reliability_completion": 0.5770833333333334,
+      "recovery": 0.32395833333333346,
+      "reliability_brier": 0.3151529692574611
+    },
+    {
+      "window": 5,
+      "raw_completion": 0.30625,
+      "reliability_completion": 0.6468750000000001,
+      "recovery": 0.34062500000000007,
+      "reliability_brier": 0.2653906377769563
+    },
+    {
+      "window": 10,
+      "raw_completion": 0.31145833333333334,
+      "reliability_completion": 0.65,
+      "recovery": 0.3385416666666667,
+      "reliability_brier": 0.25982836501310597
+    },
+    {
+      "window": 20,
+      "raw_completion": 0.3395833333333333,
+      "reliability_completion": 0.7187499999999998,
+      "recovery": 0.3791666666666665,
+      "reliability_brier": 0.18673622909994997
+    },
+    {
+      "window": 40,
+      "raw_completion": 0.3416666666666666,
+      "reliability_completion": 0.7479166666666667,
+      "recovery": 0.40625000000000006,
+      "reliability_brier": 0.17271144004695188
+    }
+  ],
   "verdicts": {
     "H1": {
       "claim": "peak per-node load grows more slowly for CTA than central",
@@ -1470,6 +1537,8 @@
     "H7": {
       "claim": "self-reports over-predict realised success because they omit competence",
       "overconfidence_gap": 0.201,
+      "winner_brier": 0.248,
+      "winner_ece": 0.243,
       "verdict": "SUPPORTED"
     },
     "H8": {
