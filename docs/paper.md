@@ -28,6 +28,7 @@ Contributions:
 6. A measurable compatibility wrapper that scores an agent's role, skills, and prompt against a task and can be calibrated to predict success, so the activation threshold rests on an empirically validated score rather than an abstract one (`docs/measures.md`).
 7. A study of self-assessment miscalibration as the failure mode of self-selection: the compatibility bid is treated as the agent's self-report (E13), and a track-record correction (the reliability `R`, E4), which uses no privileged information, recovers the completion that miscalibration costs, with the integrity gate as a safety backstop.
 8. External validity in two steps: a mixed fleet whose calibration archetypes are parameterised from measured LLM behaviour (MarketBench), and a live pilot with real Claude coding agents that measures their calibration on coding micro-tasks directly, confirming on real data that self-reports are miscalibrated and that the sign is model-dependent (`docs/live_pilot.md`).
+9. Evidence that the activation barrier is a routing discipline, not only a quality floor: on a heterogeneous job whose subtasks need different specialists, the barrier keeps allocation on target, sending each won subtask to a correct specialist because an ill-matched agent does not fire, at a coverage cost that annealing later relaxes (H10).
 
 Research questions:
 
