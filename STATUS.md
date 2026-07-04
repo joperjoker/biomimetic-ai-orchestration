@@ -1,6 +1,23 @@
 # Project Status
 
-A running log of what is complete and what comes next. Read this, then `claude.md`, `docs/roadmap.md`, and `docs/measures.md` to resume in a fresh session.
+A running log of what is complete and what comes next. Read this, then `claude.md`, `docs/next_experiments.md`, and `docs/measures.md` to resume in a fresh session.
+
+## Resume here (next session)
+
+**Where things stand.** Branch `claude/biomimetic-ai-orchestration-init-0nb5db`, PR #1 open against `main`. The framework is built and evaluated end to end: 112 tests pass, `ruff` clean, tree clean and pushed. Ten pre-registered hypotheses H1 to H10 are evaluated by `cta reproduce-all`; H1, H3, H4, H5, H7, H8, H9, H10 are supported and H2, H6 are honest negatives against the full-information optimum. Phases 0 to 2 of `docs/next_experiments.md` are done, plus P3.2. The paper (`docs/paper.md`), the dataset (`results/dataset/runs.csv`), the cost and latency dials, the runnable PoC (`python -m examples.poc`), and `docs/product.md` are all in place and consistent.
+
+**Do first (cheap, safe, no budget):**
+- **P3.3 streaming task arrival** in `src/cta/temporal.py`: tasks arrive over rounds rather than all at once, testing annealing (H5) under non-stationary load. Self-contained but touches the temporal engine core, so plan it carefully.
+- **P3.1 concurrent multi-process engine** over the SQLite store (`src/cta/engine.py`, `store.py`): drive the atomic claim from several OS processes to show contention at scale. Heavier core work.
+
+**Do when authorised (costs subagent budget):**
+- **P2.5 two-sided live pilot**: a harder, multi-model task suite run through real Claude Code subagents to populate the overconfident side of the reliability curve. Needs explicit budget approval before spending.
+- **P3.4 real complex job in the wild** (the follow-up paper): decomposition, a dependency graph, and live specialist subagents. Absorbs P2.5 and P2.6.
+
+**Publication track (not code):** decide a venue and format (the paper is Markdown; a submission needs LaTeX or PDF, print-safe figures, and a related-work table versus RouteLLM, EvoRoute, DiSRouter, MarketBench). See the "Further planning threads" in `docs/next_experiments.md`.
+
+**Operational notes.** An hourly self check-in cron (session-scoped) watches PR #1's CI and re-arms silently; it stops when the PR merges or closes. `claude.md` section 5 now encodes the four operating pillars (elite-team Consortium, autonomous loop, spinning up many subagent teams, and holding the North Star). Reproduce everything from seeds with `cta reproduce-all`.
+
 
 ## In one line
 
