@@ -1,7 +1,14 @@
 """Tests for the statistics utilities and the experiment harness."""
 
 from cta.harness import CellParams, Protocol, aggregate, run_cell, run_seeds, scaling_sweep
-from cta.stats import cliffs_delta, holm_bonferroni, mann_whitney_u, mean_ci
+from cta.stats import (
+    cliffs_delta,
+    fit_scaling,
+    holm_bonferroni,
+    mann_whitney_u,
+    mean_ci,
+    min_seeds,
+)
 
 
 def test_mean_ci_basic():
@@ -24,6 +31,26 @@ def test_cliffs_delta_sign():
     assert cliffs_delta([3, 4, 5], [0, 1, 2]) == 1.0
     assert cliffs_delta([0, 1, 2], [3, 4, 5]) == -1.0
     assert abs(cliffs_delta([1, 2, 3], [1, 2, 3])) < 1e-9
+
+
+def test_fit_scaling_recovers_known_exponents():
+    ns = [10, 100, 1000, 10000]
+    # A quadratic load (exponent 2) and a flat load (exponent 0).
+    quad = fit_scaling(ns, [n * n for n in ns])
+    flat = fit_scaling(ns, [32.0 for _ in ns])
+    assert abs(quad["exponent"] - 2.0) < 0.05
+    assert quad["ci_low"] <= 2.0 <= quad["ci_high"]
+    assert abs(flat["exponent"]) < 0.05
+    assert flat["ci_low"] <= 0.0 <= flat["ci_high"]
+
+
+def test_min_seeds_scales_with_effect_and_variance():
+    # A smaller effect (relative to the same spread) needs more replications.
+    assert min_seeds(0.02, 0.1) > min_seeds(0.08, 0.1)
+    # More variance needs more replications for the same effect.
+    assert min_seeds(0.05, 0.2) > min_seeds(0.05, 0.1)
+    # A non-positive effect is undefined and returns 0.
+    assert min_seeds(0.0, 0.1) == 0
 
 
 def test_holm_bonferroni_orders_and_rejects():

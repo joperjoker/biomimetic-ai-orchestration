@@ -7,7 +7,9 @@
       200,
       500,
       1000,
-      2000
+      2000,
+      5000,
+      10000
     ],
     "heterogeneity_grid": [
       0.0,
@@ -56,7 +58,7 @@
         "mean": 32.0,
         "ci_low": 32.0,
         "ci_high": 32.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 50
       },
       {
@@ -64,7 +66,7 @@
         "mean": 32.0,
         "ci_low": 32.0,
         "ci_high": 32.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 100
       },
       {
@@ -72,7 +74,7 @@
         "mean": 32.0,
         "ci_low": 32.0,
         "ci_high": 32.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 200
       },
       {
@@ -80,7 +82,7 @@
         "mean": 32.0,
         "ci_low": 32.0,
         "ci_high": 32.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 500
       },
       {
@@ -88,7 +90,7 @@
         "mean": 32.0,
         "ci_low": 32.0,
         "ci_high": 32.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 1000
       },
       {
@@ -96,58 +98,90 @@
         "mean": 32.0,
         "ci_low": 32.0,
         "ci_high": 32.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 2000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 32.0,
+        "ci_low": 32.0,
+        "ci_high": 32.0,
+        "n": 5,
+        "n_agents": 5000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 32.0,
+        "ci_low": 32.0,
+        "ci_high": 32.0,
+        "n": 5,
+        "n_agents": 10000
       }
     ],
     "pull_based": [
       {
         "metric": "peak_per_node",
-        "mean": 45.55,
-        "ci_low": 45.16124419324229,
-        "ci_high": 45.938755806757705,
-        "n": 20,
+        "mean": 45.8,
+        "ci_low": 44.83981766472893,
+        "ci_high": 46.76018233527106,
+        "n": 5,
         "n_agents": 50
       },
       {
         "metric": "peak_per_node",
-        "mean": 53.15,
-        "ci_low": 52.25889395993175,
-        "ci_high": 54.04110604006825,
-        "n": 20,
+        "mean": 53.4,
+        "ci_low": 51.93329725588696,
+        "ci_high": 54.866702744113034,
+        "n": 5,
         "n_agents": 100
       },
       {
         "metric": "peak_per_node",
-        "mean": 56.2,
-        "ci_low": 54.61280490858793,
-        "ci_high": 57.78719509141207,
-        "n": 20,
+        "mean": 54.2,
+        "ci_low": 52.89990697213415,
+        "ci_high": 55.50009302786586,
+        "n": 5,
         "n_agents": 200
       },
       {
         "metric": "peak_per_node",
-        "mean": 59.75,
-        "ci_low": 58.21279388830421,
-        "ci_high": 61.28720611169579,
-        "n": 20,
+        "mean": 57.6,
+        "ci_low": 56.60061053968912,
+        "ci_high": 58.59938946031088,
+        "n": 5,
         "n_agents": 500
       },
       {
         "metric": "peak_per_node",
-        "mean": 61.05,
-        "ci_low": 60.03979513809135,
-        "ci_high": 62.060204861908645,
-        "n": 20,
+        "mean": 62.0,
+        "ci_low": 59.599544161822344,
+        "ci_high": 64.40045583817765,
+        "n": 5,
         "n_agents": 1000
       },
       {
         "metric": "peak_per_node",
-        "mean": 62.8,
-        "ci_low": 61.63959816973822,
-        "ci_high": 63.96040183026177,
-        "n": 20,
+        "mean": 62.2,
+        "ci_low": 59.76774865939621,
+        "ci_high": 64.6322513406038,
+        "n": 5,
         "n_agents": 2000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 65.2,
+        "ci_low": 62.26659451177393,
+        "ci_high": 68.13340548822607,
+        "n": 5,
+        "n_agents": 5000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 66.0,
+        "ci_low": 64.61409617565032,
+        "ci_high": 67.38590382434968,
+        "n": 5,
+        "n_agents": 10000
       }
     ],
     "central_greedy": [
@@ -156,7 +190,7 @@
         "mean": 2000.0,
         "ci_low": 2000.0,
         "ci_high": 2000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 50
       },
       {
@@ -164,7 +198,7 @@
         "mean": 8000.0,
         "ci_low": 8000.0,
         "ci_high": 8000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 100
       },
       {
@@ -172,7 +206,7 @@
         "mean": 32000.0,
         "ci_low": 32000.0,
         "ci_high": 32000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 200
       },
       {
@@ -180,7 +214,7 @@
         "mean": 200000.0,
         "ci_low": 200000.0,
         "ci_high": 200000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 500
       },
       {
@@ -188,7 +222,7 @@
         "mean": 800000.0,
         "ci_low": 800000.0,
         "ci_high": 800000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 1000
       },
       {
@@ -196,8 +230,24 @@
         "mean": 3200000.0,
         "ci_low": 3200000.0,
         "ci_high": 3200000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 2000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 20000000.0,
+        "ci_low": 20000000.0,
+        "ci_high": 20000000.0,
+        "n": 5,
+        "n_agents": 5000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 80000000.0,
+        "ci_low": 80000000.0,
+        "ci_high": 80000000.0,
+        "n": 5,
+        "n_agents": 10000
       }
     ],
     "central_optimal": [
@@ -206,7 +256,7 @@
         "mean": 2000.0,
         "ci_low": 2000.0,
         "ci_high": 2000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 50
       },
       {
@@ -214,7 +264,7 @@
         "mean": 8000.0,
         "ci_low": 8000.0,
         "ci_high": 8000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 100
       },
       {
@@ -222,7 +272,7 @@
         "mean": 32000.0,
         "ci_low": 32000.0,
         "ci_high": 32000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 200
       },
       {
@@ -230,7 +280,7 @@
         "mean": 200000.0,
         "ci_low": 200000.0,
         "ci_high": 200000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 500
       },
       {
@@ -238,7 +288,7 @@
         "mean": 800000.0,
         "ci_low": 800000.0,
         "ci_high": 800000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 1000
       },
       {
@@ -246,8 +296,24 @@
         "mean": 3200000.0,
         "ci_low": 3200000.0,
         "ci_high": 3200000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 2000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 20000000.0,
+        "ci_low": 20000000.0,
+        "ci_high": 20000000.0,
+        "n": 5,
+        "n_agents": 5000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 80000000.0,
+        "ci_low": 80000000.0,
+        "ci_high": 80000000.0,
+        "n": 5,
+        "n_agents": 10000
       }
     ],
     "central_best": [
@@ -256,7 +322,7 @@
         "mean": 2000.0,
         "ci_low": 2000.0,
         "ci_high": 2000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 50
       },
       {
@@ -264,7 +330,7 @@
         "mean": 8000.0,
         "ci_low": 8000.0,
         "ci_high": 8000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 100
       },
       {
@@ -272,7 +338,7 @@
         "mean": 32000.0,
         "ci_low": 32000.0,
         "ci_high": 32000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 200
       },
       {
@@ -280,7 +346,7 @@
         "mean": 200000.0,
         "ci_low": 200000.0,
         "ci_high": 200000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 500
       },
       {
@@ -288,7 +354,7 @@
         "mean": 800000.0,
         "ci_low": 800000.0,
         "ci_high": 800000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 1000
       },
       {
@@ -296,8 +362,24 @@
         "mean": 3200000.0,
         "ci_low": 3200000.0,
         "ci_high": 3200000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 2000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 20000000.0,
+        "ci_low": 20000000.0,
+        "ci_high": 20000000.0,
+        "n": 5,
+        "n_agents": 5000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 80000000.0,
+        "ci_low": 80000000.0,
+        "ci_high": 80000000.0,
+        "n": 5,
+        "n_agents": 10000
       }
     ],
     "central_bounded": [
@@ -306,7 +388,7 @@
         "mean": 2000.0,
         "ci_low": 2000.0,
         "ci_high": 2000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 50
       },
       {
@@ -314,7 +396,7 @@
         "mean": 8000.0,
         "ci_low": 8000.0,
         "ci_high": 8000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 100
       },
       {
@@ -322,7 +404,7 @@
         "mean": 32000.0,
         "ci_low": 32000.0,
         "ci_high": 32000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 200
       },
       {
@@ -330,7 +412,7 @@
         "mean": 200000.0,
         "ci_low": 200000.0,
         "ci_high": 200000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 500
       },
       {
@@ -338,7 +420,7 @@
         "mean": 800000.0,
         "ci_low": 800000.0,
         "ci_high": 800000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 1000
       },
       {
@@ -346,8 +428,24 @@
         "mean": 3200000.0,
         "ci_low": 3200000.0,
         "ci_high": 3200000.0,
-        "n": 20,
+        "n": 5,
         "n_agents": 2000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 20000000.0,
+        "ci_low": 20000000.0,
+        "ci_high": 20000000.0,
+        "n": 5,
+        "n_agents": 5000
+      },
+      {
+        "metric": "peak_per_node",
+        "mean": 80000000.0,
+        "ci_low": 80000000.0,
+        "ci_high": 80000000.0,
+        "n": 5,
+        "n_agents": 10000
       }
     ]
   },
@@ -2093,7 +2191,17 @@
     "H1": {
       "claim": "peak per-node load grows more slowly for CTA than central",
       "cta_growth_factor": 1.0,
-      "central_growth_factor": 1600.0,
+      "central_growth_factor": 40000.0,
+      "cta_exponent": 0.0,
+      "cta_exponent_ci": [
+        0.0,
+        0.0
+      ],
+      "central_exponent": 2.0,
+      "central_exponent_ci": [
+        2.0,
+        2.0
+      ],
       "verdict": "SUPPORTED"
     },
     "H2": {

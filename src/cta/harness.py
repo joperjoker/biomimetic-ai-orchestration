@@ -67,8 +67,13 @@ class Protocol:
 
     seeds: int = 20
     base: CellParams = field(default_factory=CellParams)
-    scaling_n: tuple[int, ...] = (50, 100, 200, 500, 1000, 2000)
+    scaling_n: tuple[int, ...] = (50, 100, 200, 500, 1000, 2000, 5000, 10000)
     heterogeneity_grid: tuple[float, ...] = (0.0, 0.25, 0.5, 0.75, 1.0)
+    # The scaling curve measures peak per-node load, which is bounded and
+    # low-variance for the decentralised conditions (at most observability_k) and
+    # analytic for the central ones, so it needs far fewer seeds than the quality
+    # hypotheses, keeping the large-N tail tractable.
+    scaling_seeds: int = 5
 
 
 def run_cell(
@@ -164,7 +169,7 @@ def scaling_sweep(
                 n_agents=n,
                 n_tasks=max(1, int(n * protocol.base.n_tasks / max(1, protocol.base.n_agents))),
             )
-            rows = run_seeds(condition, params, protocol.seeds, quality=not load_only)
+            rows = run_seeds(condition, params, protocol.scaling_seeds, quality=not load_only)
             agg = aggregate(rows, metric)
             agg["n_agents"] = n
             points.append(agg)

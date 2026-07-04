@@ -83,6 +83,70 @@ def cliffs_delta(x: Sequence[float], y: Sequence[float]) -> float:
     return (gt - lt) / (len(x) * len(y))
 
 
+def _ols_slope(xs: Sequence[float], ys: Sequence[float]) -> float:
+    """Ordinary-least-squares slope of ``ys`` on ``xs``. Zero variance gives 0."""
+    n = len(xs)
+    if n < 2:
+        return 0.0
+    mx = statistics.fmean(xs)
+    my = statistics.fmean(ys)
+    sxx = sum((x - mx) ** 2 for x in xs)
+    if sxx == 0.0:
+        return 0.0
+    sxy = sum((x - mx) * (y - my) for x, y in zip(xs, ys, strict=False))
+    return sxy / sxx
+
+
+def fit_scaling(
+    ns: Sequence[float], loads: Sequence[float], boot: int = 2000, seed: int = 12345
+) -> dict[str, float]:
+    """Fit ``log(load) = a + b*log(N)`` and bootstrap a CI for the exponent ``b``.
+
+    The exponent ``b`` is the growth order: about 2 for a central scheduler whose
+    load is ``N`` times ``M`` (with ``M`` proportional to ``N``), and about 0 for a
+    decentralised per-node load that stays flat as ``N`` grows. The CI is a
+    percentile bootstrap over the points, using only the standard library. Points
+    with a non-positive load or ``N`` are dropped, since the fit is in log space.
+    """
+    import random
+
+    pts = [(math.log(n), math.log(v)) for n, v in zip(ns, loads, strict=False) if n > 0 and v > 0]
+    if len(pts) < 2:
+        return {"exponent": 0.0, "ci_low": 0.0, "ci_high": 0.0, "n_points": len(pts)}
+    xs = [p[0] for p in pts]
+    ys = [p[1] for p in pts]
+    point = _ols_slope(xs, ys)
+    rng = random.Random(seed)
+    slopes: list[float] = []
+    m = len(pts)
+    for _ in range(boot):
+        idx = [rng.randrange(m) for _ in range(m)]
+        bx = [xs[i] for i in idx]
+        by = [ys[i] for i in idx]
+        slopes.append(_ols_slope(bx, by))
+    slopes.sort()
+    lo = slopes[int(0.025 * (len(slopes) - 1))]
+    hi = slopes[int(0.975 * (len(slopes) - 1))]
+    return {"exponent": point, "ci_low": lo, "ci_high": hi, "n_points": m}
+
+
+def min_seeds(effect: float, sd: float, alpha: float = 0.05, power: float = 0.8) -> int:
+    """Seeds per arm to detect a two-sided mean difference ``effect`` at ``power``.
+
+    A closed-form normal approximation, ``n = 2 * ((z_alpha/2 + z_power) * sd /
+    effect)^2``, rounded up. It replaces a hand-picked seed count with one tied to
+    the smallest effect worth detecting. A non-positive effect returns 0 (nothing
+    to power for).
+    """
+    if effect <= 0.0 or sd <= 0.0:
+        return 0
+    nd = statistics.NormalDist()
+    z_alpha = nd.inv_cdf(1.0 - alpha / 2.0)
+    z_power = nd.inv_cdf(power)
+    n = 2.0 * ((z_alpha + z_power) * sd / effect) ** 2
+    return max(2, math.ceil(n))
+
+
 def holm_bonferroni(pvalues: Sequence[float], alpha: float = 0.05) -> list[tuple[float, bool]]:
     """Holm-Bonferroni step-down. Returns (adjusted_p, rejected) in input order."""
     m = len(pvalues)

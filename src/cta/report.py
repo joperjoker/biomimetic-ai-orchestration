@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from pathlib import Path
 
-from cta.stats import cliffs_delta, holm_bonferroni, mann_whitney_u, mean_ci
+from cta.stats import cliffs_delta, fit_scaling, holm_bonferroni, mann_whitney_u, mean_ci
 
 
 def _verdict(supported: bool) -> str:
@@ -38,16 +38,27 @@ def evaluate(
     verdicts: dict[str, dict[str, object]] = {}
 
     # H1: coordinator work grows more slowly for CTA than for the central baseline.
-    cta_cw = [p["mean"] for p in scaling.get("cta", [])]
-    cen_cw = [p["mean"] for p in scaling.get("central_optimal", [])]
-    if cta_cw and cen_cw:
+    # Quantified by a log-log fit of peak per-node load against N: the central
+    # exponent should be near 2 (load is N times M, M proportional to N) and CTA's
+    # near 0 (per-node load bounded by observability_k), with bootstrap CIs.
+    cta_pts = [(p.get("n_agents", 0.0), p["mean"]) for p in scaling.get("cta", [])]
+    cen_pts = [(p.get("n_agents", 0.0), p["mean"]) for p in scaling.get("central_optimal", [])]
+    if cta_pts and cen_pts:
+        cta_cw = [v for _, v in cta_pts]
+        cen_cw = [v for _, v in cen_pts]
         growth_cta = cta_cw[-1] / max(cta_cw[0], 1e-9)
         growth_cen = cen_cw[-1] / max(cen_cw[0], 1e-9)
+        cta_fit = fit_scaling([n for n, _ in cta_pts], cta_cw)
+        cen_fit = fit_scaling([n for n, _ in cen_pts], cen_cw)
         verdicts["H1"] = {
             "claim": "peak per-node load grows more slowly for CTA than central",
             "cta_growth_factor": round(growth_cta, 2),
             "central_growth_factor": round(growth_cen, 2),
-            "verdict": _verdict(growth_cta < growth_cen),
+            "cta_exponent": round(cta_fit["exponent"], 3),
+            "cta_exponent_ci": [round(cta_fit["ci_low"], 3), round(cta_fit["ci_high"], 3)],
+            "central_exponent": round(cen_fit["exponent"], 3),
+            "central_exponent_ci": [round(cen_fit["ci_low"], 3), round(cen_fit["ci_high"], 3)],
+            "verdict": _verdict(cta_fit["exponent"] < cen_fit["exponent"]),
         }
 
     # H2: CTA quality is at least the pull-based quality (the barrier helps) and

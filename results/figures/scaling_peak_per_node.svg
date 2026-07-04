@@ -5,62 +5,74 @@
 <line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
 <text x="315" y="422" text-anchor="middle">agents (log scale)</text>
 <text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">peak per-node load</text>
-<path d="M70.0 380.0 L162.1 380.0 L254.1 380.0 L375.9 380.0 L467.9 380.0 L560.0 380.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<path d="M70.0 380.0 L134.1 380.0 L198.2 380.0 L282.9 380.0 L347.1 380.0 L411.2 380.0 L495.9 380.0 L560.0 380.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
 <circle cx="70.0" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="162.1" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="254.1" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="375.9" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="467.9" cy="380.0" r="3" fill="#2f6f9f"/>
+<circle cx="134.1" cy="380.0" r="3" fill="#2f6f9f"/>
+<circle cx="198.2" cy="380.0" r="3" fill="#2f6f9f"/>
+<circle cx="282.9" cy="380.0" r="3" fill="#2f6f9f"/>
+<circle cx="347.1" cy="380.0" r="3" fill="#2f6f9f"/>
+<circle cx="411.2" cy="380.0" r="3" fill="#2f6f9f"/>
+<circle cx="495.9" cy="380.0" r="3" fill="#2f6f9f"/>
 <circle cx="560.0" cy="380.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">cta</text>
-<path d="M70.0 380.0 L162.1 380.0 L254.1 380.0 L375.9 380.0 L467.9 380.0 L560.0 380.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<path d="M70.0 380.0 L134.1 380.0 L198.2 380.0 L282.9 380.0 L347.1 380.0 L411.2 380.0 L495.9 380.0 L560.0 380.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
 <circle cx="70.0" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="162.1" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="254.1" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="375.9" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="467.9" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="134.1" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="198.2" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="282.9" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="347.1" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="411.2" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="495.9" cy="380.0" r="3" fill="#c25a3d"/>
 <circle cx="560.0" cy="380.0" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">pull_based</text>
-<path d="M70.0 379.8 L162.1 379.1 L254.1 376.6 L375.9 358.8 L467.9 295.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
-<circle cx="70.0" cy="379.8" r="3" fill="#4c9a6a"/>
-<circle cx="162.1" cy="379.1" r="3" fill="#4c9a6a"/>
-<circle cx="254.1" cy="376.6" r="3" fill="#4c9a6a"/>
-<circle cx="375.9" cy="358.8" r="3" fill="#4c9a6a"/>
-<circle cx="467.9" cy="295.0" r="3" fill="#4c9a6a"/>
+<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
+<circle cx="70.0" cy="380.0" r="3" fill="#4c9a6a"/>
+<circle cx="134.1" cy="380.0" r="3" fill="#4c9a6a"/>
+<circle cx="198.2" cy="379.9" r="3" fill="#4c9a6a"/>
+<circle cx="282.9" cy="379.1" r="3" fill="#4c9a6a"/>
+<circle cx="347.1" cy="376.6" r="3" fill="#4c9a6a"/>
+<circle cx="411.2" cy="366.4" r="3" fill="#4c9a6a"/>
+<circle cx="495.9" cy="295.0" r="3" fill="#4c9a6a"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#4c9a6a"/>
 <rect x="576" y="90" width="14" height="14" fill="#4c9a6a"/>
 <text x="594" y="102">central_greedy</text>
-<path d="M70.0 379.8 L162.1 379.1 L254.1 376.6 L375.9 358.8 L467.9 295.0 L560.0 40.0" fill="none" stroke="#8a6fb0" stroke-width="2.5"/>
-<circle cx="70.0" cy="379.8" r="3" fill="#8a6fb0"/>
-<circle cx="162.1" cy="379.1" r="3" fill="#8a6fb0"/>
-<circle cx="254.1" cy="376.6" r="3" fill="#8a6fb0"/>
-<circle cx="375.9" cy="358.8" r="3" fill="#8a6fb0"/>
-<circle cx="467.9" cy="295.0" r="3" fill="#8a6fb0"/>
+<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#8a6fb0" stroke-width="2.5"/>
+<circle cx="70.0" cy="380.0" r="3" fill="#8a6fb0"/>
+<circle cx="134.1" cy="380.0" r="3" fill="#8a6fb0"/>
+<circle cx="198.2" cy="379.9" r="3" fill="#8a6fb0"/>
+<circle cx="282.9" cy="379.1" r="3" fill="#8a6fb0"/>
+<circle cx="347.1" cy="376.6" r="3" fill="#8a6fb0"/>
+<circle cx="411.2" cy="366.4" r="3" fill="#8a6fb0"/>
+<circle cx="495.9" cy="295.0" r="3" fill="#8a6fb0"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#8a6fb0"/>
 <rect x="576" y="112" width="14" height="14" fill="#8a6fb0"/>
 <text x="594" y="124">central_optimal</text>
-<path d="M70.0 379.8 L162.1 379.1 L254.1 376.6 L375.9 358.8 L467.9 295.0 L560.0 40.0" fill="none" stroke="#b58b2c" stroke-width="2.5"/>
-<circle cx="70.0" cy="379.8" r="3" fill="#b58b2c"/>
-<circle cx="162.1" cy="379.1" r="3" fill="#b58b2c"/>
-<circle cx="254.1" cy="376.6" r="3" fill="#b58b2c"/>
-<circle cx="375.9" cy="358.8" r="3" fill="#b58b2c"/>
-<circle cx="467.9" cy="295.0" r="3" fill="#b58b2c"/>
+<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#b58b2c" stroke-width="2.5"/>
+<circle cx="70.0" cy="380.0" r="3" fill="#b58b2c"/>
+<circle cx="134.1" cy="380.0" r="3" fill="#b58b2c"/>
+<circle cx="198.2" cy="379.9" r="3" fill="#b58b2c"/>
+<circle cx="282.9" cy="379.1" r="3" fill="#b58b2c"/>
+<circle cx="347.1" cy="376.6" r="3" fill="#b58b2c"/>
+<circle cx="411.2" cy="366.4" r="3" fill="#b58b2c"/>
+<circle cx="495.9" cy="295.0" r="3" fill="#b58b2c"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#b58b2c"/>
 <rect x="576" y="134" width="14" height="14" fill="#b58b2c"/>
 <text x="594" y="146">central_best</text>
-<path d="M70.0 379.8 L162.1 379.1 L254.1 376.6 L375.9 358.8 L467.9 295.0 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="379.8" r="3" fill="#2f6f9f"/>
-<circle cx="162.1" cy="379.1" r="3" fill="#2f6f9f"/>
-<circle cx="254.1" cy="376.6" r="3" fill="#2f6f9f"/>
-<circle cx="375.9" cy="358.8" r="3" fill="#2f6f9f"/>
-<circle cx="467.9" cy="295.0" r="3" fill="#2f6f9f"/>
+<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="70.0" cy="380.0" r="3" fill="#2f6f9f"/>
+<circle cx="134.1" cy="380.0" r="3" fill="#2f6f9f"/>
+<circle cx="198.2" cy="379.9" r="3" fill="#2f6f9f"/>
+<circle cx="282.9" cy="379.1" r="3" fill="#2f6f9f"/>
+<circle cx="347.1" cy="376.6" r="3" fill="#2f6f9f"/>
+<circle cx="411.2" cy="366.4" r="3" fill="#2f6f9f"/>
+<circle cx="495.9" cy="295.0" r="3" fill="#2f6f9f"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="156" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="168">central_bounded</text>
 <text x="70" y="398" text-anchor="middle">50</text>
-<text x="560" y="398" text-anchor="middle">2e+03</text>
+<text x="560" y="398" text-anchor="middle">1e+04</text>
 <text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">3.2e+06</text>
+<text x="62" y="50" text-anchor="end">8e+07</text>
 </svg>
