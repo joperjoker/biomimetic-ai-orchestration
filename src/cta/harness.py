@@ -699,6 +699,78 @@ def routing_experiment(
     return out
 
 
+def pareto_sweep(
+    base: CellParams,
+    seeds: int,
+    weights: tuple[float, ...] = (0.0, 0.5, 1.0, 1.5, 2.0),
+) -> list[dict[str, float]]:
+    """The latency-quality frontier as the bid's latency weight varies (P2.2).
+
+    ``latency_weight`` is the exponent on the latency term of the Binding Energy.
+    At zero the bid ignores latency and maximises quality; as it rises the bid
+    favours faster agents, trading realised quality for lower mean latency. Each
+    point is the mean realised quality and the mean latency of the winning agents
+    at one weight, the raw material of a speed-quality product dial.
+    """
+    out: list[dict[str, float]] = []
+    for w in weights:
+        q_vals: list[float] = []
+        lat_vals: list[float] = []
+        for seed in range(seeds):
+            agents = generate_agents(
+                base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
+            )
+            tasks = generate_tasks(
+                base.n_tasks,
+                base.n_domains,
+                random.Random(seed + 10_000),
+                base.activation_energy,
+                base.family,
+            )
+            res = run_batch(
+                agents, tasks, random.Random(seed + 20_000), condition="cta",
+                observability_k=base.observability_k, latency_weight=w,
+            )
+            by_id = {a.agent_id: a for a in agents}
+            won = [o for o in res.outcomes if o.winner is not None]
+            if won:
+                lat_vals.append(sum(by_id[o.winner].latency for o in won) / len(won))
+            q_vals.append(res.summary()["mean_quality"])
+        out.append(
+            {
+                "latency_weight": w,
+                "mean_quality": sum(q_vals) / len(q_vals),
+                "mean_latency": sum(lat_vals) / len(lat_vals) if lat_vals else 0.0,
+            }
+        )
+    return out
+
+
+def pareto_front(
+    points: list[dict[str, float]],
+    quality_key: str = "mean_quality",
+    latency_key: str = "mean_latency",
+) -> list[dict[str, float]]:
+    """The non-dominated points: none has both higher quality and lower latency.
+
+    A point is dominated when another reaches at least its quality at no more than
+    its latency, strictly better on one axis. The survivors are the frontier a
+    deployer would actually choose between.
+    """
+    front: list[dict[str, float]] = []
+    for p in points:
+        dominated = any(
+            q is not p
+            and q[quality_key] >= p[quality_key]
+            and q[latency_key] <= p[latency_key]
+            and (q[quality_key] > p[quality_key] or q[latency_key] < p[latency_key])
+            for q in points
+        )
+        if not dominated:
+            front.append(p)
+    return front
+
+
 def temporal_metrics(base: CellParams, seeds: int) -> dict[str, list[float]]:
     """Run the round-based engine on the base population for temporal measures.
 
