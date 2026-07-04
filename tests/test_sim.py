@@ -2,7 +2,7 @@
 
 import random
 
-from cta.baselines import greedy_assignment, optimal_assignment, run_central
+from cta.baselines import coordinator_cost, greedy_assignment, optimal_assignment, run_central
 from cta.engine import _brier_ece, run_batch
 from cta.generators import (
     generate_agents,
@@ -190,3 +190,16 @@ def test_run_central_completes_some():
     summary = run_central(agents, tasks, random.Random(33), method="greedy")
     assert summary["tasks"] == 6
     assert summary["assigned"] >= 1
+
+
+def test_coordinator_cost_fast_path_matches_full_run_load_fields():
+    # The load-only fast path must report exactly the load the full run reports,
+    # because the scaling claim rests on these fields.
+    agents = generate_agents(8, 3, 0.8, random.Random(31))
+    tasks = generate_tasks(6, 3, random.Random(32))
+    full = run_central(agents, tasks, random.Random(33), method="greedy")
+    fast = run_central(agents, tasks, random.Random(33), method="greedy", quality=False)
+    for field in coordinator_cost(agents, tasks):
+        assert fast[field] == full[field], field
+    assert fast["method"] == "greedy-load-only"
+    assert fast["mean_quality"] == 0.0 and fast["assigned"] == 0

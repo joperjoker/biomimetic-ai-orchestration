@@ -31,6 +31,12 @@ from cta.temporal import TemporalConfig, run_temporal
 
 CONDITIONS = ("cta", "pull_based", "central_greedy", "central_optimal", "central_best")
 
+# Load fields that run_central reports analytically (N times M), independent of
+# the assignment; a sweep reading only these can skip computing the assignment.
+LOAD_METRICS = frozenset(
+    {"coordinator_work", "total_work", "peak_agent_work", "peak_store_load", "peak_per_node"}
+)
+
 
 @dataclass(frozen=True)
 class CellParams:
@@ -54,8 +60,15 @@ class Protocol:
     heterogeneity_grid: tuple[float, ...] = (0.0, 0.25, 0.5, 0.75, 1.0)
 
 
-def run_cell(condition: str, params: CellParams, seed: int) -> dict[str, float]:
-    """Run one condition once, deterministically for the given seed."""
+def run_cell(
+    condition: str, params: CellParams, seed: int, quality: bool = True
+) -> dict[str, float]:
+    """Run one condition once, deterministically for the given seed.
+
+    ``quality=False`` is the load-only fast path for the central conditions: the
+    analytic load fields are returned without computing the assignment. It has
+    no effect on the decentralised conditions, which must run to be measured.
+    """
     if condition not in CONDITIONS:
         raise ValueError(f"unknown condition: {condition}")
     agents = generate_agents(
@@ -85,15 +98,17 @@ def run_cell(condition: str, params: CellParams, seed: int) -> dict[str, float]:
             "central_optimal": "optimal",
             "central_best": "best",
         }[condition]
-        summary = run_central(agents, tasks, exec_rng, method=method)
+        summary = run_central(agents, tasks, exec_rng, method=method, quality=quality)
     summary["condition"] = condition
     summary["seed"] = seed
     return summary
 
 
-def run_seeds(condition: str, params: CellParams, seeds: int) -> list[dict[str, float]]:
+def run_seeds(
+    condition: str, params: CellParams, seeds: int, quality: bool = True
+) -> list[dict[str, float]]:
     """Run a condition across ``seeds`` replications."""
-    return [run_cell(condition, params, seed) for seed in range(seeds)]
+    return [run_cell(condition, params, seed, quality=quality) for seed in range(seeds)]
 
 
 def aggregate(rows: list[dict[str, float]], metric: str) -> dict[str, float]:
@@ -109,6 +124,9 @@ def scaling_sweep(
     """Sweep the agent count for each condition, returning aggregated points."""
     out: dict[str, list[dict[str, float]]] = {}
     for condition in conditions:
+        # Central load fields are analytic, so when the sweep reads only a load
+        # metric the assignment need not be computed; this unlocks large N.
+        load_only = condition.startswith("central") and metric in LOAD_METRICS
         points: list[dict[str, float]] = []
         for n in protocol.scaling_n:
             params = replace(
@@ -116,7 +134,7 @@ def scaling_sweep(
                 n_agents=n,
                 n_tasks=max(1, int(n * protocol.base.n_tasks / max(1, protocol.base.n_agents))),
             )
-            rows = run_seeds(condition, params, protocol.seeds)
+            rows = run_seeds(condition, params, protocol.seeds, quality=not load_only)
             agg = aggregate(rows, metric)
             agg["n_agents"] = n
             points.append(agg)

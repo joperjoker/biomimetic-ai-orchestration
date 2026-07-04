@@ -61,3 +61,17 @@ def test_scaling_sweep_small():
     out = scaling_sweep(("cta", "pull_based"), proto, metric="coordinator_work")
     assert set(out.keys()) == {"cta", "pull_based"}
     assert [p["n_agents"] for p in out["cta"]] == [20, 40]
+
+
+def test_scaling_sweep_central_load_matches_full_run():
+    # The central load-only fast path in the sweep must agree with the analytic
+    # N times M, so the scaling figure is unaffected by the optimisation.
+    proto = Protocol(
+        seeds=1,
+        base=CellParams(n_agents=20, n_tasks=16, n_domains=3),
+        scaling_n=(20, 40),
+    )
+    out = scaling_sweep(("central_best",), proto, metric="peak_per_node")
+    tasks_at = {20: max(1, int(20 * 16 / 20)), 40: max(1, int(40 * 16 / 20))}
+    for pt in out["central_best"]:
+        assert pt["mean"] == pt["n_agents"] * tasks_at[pt["n_agents"]]

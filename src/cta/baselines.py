@@ -128,13 +128,46 @@ def optimal_assignment(agents: list[Agent], tasks: list[Task]) -> Assignment:
     return Assignment(pairs, "optimal-hungarian")
 
 
+def coordinator_cost(agents: list[Agent], tasks: list[Task]) -> dict[str, float]:
+    """The analytic coordinator load fields: N times M pair scores at one node.
+
+    These fields do not depend on which assignment the scheduler picks, so a
+    scaling sweep that only needs the load curve can take this fast path and
+    skip computing the assignment entirely.
+    """
+    nm = len(agents) * len(tasks)
+    return {
+        "coordinator_work": nm,
+        "total_work": nm,
+        "peak_agent_work": nm,
+        "peak_store_load": 0,
+        "peak_per_node": nm,
+    }
+
+
 def run_central(
     agents: list[Agent],
     tasks: list[Task],
     rng: random.Random,
     method: str = "greedy",
+    quality: bool = True,
 ) -> dict[str, float]:
-    """Assign centrally, execute the assigned pairs, and summarise."""
+    """Assign centrally, execute the assigned pairs, and summarise.
+
+    With ``quality=False`` only the analytic load fields are real; the quality
+    fields are zeroed and the assignment is never computed. Use it when a sweep
+    reads nothing but the load curve.
+    """
+    if not quality:
+        return {
+            "tasks": len(tasks),
+            "assigned": 0,
+            "completed": 0,
+            "infeasible_rate": 0.0,
+            "mean_quality": 0.0,
+            **coordinator_cost(agents, tasks),
+            "method": f"{method}-load-only",
+        }
     if method == "greedy":
         assignment = greedy_assignment(agents, tasks)
     elif method == "best":
@@ -159,15 +192,9 @@ def run_central(
         "completed": completed,
         "infeasible_rate": (n - assigned) / n if n else 0.0,
         "mean_quality": sum(qualities) / len(qualities) if qualities else 0.0,
-        # The central scheduler scores all agent-task pairs at one node each round;
-        # this is the coordinator work that the decentralised claim distributes.
-        "coordinator_work": len(agents) * len(tasks),
-        # A single node does all the work, so the peak per-node load equals the
-        # total work: N times M. This is the bottleneck the decentralised design
-        # avoids by distributing evaluation across agents.
-        "total_work": len(agents) * len(tasks),
-        "peak_agent_work": len(agents) * len(tasks),
-        "peak_store_load": 0,
-        "peak_per_node": len(agents) * len(tasks),
+        # A single node scores all N times M pairs, so the peak per-node load
+        # equals the total work. This is the bottleneck the decentralised
+        # design avoids by distributing evaluation across agents.
+        **coordinator_cost(agents, tasks),
         "method": assignment.method,
     }
