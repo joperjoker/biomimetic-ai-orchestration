@@ -165,7 +165,9 @@ def _fires_on(delta: float, temperature: float, rng: random.Random) -> bool:
     return rng.random() < math.exp(delta / temperature)
 
 
-def _bid(mode: str, c_self: float, c_true: float, agent: Agent) -> float:
+def _bid(
+    mode: str, c_self: float, c_true: float, agent: Agent, latency_weight: float = 1.0
+) -> float:
     """The selection score used to rank the firing agents (E6 family).
 
     Only signals available at allocation time may enter the bid: the agent's
@@ -182,9 +184,12 @@ def _bid(mode: str, c_self: float, c_true: float, agent: Agent) -> float:
       knows both the true fit and the true capability.
 
     Latency breaks near-ties as in E6, except in ``quality`` mode where it is
-    dropped from the bid entirely.
+    dropped from the bid entirely. ``latency_weight`` is the exponent on the
+    latency term (``/ L ** latency_weight``): 1.0 is the deployed cost-aware bid,
+    0.0 ignores latency (a quality-first bid), and larger values favour faster
+    agents more aggressively. Sweeping it traces the latency-quality frontier.
     """
-    lat = max(agent.latency, EPS)
+    lat = max(agent.latency, EPS) ** latency_weight
     if mode == "true":
         cap = 0.0 if agent.capability < 0.0 else 1.0 if agent.capability > 1.0 else agent.capability
         return c_true * cap / lat
@@ -206,6 +211,7 @@ def run_batch(
     gate_enabled: bool = True,
     observability_k: int | None = None,
     selection_mode: str = "reliability",
+    latency_weight: float = 1.0,
 ) -> BatchResult:
     """Allocate a batch of tasks under a decentralised condition.
 
@@ -276,7 +282,7 @@ def run_batch(
         winner = max(
             firing,
             key=lambda a: (
-                _bid(selection_mode, self_c[a.agent_id], true_c[a.agent_id], a),
+                _bid(selection_mode, self_c[a.agent_id], true_c[a.agent_id], a, latency_weight),
                 -a.latency,
                 a.agent_id,
             ),
