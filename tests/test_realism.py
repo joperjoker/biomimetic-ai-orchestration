@@ -4,14 +4,29 @@ import random
 import statistics
 
 from cta.engine import reliability_bins
-from cta.generators import generate_tasks
+from cta.generators import generate_agents, generate_tasks
 from cta.realism import (
     PROFILES,
     FleetClient,
     fleet_experiment,
     fleet_mix_sweep,
     generate_fleet,
+    with_fitted_miscalibration,
 )
+
+
+def test_fitted_miscalibration_draws_from_measured_profiles():
+    agents = generate_agents(50, 4, 0.8, random.Random(2))
+    fitted = with_fitted_miscalibration(agents, random.Random(9))
+    biases = {p.calibration_bias for p in PROFILES}
+    # Every agent's calibration bias is one of the measured archetype values.
+    assert all(a.calibration_bias in biases for a in fitted)
+    # The population spans more than one archetype under the default equal mix.
+    assert len({a.calibration_bias for a in fitted}) >= 2
+    # Deterministic under the seed; only calibration is overridden.
+    again = with_fitted_miscalibration(agents, random.Random(9))
+    assert [a.calibration_bias for a in fitted] == [a.calibration_bias for a in again]
+    assert [a.capability for a in fitted] == [a.capability for a in agents]
 
 
 def test_fleet_is_deterministic_and_mixed():

@@ -111,6 +111,27 @@ def generate_fleet(
     return out
 
 
+def with_fitted_miscalibration(
+    agents: list[Agent], rng: random.Random, mix: dict[str, float] | None = None
+) -> list[Agent]:
+    """Override each agent's calibration from the measured MarketBench spread.
+
+    Where ``with_miscalibration`` injects one hand-picked overconfidence bias, this
+    draws each agent's ``calibration_bias`` and ``calibration_noise`` from a profile
+    sampled out of the measured archetype mixture (overconfident, calibrated,
+    underconfident), so the population's self-assessment error matches the shape and
+    spread reported for real coding models rather than a chosen constant. It only
+    touches calibration, so it composes with the competence-spread and track-record
+    transforms used in the calibration sweep. ``mix`` weights the archetypes; the
+    default is an equal mixture.
+    """
+    profiles = _assign(len(agents), mix, rng)
+    return [
+        replace(a, calibration_bias=p.calibration_bias, calibration_noise=p.calibration_noise)
+        for a, p in zip(agents, profiles, strict=False)
+    ]
+
+
 @dataclass
 class FleetClient:
     """A pilot client whose self-report is a success estimate with archetype bias."""
