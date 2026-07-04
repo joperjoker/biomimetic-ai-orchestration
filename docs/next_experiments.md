@@ -8,39 +8,102 @@ commercialisation story.
 
 This is a code-first plan. Every item names the concrete file and function to
 add or change, the dataset or figure it produces, the paper section it feeds,
-and an acceptance test that decides whether the item is done. Work the phases in
-order; within a phase the items are independent and can be parallelised. Keep
-the house rules throughout: pure Python standard library (no numpy/scipy),
-deterministic under seeded `random.Random`, British English, no
-clause-separating dashes, no puffery. `ruff check .` and `pytest` stay green
-after every item.
+and an acceptance test that decides whether the item is done. Keep the house
+rules throughout: pure Python standard library (no numpy/scipy), deterministic
+under seeded `random.Random`, British English, no clause-separating dashes, no
+puffery. `ruff check .` and `pytest` stay green after every item.
+
+Read the two cross-cutting protocols first (statistics, and product). They bind
+every experiment below and exist to stop the larger experiment family from
+quietly turning into p-hacking or a demo with no customer.
 
 ---
 
-## Where the paper stands, and the six gaps this plan closes
+## Where the paper stands, and the gaps this plan closes
 
 The framework is built and the protocol is pre-registered. The honest weaknesses
-that a reviewer will find, and that block the four goals, are:
+a reviewer will find, and that block the four goals, are:
 
 1. **The dataset is small for the claim.** 20 seeds, `N <= 1000`, 39 live-pilot
    samples. "Large dataset" is a stated goal and the evidence does not yet meet
-   it.
-2. **The central baseline has perfect information.** `run_central` scores every
-   pair from the *true* compatibility vectors, so it is an unbeatable oracle.
-   H2 and H6 are measured against an opponent that cannot exist in production.
+   it, and the seed count was chosen by hand rather than by the effect size we
+   need to detect.
+2. **The central baseline has perfect information.** `run_central`
+   (`baselines.py:150`) scores every pair from the *true* compatibility vectors,
+   so it is an unbeatable oracle. H2 and H6 are measured against an opponent that
+   cannot exist in production.
 3. **Biomimicry is asserted, not isolated.** Nothing shows the biological
    mechanisms (activation barrier, integrity gate, annealing) beat a plain
-   reliability-weighted auction. Without that ablation the biology is decoration.
+   reliability-weighted auction. `selection_mode` already exists in `engine.py`
+   (`SELECTION_MODES`), so the ablation has a hook but has never been run as one.
 4. **Scaling is capped at N=1000 by an accident of implementation.**
    `run_central` builds the full assignment even when only the analytic
-   coordinator cost (`N*M`) is reported, so large N is needlessly expensive.
-5. **No cost, latency or dollar model.** The commercial claim has no Pareto
-   frontier and no pricing.
+   coordinator cost (`N*M`, `baselines.py:164`) is reported, so large N is
+   needlessly expensive.
+5. **No cost, latency or dollar model, and no product definition.** The
+   commercial claim has no Pareto frontier, no pricing, and no statement of what
+   the product actually is or who buys it.
 6. **H6 is dead by construction.** A decentralised scheme cannot beat a
-   full-information optimum on quality, so "we match/beat central" can only be
-   fair once the baseline is information-bounded (see gap 2).
+   full-information optimum on quality, so "we match/beat central" is only fair
+   once the baseline is information-bounded (couples to gap 2).
+7. **The generators are hand-tuned, not fitted to real data.** External validity
+   rests on one 39-sample pilot; the synthetic distributions are not anchored to
+   any measured calibration data.
 
-The phases below close these in dependency order.
+---
+
+## Cross-cutting protocol A: statistics and pre-registration
+
+Applies to every experiment. Do this before running the sweeps, not after.
+
+- **Pre-register each new or re-run hypothesis.** Before writing results, add to
+  `docs/paper.md` §2.6 a one-line falsification criterion for every new claim
+  (H2/H6 vs the bounded baseline in P1.0, the four biomimicry conditions in P2.4,
+  the streaming and adversary claims in Phase 3). State the direction, the metric
+  and the threshold in advance.
+- **Choose the seed count by power, not by hand.** Add `stats.min_seeds(effect,
+  sd, alpha=0.05, power=0.8)` (a closed-form normal approximation, pure stdlib)
+  and run it on a 20-seed pilot of each headline comparison to pick
+  `headline_seeds`. Report the chosen number and the detectable effect. This
+  replaces the arbitrary "200" with a justified figure (likely in the low
+  hundreds, but derived).
+- **One Holm family per results table.** When P1.0 and P2.x add comparisons, they
+  join the existing Holm-Bonferroni family for their table so the corrected
+  p-values stay honest as the family grows. Do not run the new tests in a
+  separate, uncorrected family.
+- **Reproducible, non-overlapping seeds.** Derive each condition's seed stream
+  as `hash(condition_name) ^ base_seed + i` (or an explicit offset table) so no
+  two conditions share draws and the whole dataset regenerates bit-for-bit.
+  Add a test that two conditions do not collide.
+- **Commit to reporting negatives.** Every hypothesis item below is "supported or
+  the paper says it is not." A mechanism that does not earn its place (P2.4), a
+  regime where CTA loses to the bounded baseline (P1.0), or annealing that does
+  not help under streaming (P3.3) is a *result*, written up, not a run to bury.
+- **Runtime budget.** Estimate wall-clock before the big run (`headline_seeds` x
+  conditions x cells). If it exceeds a few minutes single-core, memoise per-seed
+  cells and parallelise with `concurrent.futures` over seeds (determinism is per
+  seed, so this is safe). Record the budget in `results/dataset/README.md`.
+
+## Cross-cutting protocol B: the product thesis
+
+The commercial goal needs a stated product, not just a cost curve. Write
+`docs/product.md` (one page) and keep the experiments pointed at it:
+
+- **What it is.** A decentralised task-allocation layer for multi-agent LLM
+  systems: agents self-select on a calibrated, track-record-corrected bid behind
+  an integrity gate, with no central scheduler to become the bottleneck or the
+  single point of failure.
+- **Who buys it and why now.** Teams running agent fleets who hit the coordinator
+  `N*M` wall and cannot trust raw self-reports. Position explicitly against the
+  central routers the literature already has (RouteLLM, EvoRoute, DiSRouter): the
+  differentiator is *no central router* plus *calibration robustness*, not better
+  routing accuracy.
+- **The wedge deliverable.** A minimal runnable proof of concept (P2.6) a
+  prospective user can run on their own agents, not only the simulator.
+- Every commercialisation experiment (P2.2, P2.3, P2.6) must cite the number it
+  produces back to a line in this doc (cost saved, latency dial, failures
+  prevented). If an experiment does not move a product claim, it is Phase 3, not
+  Phase 2.
 
 ---
 
@@ -50,138 +113,171 @@ The phases below close these in dependency order.
 - **File:** `docs/paper.md`, the §3 Results header.
 - **Change:** the body already reports the full protocol; delete the
   "(preliminary, demo scale)" qualifier so the section and its contents agree.
-- **Feeds:** §3.
-- **Acceptance:** no occurrence of "preliminary, demo scale" remains; a grep for
-  it returns nothing.
+- **Acceptance:** a grep for "preliminary, demo scale" returns nothing.
 
 ### P0.2 Scaling fast path in the central baseline
 - **File:** `src/cta/baselines.py`.
-- **Change:** add `coordinator_cost(agents, tasks) -> dict` that returns only the
+- **Change:** add `coordinator_cost(agents, tasks) -> dict` returning only the
   analytic load fields (`coordinator_work`, `total_work`, `peak_agent_work`,
   `peak_per_node`, all `N*M`; `peak_store_load` 0) without calling
   `greedy/best/optimal_assignment`. Give `run_central` a `quality: bool = True`
-  parameter; when `False` it returns `coordinator_cost(...)` merged with zeroed
-  quality fields. In `harness.scaling_sweep`, call the central condition with
-  `quality=False` because the sweep only needs the load curve, not the assigned
-  quality.
-- **Feeds:** §3 scaling result; unlocks P1.2.
-- **Acceptance:** `coordinator_cost` matches the old `run_central` load fields
-  exactly for a small fleet (regression test); `scaling_sweep` at `N=5000`
-  completes in under a few seconds on one core; a new test asserts the fast path
-  and the full path agree on the four load fields.
+  parameter; when `False` it returns `coordinator_cost(...)` with zeroed quality
+  fields. In `harness.scaling_sweep`, call the central condition with
+  `quality=False` because the sweep only needs the load curve.
+- **Acceptance:** `coordinator_cost` matches the old load fields exactly for a
+  small fleet (regression test); `scaling_sweep` at `N=5000` completes in under a
+  few seconds on one core.
 
 ---
 
-## Phase 1: the large dataset (the headline goal)
+## Phase 1: a fair baseline, then the large dataset
 
-### P1.1 Raise the seed count for the headline hypotheses
-- **File:** `src/cta/harness.py` `Protocol` dataclass and `src/cta/cli.py`
-  `autorun`.
-- **Change:** add `headline_seeds: int = 200` alongside the existing
-  `seeds: int = 20`. Use `headline_seeds` for the verdict table, the robustness
-  table and the calibration sweep; keep the cheaper `seeds` for exploratory grids
-  and surfaces so the run stays tractable. Confidence intervals must be reported,
-  so make `aggregate` emit a bootstrap 95% CI (percentile bootstrap, pure stdlib,
-  fixed seed) for every headline mean.
-- **Feeds:** §3 verdict and robustness tables (every mean gains a CI).
-- **Acceptance:** headline tables in `results/RESULTS.md` show `mean [lo, hi]`;
-  a test checks the CI brackets the mean and narrows when seeds increase.
+**Sequencing note (this fixes a bug in the first draft of this plan):** the
+information-bounded baseline (P1.0) changes what every headline number is
+measured against, so it must land *before* the large dataset is frozen.
+Generating the big dataset first and swapping the baseline second would force a
+full regenerate and invalidate any interim write-up. Do P1.0, then P1.1 to P1.3.
+
+### P1.0 Bounded-information central baseline (makes H2 and H6 fair)
+- **File:** `src/cta/baselines.py`.
+- **Change:** add `run_central_bounded(agents, tasks, rng, staleness, noise)`
+  that assigns from *self-reported* compatibility with a *stale* reliability
+  estimate, mirroring what a real coordinator sees. Define staleness concretely:
+  the reliability used is the agent's value from `staleness` rounds ago (or, in
+  the batch engine, `R` computed from a truncated history), and `noise` perturbs
+  the self-report as in E13. **Fairness constraint:** the bounded central and CTA
+  must be given the *same* information budget, so the comparison isolates
+  central-versus-decentralised, not who was handed better data. State this in
+  §2.3.
+- **Feeds:** §2.3 baselines; §3 H2 and H6 re-run against the bounded baseline;
+  §4 honest-negative discussion.
+- **Acceptance:** at zero staleness/noise it reduces to perfect-info central
+  (regression); as staleness rises its quality drops below CTA in at least one
+  regime, giving H6 a beatable target; a Holm-corrected test reports it.
+
+### P1.1 Power-justified seed count with confidence intervals
+- **File:** `src/cta/harness.py` `Protocol`, `src/cta/stats.py`, `src/cta/cli.py`.
+- **Change:** add `headline_seeds` set from `stats.min_seeds` (protocol A), used
+  for the verdict table, robustness table and calibration sweep; keep the cheaper
+  `seeds` for exploratory grids and surfaces. Make `aggregate` emit a percentile
+  bootstrap 95% CI (pure stdlib, fixed seed) for every headline mean.
+- **Feeds:** §3 verdict and robustness tables (every mean gains a CI); §2.6
+  reports the power calculation.
+- **Acceptance:** headline tables in `results/RESULTS.md` show `mean [lo, hi]`; a
+  test checks the CI brackets the mean and narrows as seeds increase.
 
 ### P1.2 Extend the scaling curve and fit growth with CIs
-- **File:** `src/cta/harness.py` `Protocol.scaling_n` and a new
-  `fit_scaling(rows) -> dict` in `src/cta/stats.py`.
+- **File:** `src/cta/harness.py` `Protocol.scaling_n`, new `fit_scaling` in
+  `src/cta/stats.py`.
 - **Change:** extend `scaling_n` to `(50, 100, 200, 500, 1000, 2000, 5000,
-  10000)` (feasible now that P0.2 removed the assignment cost). `fit_scaling`
-  does an ordinary-least-squares fit of `log(peak_per_node)` on `log(N)` for both
-  central and decentralised, returning the exponent with a bootstrap CI, to back
-  the "central grows as N*M, decentralised stays flat per node" claim
-  quantitatively.
+  10000)` (feasible after P0.2). `fit_scaling` does an OLS fit of
+  `log(peak_per_node)` on `log(N)` for central and decentralised, returning the
+  exponent with a bootstrap CI.
 - **Feeds:** §3 scaling; H1.
 - **Acceptance:** the fitted central exponent CI includes the analytic slope and
-  the decentralised per-node slope CI includes ~0; a scaling figure covers the
-  full range on a log-log axis.
+  the decentralised per-node slope CI includes ~0; a log-log figure covers the
+  full range.
 
-### P1.3 Release the raw per-run dataset
-- **File:** new `src/cta/dataset.py` with `dump_runs(path, rows)` and a
-  `cta dataset` CLI subcommand in `src/cta/cli.py`.
+### P1.3 Release the raw per-run dataset (the headline deliverable)
+- **File:** new `src/cta/dataset.py` (`dump_runs`), `cta dataset` subcommand.
 - **Change:** persist every per-seed, per-condition record (inputs: N, M, mode,
-  bias, seed; outputs: mean quality, stall rate, violations, loads) to
-  `results/dataset/runs.csv` using the stdlib `csv` module, plus a short
-  `results/dataset/README.md` data dictionary. This *is* the "large dataset"
-  deliverable a reader can reanalyse.
-- **Feeds:** §3, reproducibility appendix, and the commercialisation story (a
-  shippable benchmark).
+  bias, staleness, seed; outputs: mean quality, stall rate, violations, loads) to
+  `results/dataset/runs.csv` via the stdlib `csv` module, plus
+  `results/dataset/README.md` (data dictionary, seed scheme, runtime budget).
+- **Feeds:** §3, the reproducibility appendix, and the product story (a shippable
+  benchmark).
 - **Acceptance:** `runs.csv` has one row per (condition, seed) with a stable
   column order; row count equals conditions times seeds; a test round-trips the
   CSV and re-derives one headline mean from it.
 
+### P1.4 One-command reproducibility
+- **File:** `src/cta/cli.py` (`cta reproduce-all`), `docs/reproduce.md`, pin the
+  interpreter/toolchain versions in `pyproject.toml` and a short `constraints`.
+- **Change:** a single entry point regenerates every figure, table and the CSV
+  from seeds, and a `docs/reproduce.md` appendix documents it. A paper stands or
+  falls on this for a synthetic-data claim.
+- **Acceptance:** `cta reproduce-all` on a clean checkout reproduces the committed
+  figures and `runs.csv` byte-for-byte (or within a documented tolerance); CI-style
+  smoke test runs it at small scale.
+
 ---
 
-## Phase 2: realism, biomimicry and commercialisation
+## Phase 2: realism, biomimicry and the product
 
-### P2.1 A bounded-information central baseline (makes H2 and H6 fair)
-- **File:** `src/cta/baselines.py`.
-- **Change:** add `run_central_bounded(agents, tasks, rng, staleness, noise)`
-  that assigns from *self-reported* compatibility with a stale reliability
-  estimate rather than the true vectors, mirroring what a real coordinator would
-  actually see. This is the honest opponent: a scheduler with imperfect
-  knowledge, which CTA's local track-record correction can plausibly match or
-  beat.
-- **Feeds:** §2.3 baselines, §3 (rerun H2 and H6 against the bounded baseline),
-  §4 discussion of the honest negative.
-- **Acceptance:** at zero staleness/noise it reduces to the perfect-info central
-  (regression); as staleness rises its quality degrades below CTA on at least
-  one regime, giving H6 a beatable target; a Holm-corrected test reports the
-  comparison.
+### P2.1 Ground the generators in measured calibration data
+- **File:** `src/cta/realism.py`, `src/cta/generators.py`.
+- **Change:** fit the calibration-bias and noise distributions of the synthetic
+  fleet to the measured MarketBench profiles already in `realism.PROFILES`
+  (overconfident, calibrated, underconfident) instead of hand-picked constants,
+  and add a `fitted` generator family that samples from them. This turns
+  "synthetic supports the hypotheses" into "synthetic *calibrated to real
+  measurements* supports the hypotheses."
+- **Feeds:** §2.5 realism, §3 robustness (verdicts under the fitted family), §4
+  external validity.
+- **Acceptance:** the fitted family's aggregate bias/noise match the source
+  profiles within tolerance (test); headline verdicts hold under it or the paper
+  reports the difference.
 
 ### P2.2 Latency and quality Pareto frontier
-- **File:** `src/cta/scoring.py` `binding_energy` and new
-  `harness.pareto_sweep`.
-- **Change:** `binding_energy` currently trades quality against a length term
-  `L`; expose the L weight as a swept parameter. `pareto_sweep` sweeps it and
-  records realised quality against mean task latency (proxy: assigned task
-  length), returning the non-dominated set.
-- **Feeds:** new §3 Pareto paragraph; commercial "tune the speed/quality dial"
-  story.
-- **Acceptance:** a `figures/pareto_latency_quality.svg` shows a monotone
-  frontier; a test asserts the returned set is actually non-dominated.
+- **File:** `src/cta/scoring.py` `binding_energy`, new `harness.pareto_sweep`.
+- **Change:** the bid already divides by latency (`c_self * reliability / lat`,
+  `engine.py:196`); expose a latency-weight exponent `beta` so the bid is
+  `... / lat**beta` (`beta=1` is current behaviour, `beta=0` ignores latency).
+  `pareto_sweep` sweeps `beta` and records realised quality against mean assigned
+  latency, returning the non-dominated set.
+- **Feeds:** new §3 Pareto paragraph; the "speed/quality dial" product claim in
+  `docs/product.md`.
+- **Acceptance:** `figures/pareto_latency_quality.svg` shows a monotone frontier;
+  a test asserts the returned set is genuinely non-dominated.
 
 ### P2.3 Token and dollar cost model
 - **File:** new `src/cta/cost.py`.
-- **Change:** attach a per-evaluation and per-execution token estimate to agents
+- **Change:** attach per-evaluation and per-execution token estimates to agents
   and a `PRICING` table of real per-model input/output rates (cite the source in
-  a comment and in the paper). Compute the coordinator dollar cost of central
-  (`N*M` evaluations at coordinator rates) versus decentralised (each agent pays
-  for its own local evaluations), producing a cost-versus-N curve.
-- **Feeds:** new §4 commercialisation subsection; the product case.
-- **Acceptance:** `figures/cost_vs_n.svg` shows central cost growing as `N*M` and
-  decentralised growing linearly per node; a test checks the crossover point is
-  where the analytics say it is.
+  a comment and the paper). Compute coordinator dollar cost of central (`N*M`
+  evaluations at coordinator rates) versus decentralised (each agent pays for its
+  own local evaluations), producing a cost-versus-N curve and a crossover point.
+- **Feeds:** new §4 commercialisation subsection; `docs/product.md` cost claim.
+- **Acceptance:** `figures/cost_vs_n.svg` shows central growing as `N*M` and
+  decentralised linear per node; a test checks the crossover matches the analytics.
 
 ### P2.4 The biomimicry ablation (isolates the biology)
-- **File:** `src/cta/engine.py` `selection_mode` and new
+- **File:** `src/cta/engine.py` (reuse `selection_mode`), new
   `harness.biomimicry_ablation`.
-- **Change:** define four conditions: (a) full CTA (activation barrier + integrity
-  gate + annealing), (b) minus the activation barrier, (c) minus the integrity
-  gate, (d) a plain reliability-weighted auction with none of the biological
-  mechanisms. Sweep all four over the calibration and adversarial regimes.
-- **Feeds:** §2 (biomimicry justification moves from assertion to evidence), §3
-  ablation table, §4.
-- **Acceptance:** an ablation table shows each biological mechanism contributes a
+- **Change:** four conditions: (a) full CTA (activation barrier + integrity gate
+  + annealing), (b) minus the activation barrier, (c) minus the integrity gate,
+  (d) a plain reliability-weighted auction with none of the biological mechanisms
+  (`selection_mode` gives the bid variants; barrier and gate are toggled). Sweep
+  all four across the calibration and adversarial regimes.
+- **Feeds:** §2 (biomimicry moves from assertion to evidence), §3 ablation table,
+  §4.
+- **Acceptance:** the ablation table shows each biological mechanism contributes a
   measurable, Holm-corrected gain on at least one metric (quality, stall rate or
-  violations); if a mechanism does not, the paper reports that honestly.
+  violations), or the paper reports honestly that it does not.
 
 ### P2.5 Scale the live pilot to a two-sided reliability curve
 - **File:** `pilot_tasks/suite.py`, `pilot_tasks/analyse.py`, `src/cta/pilot.py`.
-- **Change:** add a harder task tier that induces genuine failures (so the
-  overconfident region of the reliability diagram is populated, not just the
-  underconfident one), and run the pilot across at least two model tiers via
-  independent subagents to get per-model calibration. Keep the reference-validates
-  -its-own-hidden-cases guard before spending any budget.
-- **Feeds:** §3 live pilot, the external-validity anchor for H7; `docs/live_pilot.md`.
+- **Change:** add a harder task tier that induces genuine failures (populating the
+  overconfident region of the reliability diagram), and run the pilot across at
+  least two model tiers via independent subagents for per-model calibration. Keep
+  the reference-validates-its-own-hidden-cases guard before spending any budget.
+  Budget is spent only through sanctioned Claude Code subagents, never by
+  scavenging credentials or endpoints.
+- **Feeds:** §3 live pilot, external-validity anchor for H7; `docs/live_pilot.md`.
 - **Acceptance:** the reliability diagram has points on *both* sides of the
-  diagonal; per-model ECE and Brier are reported; every reference still passes
-  its own hidden cases.
+  diagonal; per-model ECE and Brier are reported; every reference still passes its
+  own hidden cases.
+
+### P2.6 Product proof of concept (the commercial wedge)
+- **File:** new `examples/poc/` with a small runnable demo and `docs/product.md`.
+- **Change:** a minimal end-to-end example a prospective user runs on a handful of
+  real subagents: define three toy agents, post tasks, watch them self-select
+  through the calibrated gated bid, and print the allocation, the prevented
+  violations and the coordinator cost avoided. This is the artefact that turns the
+  paper into a product story rather than a table of simulations.
+- **Feeds:** `docs/product.md`; a demo paragraph/figure in §4.
+- **Acceptance:** `python -m examples.poc` runs end-to-end offline (mock client)
+  and, when budget is available, with real subagents; a test runs the mock path.
 
 ---
 
@@ -189,9 +285,9 @@ The phases below close these in dependency order.
 
 ### P3.1 Concurrent multi-process engine over the SQLite store
 - **File:** `src/cta/engine.py` / `src/cta/store.py`.
-- **Change:** drive the existing atomic-claim store from several OS processes to
-  demonstrate the decentralised claim under real contention, not just simulated
-  rounds. Measure claim-contention retries and wall-clock throughput versus N.
+- **Change:** drive the atomic-claim store from several OS processes to
+  demonstrate the decentralised claim under real contention. Measure claim-
+  contention retries and wall-clock throughput versus N.
 - **Acceptance:** no double-claims under contention (store invariant test); a
   throughput-versus-workers figure.
 
@@ -212,26 +308,38 @@ The phases below close these in dependency order.
 
 ---
 
-## Execution order and definition of done
+## Execution order, priority and the minimum viable paper
 
-1. Do **P0** first: it unblocks scale (P0.2) and removes a visible inconsistency
-   (P0.1).
-2. Do **P1** next: it produces the large dataset that is the headline goal.
-3. Do **P2** for realism, the biomimicry evidence and the commercial story; P2.1
-   and P2.4 are the highest-leverage because they turn two soft claims into fair,
-   evidenced results.
-4. **P3** is optional depth.
+Work the phases in order; within a phase the items are independent and can be
+parallelised. If time is short, the **minimum viable paper** (reviewer-ready) is:
 
-After each item: rerun `cta autorun` (or the relevant sweep), refresh `results/`,
-update the named paper section, run `ruff check . && pytest`, then commit with a
-message naming the item (for example "P1.2: extend scaling to N=10000 with fitted
-growth CIs"). Push to `claude/biomimetic-ai-orchestration-init-0nb5db`. Each
-phase boundary is a natural checkpoint to update `STATUS.md` and `CHANGELOG.md`.
+> P0.1, P0.2, **P1.0** (fair baseline), P1.1 (power + CIs), P1.2 (scaling),
+> P1.3 (dataset), P2.4 (biomimicry ablation), P2.3 (cost model).
 
-**Done when:** the dataset is released as CSV with CIs on every headline mean
-(P1.3, P1.1); H2/H6 are measured against an information-bounded baseline (P2.1);
-the biomimicry ablation shows each mechanism earns its place or is reported not to
-(P2.4); a cost/latency Pareto and dollar model back the commercial claim (P2.2,
-P2.3); and the live reliability curve is two-sided (P2.5). At that point the four
-goals — large supporting dataset, biomimicry justified, AI failure mode resolved,
-commercialisation credible — each have a figure and a test behind them.
+Those eight close gaps 1 to 6 and give every core claim a figure, a CI and a
+test. P2.1 (real-data grounding) and P2.6 (PoC) are the highest-value additions
+beyond the minimum because they carry external validity and the product story.
+P1.4, P2.2, P2.5 round it out. Phase 3 is optional depth.
+
+Rough effort: P0 is hours; each P1 item is half a day; P2.1/P2.4 are the
+heaviest in P2 (a day each) because they touch the engine and the write-up; P2.6
+depends on subagent budget. Front-load P1.0 regardless, because everything
+downstream is measured against it.
+
+After each item: rerun the relevant sweep (or `cta reproduce-all`), refresh
+`results/`, update the named paper section, run `ruff check . && pytest`, then
+commit with a message naming the item (for example "P1.2: extend scaling to
+N=10000 with fitted growth CIs"). Push to
+`claude/biomimetic-ai-orchestration-init-0nb5db`. Each phase boundary updates
+`STATUS.md` and `CHANGELOG.md`.
+
+**Done when:** the dataset is released as CSV with power-justified CIs on every
+headline mean (P1.1, P1.3); H2/H6 are measured against an information-bounded
+baseline given an equal information budget (P1.0); the biomimicry ablation shows
+each mechanism earns its place or reports it does not (P2.4); a cost/latency
+Pareto and dollar model plus a runnable PoC back the commercial claim (P2.2,
+P2.3, P2.6); the generators are anchored to measured data (P2.1); and the live
+reliability curve is two-sided (P2.5). At that point the four goals — large
+supporting dataset, biomimicry justified, AI failure mode resolved,
+commercialisation credible — each have a figure, a test and a pre-registered
+falsification criterion behind them.
