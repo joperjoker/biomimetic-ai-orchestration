@@ -2466,6 +2466,11 @@
       "mean_latency": 0.6536755828041674
     }
   ],
+  "fitted_calibration_recovery": {
+    "raw_completion": 0.37,
+    "reliability_completion": 0.8549999999999999,
+    "recovery": 0.4849999999999999
+  },
   "fleet": {
     "experiment": {
       "raw_completion": 0.7635416666666667,

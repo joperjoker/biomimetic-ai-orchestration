@@ -26,6 +26,7 @@ from cta.harness import (
     bounded_vs_cta,
     calibration_sweep,
     feasibility_check,
+    fitted_calibration_recovery,
     gate_ablation,
     h2_decomposition,
     heterogeneity_sweep,
@@ -142,6 +143,8 @@ def autorun(
     routing = routing_experiment(protocol.base, protocol.seeds)
     # Latency-quality frontier as the bid's latency weight varies (P2.2).
     pareto = pareto_sweep(protocol.base, protocol.seeds)
+    # Calibration recovery when the miscalibration is the measured mixture (P2.1).
+    fitted_recovery = fitted_calibration_recovery(protocol.base, protocol.seeds)
     # Dollar cost of coordination against agent count (P2.3): central is N*M, the
     # decentralised fleet is bounded per node, so the bill diverges at scale.
     task_ratio = protocol.base.n_tasks / max(1, protocol.base.n_agents)
@@ -481,6 +484,7 @@ def autorun(
         "cost_savings": cost_savings,
         "routing": routing,
         "pareto_latency_quality": pareto,
+        "fitted_calibration_recovery": fitted_recovery,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
         "verdicts": verdicts,

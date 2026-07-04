@@ -280,6 +280,50 @@ def calibration_sweep(
     return out
 
 
+def fitted_calibration_recovery(
+    base: CellParams, seeds: int, mix: dict[str, float] | None = None
+) -> dict[str, float]:
+    """H8 under measured miscalibration: recovery when the bias is not hand-picked.
+
+    The calibration sweep injects one chosen overconfidence bias. This repeats the
+    raw-versus-reliability comparison on a population whose per-agent calibration is
+    sampled from the measured MarketBench archetype mixture instead, so the recovery
+    is shown not to be an artefact of the injected bias shape. Returns the raw and
+    reliability completion and their difference.
+    """
+    from cta.realism import with_fitted_miscalibration
+
+    raw_vals: list[float] = []
+    rel_vals: list[float] = []
+    for seed in range(seeds):
+        agents = generate_agents(
+            base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
+        )
+        agents = with_capability_spread(agents, 0.2)
+        agents = with_track_record(agents, random.Random(seed + 40_000))
+        agents = with_fitted_miscalibration(agents, random.Random(seed + 60_000), mix)
+        tasks = generate_tasks(
+            base.n_tasks, base.n_domains, random.Random(seed + 10_000),
+            base.activation_energy, base.family,
+        )
+        raw = run_batch(
+            agents, tasks, random.Random(seed + 20_000), condition="cta", selection_mode="raw"
+        ).summary()
+        rel = run_batch(
+            agents, tasks, random.Random(seed + 20_000), condition="cta",
+            selection_mode="reliability",
+        ).summary()
+        raw_vals.append(raw["completion_rate"])
+        rel_vals.append(rel["completion_rate"])
+    raw_mean = sum(raw_vals) / len(raw_vals)
+    rel_mean = sum(rel_vals) / len(rel_vals)
+    return {
+        "raw_completion": raw_mean,
+        "reliability_completion": rel_mean,
+        "recovery": rel_mean - raw_mean,
+    }
+
+
 def bounded_vs_cta(
     base: CellParams,
     seeds: int,

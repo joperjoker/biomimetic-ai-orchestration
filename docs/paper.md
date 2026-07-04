@@ -191,7 +191,7 @@ Supporting analysis (not a hypothesis): a biomimicry ablation isolates the contr
 
 Supporting analysis (not a hypothesis): the track-record correction needs little history to work. Sweeping the length of the reliability record from 2 to 40 prior attempts, even a two-attempt record recovers most of the completion gap (about 0.32), and both the recovery and the calibration of the retained winners improve with a longer record (recovery rising to about 0.41 and the Brier score falling from about 0.32 to about 0.17). So the correction is cheap in data as well as in computation.
 
-Generalisability across generators: the population-dependent hypotheses were re-run under the structurally different `latent` family (smooth cosine compatibility, no skill gate). The verdicts are the same under both families, which is evidence the findings track the mechanism, not the synthetic structure.
+Generalisability across generators: the population-dependent hypotheses were re-run under the structurally different `latent` family (smooth cosine compatibility, no skill gate). The verdicts are the same under both families, which is evidence the findings track the mechanism, not the synthetic structure. The calibration recovery is also robust to how the miscalibration itself is generated: repeating the raw-versus-reliability comparison on a population whose per-agent bias is drawn from the measured MarketBench archetype mixture, rather than from a single injected overconfidence, the track-record correction still recovers completion by about 0.48 (from about 0.37 to about 0.85), so the H8 result is not an artefact of the injected bias shape.
 
 | Hypothesis | Domains family | Latent family |
 |-----------|----------------|---------------|
