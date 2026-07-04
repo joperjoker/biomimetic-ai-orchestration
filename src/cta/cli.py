@@ -14,6 +14,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from cta.dashboard import write_dashboard
+from cta.dataset import dump_runs
 from cta.generators import generate_agents, generate_tasks
 from cta.harness import (
     CONDITIONS,
@@ -39,7 +40,7 @@ from cta.harness import (
 from cta.pilot import MockClient, run_pilot
 from cta.realism import adversarial_fleet_safety, fleet_experiment, fleet_mix_sweep
 from cta.report import evaluate, write_results_md
-from cta.stats import mean_ci
+from cta.stats import bootstrap_ci, mean_ci
 from cta.viz import bar_chart, heatmap, line_chart, save_svg
 
 
@@ -355,7 +356,9 @@ def autorun(
             "heterogeneity_grid": list(protocol.heterogeneity_grid),
         },
         "base_quality": {
-            c: dict(zip(("mean", "ci_low", "ci_high"), mean_ci(v["mean_quality"]), strict=False))
+            c: dict(
+                zip(("mean", "ci_low", "ci_high"), bootstrap_ci(v["mean_quality"]), strict=False)
+            )
             for c, v in base_values.items()
         },
         "scaling_peak_per_node": scaling,
@@ -380,6 +383,8 @@ def autorun(
     (out).mkdir(parents=True, exist_ok=True)
     (out / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     write_dashboard(out, out / "dashboard.html")
+    # Release the raw per-run rows behind the aggregates as CSV (P1.3).
+    dump_runs(str(out), protocol)
     return summary
 
 
@@ -392,6 +397,9 @@ def main(argv: list[str] | None = None) -> int:
     dash = sub.add_parser("dashboard", help="rebuild the HTML dashboard from an existing run")
     dash.add_argument("--out", default="results", help="results directory to read")
     dash.add_argument("--to", default="results/dashboard.html", help="dashboard output path")
+    ds = sub.add_parser("dataset", help="write the raw per-run dataset to results/dataset/runs.csv")
+    ds.add_argument("--out", default="results", help="output directory")
+    ds.add_argument("--full", action="store_true", help="use the full protocol (more seeds)")
     pil = sub.add_parser("pilot", help="run the Stage 2 pilot pipeline (mock client, no calls)")
     pil.add_argument("--agents", type=int, default=20, help="number of agents")
     pil.add_argument("--tasks", type=int, default=15, help="number of tasks")
@@ -408,6 +416,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "dashboard":
         path = write_dashboard(args.out, args.to)
         print(f"Dashboard written to {path}")
+        return 0
+    if args.command == "dataset":
+        protocol = None if args.full else _demo_protocol()
+        path = dump_runs(args.out, protocol)
+        print(f"Dataset written to {path}")
         return 0
     if args.command == "pilot":
         import random

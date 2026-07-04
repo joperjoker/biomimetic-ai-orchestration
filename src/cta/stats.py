@@ -28,6 +28,35 @@ def mean_ci(values: Sequence[float], z: float = Z_95) -> tuple[float, float, flo
     return (mean, mean - half, mean + half)
 
 
+def bootstrap_ci(
+    values: Sequence[float], boot: int = 2000, seed: int = 20240607, alpha: float = 0.05
+) -> tuple[float, float, float]:
+    """Mean and a percentile bootstrap confidence interval (mean, low, high).
+
+    Resamples the values with replacement ``boot`` times and takes the empirical
+    ``alpha/2`` and ``1 - alpha/2`` quantiles of the resample means. Unlike the
+    normal-approximation ``mean_ci`` it makes no symmetry or normality assumption,
+    which matters for the bounded, skewed quality and completion metrics. Pure
+    standard library and deterministic under the seed.
+    """
+    import random
+
+    n = len(values)
+    if n == 0:
+        return (0.0, 0.0, 0.0)
+    mean = statistics.fmean(values)
+    if n == 1:
+        return (mean, mean, mean)
+    rng = random.Random(seed)
+    means = []
+    for _ in range(boot):
+        means.append(statistics.fmean(values[rng.randrange(n)] for _ in range(n)))
+    means.sort()
+    lo = means[int((alpha / 2.0) * (len(means) - 1))]
+    hi = means[int((1.0 - alpha / 2.0) * (len(means) - 1))]
+    return (mean, lo, hi)
+
+
 def _average_ranks(values: Sequence[float]) -> list[float]:
     order = sorted(range(len(values)), key=lambda i: values[i])
     ranks = [0.0] * len(values)

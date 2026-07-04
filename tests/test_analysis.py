@@ -2,6 +2,7 @@
 
 from cta.harness import CellParams, Protocol, aggregate, run_cell, run_seeds, scaling_sweep
 from cta.stats import (
+    bootstrap_ci,
     cliffs_delta,
     fit_scaling,
     holm_bonferroni,
@@ -42,6 +43,17 @@ def test_fit_scaling_recovers_known_exponents():
     assert quad["ci_low"] <= 2.0 <= quad["ci_high"]
     assert abs(flat["exponent"]) < 0.05
     assert flat["ci_low"] <= 0.0 <= flat["ci_high"]
+
+
+def test_bootstrap_ci_brackets_mean_and_is_deterministic():
+    values = [0.8, 0.82, 0.85, 0.9, 0.7, 0.88, 0.79, 0.91]
+    mean, lo, hi = bootstrap_ci(values)
+    assert lo <= mean <= hi
+    assert abs(mean - (sum(values) / len(values))) < 1e-9
+    # Deterministic under the fixed seed.
+    assert bootstrap_ci(values) == (mean, lo, hi)
+    # A constant sample has a degenerate interval at the mean.
+    assert bootstrap_ci([0.5, 0.5, 0.5]) == (0.5, 0.5, 0.5)
 
 
 def test_min_seeds_scales_with_effect_and_variance():

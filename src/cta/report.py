@@ -8,14 +8,48 @@ honest about scope: a verdict is "supported", "not supported", or "pending".
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from pathlib import Path
 
-from cta.stats import cliffs_delta, fit_scaling, holm_bonferroni, mann_whitney_u, mean_ci
+from cta.stats import (
+    bootstrap_ci,
+    cliffs_delta,
+    fit_scaling,
+    holm_bonferroni,
+    mann_whitney_u,
+    mean_ci,
+    min_seeds,
+)
 
 
 def _verdict(supported: bool) -> str:
     return "SUPPORTED" if supported else "NOT SUPPORTED"
+
+
+def _power_note(a: Sequence[float], b: Sequence[float]) -> dict[str, object]:
+    """Report whether the seeds used suffice to detect the observed mean gap.
+
+    Uses the observed effect (difference of means) and the pooled standard
+    deviation to compute the seeds per arm a power calculation would require, then
+    compares it to the seeds actually run. This replaces a hand-picked seed count
+    with a stated power justification, per section 2.6.
+    """
+    import statistics
+
+    seeds_used = min(len(a), len(b))
+    effect = abs(mean_ci(a)[0] - mean_ci(b)[0])
+    sd = 0.0
+    if len(a) > 1 and len(b) > 1:
+        sd = math.sqrt((statistics.variance(a) + statistics.variance(b)) / 2.0)
+    recommended = min_seeds(effect, sd)
+    return {
+        "seeds_used": seeds_used,
+        "effect": round(effect, 3),
+        "pooled_sd": round(sd, 3),
+        "recommended_seeds": recommended,
+        "adequately_powered": recommended <= seeds_used,
+    }
 
 
 def evaluate(
@@ -208,13 +242,16 @@ def evaluate(
         raw_top = [float(x) for x in raw[-1]["completion_values"]]  # type: ignore[union-attr]
         rel_top = [float(x) for x in rel[-1]["completion_values"]]  # type: ignore[union-attr]
         _, p = mann_whitney_u(rel_top, raw_top)
-        rel_mean, raw_mean = mean_ci(rel_top)[0], mean_ci(raw_top)[0]
+        rel_mean, rel_lo, rel_hi = bootstrap_ci(rel_top)
+        raw_mean = mean_ci(raw_top)[0]
         verdicts["H8"] = {
             "claim": "the track-record correction recovers completion under miscalibration",
             "reliability_completion": round(rel_mean, 3),
+            "reliability_completion_ci": [round(rel_lo, 3), round(rel_hi, 3)],
             "raw_completion": round(raw_mean, 3),
             "recovery": round(rel_mean - raw_mean, 3),
             "p": round(p, 4),
+            "power": _power_note(rel_top, raw_top),
             "verdict": _verdict(rel_mean > raw_mean and p < 0.05),
         }
     else:
@@ -244,6 +281,7 @@ def evaluate(
             "cta_quality_stale": round(mean_ci(cta_stale)[0], 3),
             "bounded_quality_stale": round(mean_ci(bnd_stale)[0], 3),
             "p": round(p_bounded, 4),
+            "power": _power_note(cta_stale, bnd_stale),
             "verdict": _verdict(mean_ci(cta_stale)[0] > mean_ci(bnd_stale)[0]),
         }
 

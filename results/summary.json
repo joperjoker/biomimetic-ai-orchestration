@@ -22,33 +22,33 @@
   "base_quality": {
     "cta": {
       "mean": 0.8790492221654146,
-      "ci_low": 0.872536755606534,
-      "ci_high": 0.8855616887242952
+      "ci_low": 0.8723593766100601,
+      "ci_high": 0.8853047624444788
     },
     "pull_based": {
       "mean": 0.880063603037752,
-      "ci_low": 0.8729207200937398,
-      "ci_high": 0.8872064859817642
+      "ci_low": 0.8724686945329843,
+      "ci_high": 0.886609345307186
     },
     "central_greedy": {
       "mean": 0.7445972253360844,
-      "ci_low": 0.7294921234307865,
-      "ci_high": 0.7597023272413823
+      "ci_low": 0.7289415672007361,
+      "ci_high": 0.758899631987201
     },
     "central_optimal": {
       "mean": 0.7445972253360844,
-      "ci_low": 0.7294921234307865,
-      "ci_high": 0.7597023272413823
+      "ci_low": 0.7289415672007361,
+      "ci_high": 0.758899631987201
     },
     "central_best": {
       "mean": 0.9422727774581127,
-      "ci_low": 0.9379464099429419,
-      "ci_high": 0.9465991449732835
+      "ci_low": 0.9379831347814349,
+      "ci_high": 0.9463932899444814
     },
     "central_bounded": {
       "mean": 0.9219721015144007,
-      "ci_low": 0.9126269290732193,
-      "ci_high": 0.9313172739555821
+      "ci_low": 0.9129063118790317,
+      "ci_high": 0.9310360068124005
     }
   },
   "scaling_peak_per_node": {
@@ -2178,9 +2178,20 @@
       "H8": {
         "claim": "the track-record correction recovers completion under miscalibration",
         "reliability_completion": 0.608,
+        "reliability_completion_ci": [
+          0.557,
+          0.652
+        ],
         "raw_completion": 0.214,
         "recovery": 0.393,
         "p": 0.0,
+        "power": {
+          "seeds_used": 20,
+          "effect": 0.393,
+          "pooled_sd": 0.097,
+          "recommended_seeds": 2,
+          "adequately_powered": true
+        },
         "verdict": "SUPPORTED",
         "p_holm": 0.0,
         "significant_holm": true
@@ -2252,9 +2263,20 @@
     "H8": {
       "claim": "the track-record correction recovers completion under miscalibration",
       "reliability_completion": 0.73,
+      "reliability_completion_ci": [
+        0.7,
+        0.759
+      ],
       "raw_completion": 0.341,
       "recovery": 0.389,
       "p": 0.0,
+      "power": {
+        "seeds_used": 20,
+        "effect": 0.389,
+        "pooled_sd": 0.079,
+        "recommended_seeds": 2,
+        "adequately_powered": true
+      },
       "verdict": "SUPPORTED",
       "p_holm": 0.0,
       "significant_holm": true
@@ -2268,6 +2290,13 @@
       "cta_quality_stale": 0.878,
       "bounded_quality_stale": 0.581,
       "p": 0.0,
+      "power": {
+        "seeds_used": 20,
+        "effect": 0.297,
+        "pooled_sd": 0.073,
+        "recommended_seeds": 2,
+        "adequately_powered": true
+      },
       "verdict": "SUPPORTED",
       "p_holm": 0.0,
       "significant_holm": true
