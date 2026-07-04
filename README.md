@@ -92,18 +92,21 @@ The framework is evaluated against a centralised baseline in two modes that shar
 ├── claude.md            Master context and theoretical blueprint for autonomous loops
 ├── CONTRIBUTING.md      Operating protocol, style constraints, and local checks
 ├── CHANGELOG.md         Notable changes
+├── REPRODUCE.md         How to regenerate every result from seeds
 ├── pyproject.toml       Project manifest and tooling configuration
-├── src/
-│   ├── signals/         Task scent envelope generation and parsing
-│   ├── agents/          Agent definitions, capability scoring, Binding Energy logic
-│   ├── gates/           Rejection Gate sandbox and reliability scoring
-│   └── orchestrator/    Decentralised coordination and event loop
+├── src/cta/             The framework: scoring, engine, temporal, baselines,
+│                        generators, realism, harness, stats, store, cost,
+│                        routing, dataset, report, dashboard, viz, cli, pilot,
+│                        and the autoresearch loop
+├── pilot_tasks/         Live-pilot coding task suite, scorer, and analyser
+├── examples/poc/        Runnable product proof of concept (python -m examples.poc)
+├── results/             Committed run outputs: summary.json, RESULTS.md, figures,
+│                        dashboard.html, dataset/runs.csv, live_pilot/
 ├── tests/               Validation suites (including the foundation guard)
-├── docs/                Theory, glossary, the research write-up, the architecture, and the roadmap
+├── docs/                Paper, measures, theory, glossary, architecture, product,
+│                        and the next-experiments plan
 └── .github/             Continuous integration and repository configuration
 ```
-
-Planned for the implementation phase (not yet created): `sim/` (simulation harness), `experiments/` (run configurations), and `analysis/` (metrics and statistics).
 
 ## Getting started
 
