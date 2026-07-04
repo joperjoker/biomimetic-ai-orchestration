@@ -29,6 +29,7 @@ from cta.harness import (
     gate_ablation,
     h2_decomposition,
     heterogeneity_sweep,
+    pareto_sweep,
     recovery_surface,
     recovery_vs_spread,
     reduction_vs_recall,
@@ -139,6 +140,8 @@ def autorun(
     ablation_analysis = ablation_attribution(ablation)
     # Specialist routing: does the activation barrier route subtasks correctly (H10, P2.7).
     routing = routing_experiment(protocol.base, protocol.seeds)
+    # Latency-quality frontier as the bid's latency weight varies (P2.2).
+    pareto = pareto_sweep(protocol.base, protocol.seeds)
     # Dollar cost of coordination against agent count (P2.3): central is N*M, the
     # decentralised fleet is bounded per node, so the bill diverges at scale.
     task_ratio = protocol.base.n_tasks / max(1, protocol.base.n_agents)
@@ -372,6 +375,22 @@ def autorun(
         ),
         figures_dir / "specialist_routing.svg",
     )
+    # Pareto figure: realised quality against mean latency as the bid's latency
+    # weight varies, the speed-quality dial (P2.2).
+    pareto_series = {
+        "latency-quality frontier": [
+            (float(p["mean_latency"]), float(p["mean_quality"])) for p in pareto
+        ],
+    }
+    save_svg(
+        line_chart(
+            pareto_series,
+            title="Latency-quality frontier (sweeping the bid's latency weight)",
+            xlabel="mean latency of winning agents",
+            ylabel="mean realised quality",
+        ),
+        figures_dir / "pareto_latency_quality.svg",
+    )
     # Reliability diagram of the realistic fleet: mean predicted vs realised
     # success, with the diagonal of perfect calibration. Points below the diagonal
     # are overconfident. The correction pulls the retained winners toward it.
@@ -423,6 +442,7 @@ def autorun(
         "figures/biomimicry_ablation.svg",
         "figures/cost_vs_n.svg",
         "figures/specialist_routing.svg",
+        "figures/pareto_latency_quality.svg",
         "figures/reliability_diagram.svg",
         "figures/fleet_mix.svg",
     ]
@@ -460,6 +480,7 @@ def autorun(
         "cost_curve": cost,
         "cost_savings": cost_savings,
         "routing": routing,
+        "pareto_latency_quality": pareto,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
         "verdicts": verdicts,

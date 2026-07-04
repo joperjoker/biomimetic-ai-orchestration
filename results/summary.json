@@ -2439,6 +2439,33 @@
       "barrier_off_won": 75.5
     }
   ],
+  "pareto_latency_quality": [
+    {
+      "latency_weight": 0.0,
+      "mean_quality": 0.9105737124851354,
+      "mean_latency": 0.9966820676926862
+    },
+    {
+      "latency_weight": 0.5,
+      "mean_quality": 0.8886528373828207,
+      "mean_latency": 0.7283811605090047
+    },
+    {
+      "latency_weight": 1.0,
+      "mean_quality": 0.8790492221654146,
+      "mean_latency": 0.6791817214438607
+    },
+    {
+      "latency_weight": 1.5,
+      "mean_quality": 0.8753137194919034,
+      "mean_latency": 0.6612454212581377
+    },
+    {
+      "latency_weight": 2.0,
+      "mean_quality": 0.8728040372349415,
+      "mean_latency": 0.6536755828041674
+    }
+  ],
   "fleet": {
     "experiment": {
       "raw_completion": 0.7635416666666667,

@@ -49,6 +49,8 @@ pending.
 
 ![specialist_routing](figures/specialist_routing.svg)
 
+![pareto_latency_quality](figures/pareto_latency_quality.svg)
+
 ![reliability_diagram](figures/reliability_diagram.svg)
 
 ![fleet_mix](figures/fleet_mix.svg)

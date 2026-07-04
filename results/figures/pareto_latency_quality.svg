@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
+<rect width="720" height="440" fill="white"/>
+<text x="360" y="22" text-anchor="middle" font-size="16">Latency-quality frontier (sweeping the bid's latency weight)</text>
+<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
+<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
+<text x="315" y="422" text-anchor="middle">mean latency of winning agents</text>
+<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">mean realised quality</text>
+<path d="M560.0 40.0 L176.7 48.2 L106.4 51.8 L80.8 53.2 L70.0 54.1" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="176.7" cy="48.2" r="3" fill="#2f6f9f"/>
+<circle cx="106.4" cy="51.8" r="3" fill="#2f6f9f"/>
+<circle cx="80.8" cy="53.2" r="3" fill="#2f6f9f"/>
+<circle cx="70.0" cy="54.1" r="3" fill="#2f6f9f"/>
+<rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
+<text x="594" y="58">latency-quality frontier</text>
+<text x="70" y="398" text-anchor="middle">0.65</text>
+<text x="560" y="398" text-anchor="middle">1.00</text>
+<text x="62" y="380" text-anchor="end">0</text>
+<text x="62" y="50" text-anchor="end">0.91</text>
+</svg>
