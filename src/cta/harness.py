@@ -280,6 +280,75 @@ def calibration_sweep(
     return out
 
 
+def strategic_adversary(
+    base: CellParams,
+    seeds: int,
+    rounds: int = 8,
+    n_adversaries: int = 6,
+    bias: float = 0.6,
+    low_capability: float = 0.15,
+) -> dict[str, object]:
+    """P3.2: does the track record demote an agent that games its self-report?
+
+    A strategic adversary inflates its self-report to win bids (high overconfidence
+    bias) while being genuinely incompetent (low capability), and it starts with a
+    clean record so it wins early. Over sequential rounds the record is updated from
+    each winner's realised outcomes, so the adversary's reliability falls as it
+    fails, and reliability-weighted selection should demote it. This reuses the
+    batch engine round by round rather than changing the engine; the ``raw`` share
+    is recorded for contrast (raw selection has no track-record feedback). Returns
+    the adversary win share per round under each selection mode and the decay.
+    """
+    def share_series(mode: str) -> list[float]:
+        per_round: list[list[float]] = [[] for _ in range(rounds)]
+        for seed in range(seeds):
+            agents = generate_agents(
+                base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
+            )
+            agents = [
+                replace(
+                    a,
+                    calibration_bias=bias if i < n_adversaries else a.calibration_bias,
+                    capability=low_capability if i < n_adversaries else a.capability,
+                    successes=18 if i < n_adversaries else a.successes,
+                    attempts=20,
+                )
+                for i, a in enumerate(agents)
+            ]
+            adversaries = {a.agent_id for a in agents[:n_adversaries]}
+            record = {a.agent_id: [a.successes, a.attempts] for a in agents}
+            for r in range(rounds):
+                current = [
+                    replace(a, successes=record[a.agent_id][0], attempts=record[a.agent_id][1])
+                    for a in agents
+                ]
+                tasks = generate_tasks(
+                    base.n_tasks, base.n_domains, random.Random(seed + 1000 * r),
+                    base.activation_energy, base.family,
+                )
+                res = run_batch(
+                    current, tasks, random.Random(seed + 20_000 + r), condition="cta",
+                    selection_mode=mode,
+                )
+                won = [o for o in res.outcomes if o.winner is not None]
+                adv_wins = sum(1 for o in won if o.winner in adversaries)
+                per_round[r].append(adv_wins / len(won) if won else 0.0)
+                for o in won:
+                    record[o.winner][1] += 1
+                    if o.status == "COMPLETED":
+                        record[o.winner][0] += 1
+        return [sum(x) / len(x) for x in per_round]
+
+    reliability_share = share_series("reliability")
+    raw_share = share_series("raw")
+    return {
+        "rounds": rounds,
+        "reliability_share": reliability_share,
+        "raw_share": raw_share,
+        "reliability_decay": reliability_share[0] - reliability_share[-1],
+    }
+
+
 def fitted_calibration_recovery(
     base: CellParams, seeds: int, mix: dict[str, float] | None = None
 ) -> dict[str, float]:
