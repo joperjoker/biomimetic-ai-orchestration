@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
+<rect width="720" height="440" fill="white"/>
+<text x="360" y="22" text-anchor="middle" font-size="16">Specialist routing accuracy: the activation barrier keeps allocation on-target</text>
+<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
+<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
+<text x="315" y="422" text-anchor="middle">observability (tasks each agent sees)</text>
+<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">routing accuracy (won tasks to the right specialist)</text>
+<path d="M70.0 40.0 L140.0 40.0 L280.0 40.0 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="70.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="140.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="280.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
+<text x="594" y="58">barrier on</text>
+<path d="M70.0 218.7 L140.0 145.7 L280.0 68.3 L560.0 42.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="70.0" cy="218.7" r="3" fill="#c25a3d"/>
+<circle cx="140.0" cy="145.7" r="3" fill="#c25a3d"/>
+<circle cx="280.0" cy="68.3" r="3" fill="#c25a3d"/>
+<circle cx="560.0" cy="42.0" r="3" fill="#c25a3d"/>
+<rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
+<text x="594" y="80">barrier off</text>
+<path d="M70.0 295.0 L140.0 295.0 L280.0 295.0 L560.0 295.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
+<circle cx="70.0" cy="295.0" r="3" fill="#4c9a6a"/>
+<circle cx="140.0" cy="295.0" r="3" fill="#4c9a6a"/>
+<circle cx="280.0" cy="295.0" r="3" fill="#4c9a6a"/>
+<circle cx="560.0" cy="295.0" r="3" fill="#4c9a6a"/>
+<rect x="576" y="90" width="14" height="14" fill="#4c9a6a"/>
+<text x="594" y="102">chance floor</text>
+<text x="70" y="398" text-anchor="middle">2</text>
+<text x="560" y="398" text-anchor="middle">16</text>
+<text x="62" y="380" text-anchor="end">0</text>
+<text x="62" y="50" text-anchor="end">1</text>
+</svg>

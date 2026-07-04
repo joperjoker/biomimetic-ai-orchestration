@@ -9,6 +9,7 @@ pending.
 | Hypothesis | Verdict | Claim |
 | --- | --- | --- |
 | H1 | SUPPORTED | peak per-node load grows more slowly for CTA than central |
+| H10 | SUPPORTED | the activation barrier routes each subtask to a correct specialist |
 | H2 | NOT SUPPORTED | CTA quality is not worse than pull-based and within margin of the optimum |
 | H3 | SUPPORTED | the engine labels infeasible and stalled tasks correctly |
 | H4 | SUPPORTED | the integrity gate substantially reduces out-of-scope writes |
@@ -45,6 +46,8 @@ pending.
 ![biomimicry_ablation](figures/biomimicry_ablation.svg)
 
 ![cost_vs_n](figures/cost_vs_n.svg)
+
+![specialist_routing](figures/specialist_routing.svg)
 
 ![reliability_diagram](figures/reliability_diagram.svg)
 

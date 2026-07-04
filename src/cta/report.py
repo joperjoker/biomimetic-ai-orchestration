@@ -63,6 +63,7 @@ def evaluate(
     safety: dict[str, list[float]] | None = None,
     annealing: list[dict[str, float]] | None = None,
     bounded: list[dict[str, object]] | None = None,
+    routing: list[dict[str, float]] | None = None,
 ) -> dict[str, dict[str, object]]:
     """Return a verdict record per hypothesis.
 
@@ -283,6 +284,28 @@ def evaluate(
             "p": round(p_bounded, 4),
             "power": _power_note(cta_stale, bnd_stale),
             "verdict": _verdict(mean_ci(cta_stale)[0] > mean_ci(bnd_stale)[0]),
+        }
+
+    # H10: the activation barrier routes each subtask to a correct specialist. At
+    # the tightest observability (where an ill-matched agent is most likely to be
+    # the only one that sees a task) routing accuracy with the barrier stays near
+    # perfect and far above the chance floor, while without it agents fire on
+    # ill-matched tasks and accuracy falls. Supported when the barrier gives near
+    # perfect routing above chance and materially above the no-barrier baseline.
+    if routing:
+        tight = routing[0]
+        on = float(tight["barrier_on_accuracy"])
+        off = float(tight["barrier_off_accuracy"])
+        floor = float(tight["chance_floor"])
+        verdicts["H10"] = {
+            "claim": "the activation barrier routes each subtask to a correct specialist",
+            "observability_k": tight["observability_k"],
+            "chance_floor": round(floor, 3),
+            "barrier_on_accuracy": round(on, 3),
+            "barrier_off_accuracy": round(off, 3),
+            "barrier_on_won": round(float(tight["barrier_on_won"]), 1),
+            "barrier_off_won": round(float(tight["barrier_off_won"]), 1),
+            "verdict": _verdict(on > 0.9 and on > floor and on > off + 0.05),
         }
 
     # Multiple-comparison control across the family of hypotheses that rest on a

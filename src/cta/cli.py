@@ -32,6 +32,7 @@ from cta.harness import (
     recovery_surface,
     recovery_vs_spread,
     reduction_vs_recall,
+    routing_experiment,
     run_seeds,
     safety_ablation,
     scaling_sweep,
@@ -136,6 +137,8 @@ def autorun(
     # Biomimicry ablation: isolate the activation barrier and the integrity gate (P2.4).
     ablation = biomimicry_ablation(protocol.base, protocol.seeds)
     ablation_analysis = ablation_attribution(ablation)
+    # Specialist routing: does the activation barrier route subtasks correctly (H10, P2.7).
+    routing = routing_experiment(protocol.base, protocol.seeds)
     # Dollar cost of coordination against agent count (P2.3): central is N*M, the
     # decentralised fleet is bounded per node, so the bill diverges at scale.
     task_ratio = protocol.base.n_tasks / max(1, protocol.base.n_agents)
@@ -157,6 +160,7 @@ def autorun(
         safety,
         annealing,
         bounded,
+        routing,
     )
 
     # Generalisability: re-run the population-dependent hypotheses under a second,
@@ -346,6 +350,28 @@ def autorun(
         ),
         figures_dir / "cost_vs_n.svg",
     )
+    # Routing figure: routing accuracy against observability, with the activation
+    # barrier on versus off, plus the chance floor (H10, P2.7).
+    routing_series = {
+        "barrier on": [
+            (float(p["observability_k"]), float(p["barrier_on_accuracy"])) for p in routing
+        ],
+        "barrier off": [
+            (float(p["observability_k"]), float(p["barrier_off_accuracy"])) for p in routing
+        ],
+        "chance floor": [
+            (float(p["observability_k"]), float(p["chance_floor"])) for p in routing
+        ],
+    }
+    save_svg(
+        line_chart(
+            routing_series,
+            title="Specialist routing accuracy: the activation barrier keeps allocation on-target",
+            xlabel="observability (tasks each agent sees)",
+            ylabel="routing accuracy (won tasks to the right specialist)",
+        ),
+        figures_dir / "specialist_routing.svg",
+    )
     # Reliability diagram of the realistic fleet: mean predicted vs realised
     # success, with the diagonal of perfect calibration. Points below the diagonal
     # are overconfident. The correction pulls the retained winners toward it.
@@ -396,6 +422,7 @@ def autorun(
         "figures/bounded_central.svg",
         "figures/biomimicry_ablation.svg",
         "figures/cost_vs_n.svg",
+        "figures/specialist_routing.svg",
         "figures/reliability_diagram.svg",
         "figures/fleet_mix.svg",
     ]
@@ -432,6 +459,7 @@ def autorun(
         "biomimicry_ablation_analysis": ablation_analysis,
         "cost_curve": cost,
         "cost_savings": cost_savings,
+        "routing": routing,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
         "verdicts": verdicts,

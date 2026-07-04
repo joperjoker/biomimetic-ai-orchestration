@@ -2405,6 +2405,40 @@
     "decentralised_total_usd": 576.0,
     "savings_multiple": 250.0
   },
+  "routing": [
+    {
+      "observability_k": 2,
+      "chance_floor": 0.25,
+      "barrier_on_accuracy": 1.0,
+      "barrier_off_accuracy": 0.474330266419315,
+      "barrier_on_won": 29.0,
+      "barrier_off_won": 61.15
+    },
+    {
+      "observability_k": 4,
+      "chance_floor": 0.25,
+      "barrier_on_accuracy": 1.0,
+      "barrier_off_accuracy": 0.6890669960172827,
+      "barrier_on_won": 46.4,
+      "barrier_off_won": 67.4
+    },
+    {
+      "observability_k": 8,
+      "chance_floor": 0.25,
+      "barrier_on_accuracy": 1.0,
+      "barrier_off_accuracy": 0.9167253589538339,
+      "barrier_on_won": 65.35,
+      "barrier_off_won": 71.3
+    },
+    {
+      "observability_k": 16,
+      "chance_floor": 0.25,
+      "barrier_on_accuracy": 1.0,
+      "barrier_off_accuracy": 0.993976371459803,
+      "barrier_on_won": 75.05,
+      "barrier_off_won": 75.5
+    }
+  ],
   "fleet": {
     "experiment": {
       "raw_completion": 0.7635416666666667,
@@ -2669,6 +2703,16 @@
       "verdict": "SUPPORTED",
       "p_holm": 0.0,
       "significant_holm": true
+    },
+    "H10": {
+      "claim": "the activation barrier routes each subtask to a correct specialist",
+      "observability_k": 2,
+      "chance_floor": 0.25,
+      "barrier_on_accuracy": 1.0,
+      "barrier_off_accuracy": 0.474,
+      "barrier_on_won": 29.0,
+      "barrier_off_won": 61.1,
+      "verdict": "SUPPORTED"
     }
   }
 }
