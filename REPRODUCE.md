@@ -41,6 +41,16 @@ statistics, evaluates the hypotheses, and writes:
 Use `--full` for the larger protocol (slower). Runs are deterministic: the same
 command reproduces the same numbers.
 
+## Product proof of concept (offline, deterministic)
+
+```
+python -m examples.poc
+```
+
+A small fleet self-selects tasks through the calibrated, gated bid; the report
+shows the allocation, the out-of-scope actions the integrity gate stopped, and
+the coordinator cost avoided. No model calls.
+
 ## Auto-Researcher loop (Stage 2, deterministic search)
 
 The propose, evaluate, keep-or-revert loop in `cta.autoresearch` tunes the

@@ -13,10 +13,10 @@ power notes on the headline comparisons), P1.2 (scaling to N=10,000 with fitted
 growth exponents 0.0 vs 2.0), P1.3 (raw dataset released as
 `results/dataset/runs.csv`), P2.4 (biomimicry ablation isolating the barrier and
 the gate), P2.3 (token and dollar cost model), P1.4 (one-command reproducibility),
-P2.7 (heterogeneous specialist routing, H10), and P2.2 (latency-quality Pareto).
-Still open: P2.1 (fit generators to measured calibration), P2.5 (two-sided live
-pilot), P2.6 (product PoC), and all of Phase 3 including P3.4 (the real-agent,
-dependency-graph follow-up).
+P2.7 (heterogeneous specialist routing, H10), P2.2 (latency-quality Pareto), and
+P2.6 (product PoC, `examples/poc`). Still open: P2.1 (fit generators to measured
+calibration), P2.5 (two-sided live pilot, needs subagent budget), and all of
+Phase 3 including P3.4 (the real-agent, dependency-graph follow-up).
 
 **P2.7 landed (H10 supported).** The activation barrier holds specialist routing
 at 1.00 across observability (chance floor 0.25); without it routing collapses to
