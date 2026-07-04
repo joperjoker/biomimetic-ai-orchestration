@@ -128,6 +128,24 @@ The commercial goal needs a stated product, not just a cost curve. Write
   small fleet (regression test); `scaling_sweep` at `N=5000` completes in under a
   few seconds on one core.
 
+### P0.3 Repo hygiene (keep the project tight)
+- **Done in this pass:** removed four empty stub directories (`src/agents`,
+  `src/gates`, `src/orchestrator`, `src/signals`) left from an abandoned
+  architecture sketch; rewrote `architecture.md §9` from a "planned layout that
+  never happened" into the actual `src/cta` layout; pointed P1.4 at the existing
+  `REPRODUCE.md` rather than a duplicate.
+- **Remaining judgment calls (do as docs are touched, not as a separate churn):**
+  `docs/roadmap.md` is a pre-build plan that has partly diverged from what was
+  built; when it is next edited, either mark it "historical plan" at the top or
+  fold the still-live Auto-Researcher description into `architecture.md` and
+  retire the rest. Check `claude.md` (298 lines), `STATUS.md` and `CHANGELOG.md`
+  for overlap before each grows further; prefer one source of truth per fact.
+- **Standing rule:** every new experiment adds at most one figure and one data
+  file per claim, and reuses `viz.py`/`stats.py` rather than adding new plotting
+  or stats helpers. No new top-level directories; new modules go under `src/cta`.
+- **Acceptance:** `git ls-files` shows no empty-marker files; no doc describes a
+  layout that does not exist; `ruff check . && pytest` stay green.
+
 ---
 
 ## Phase 1: a fair baseline, then the large dataset
@@ -191,11 +209,12 @@ full regenerate and invalidate any interim write-up. Do P1.0, then P1.1 to P1.3.
   CSV and re-derives one headline mean from it.
 
 ### P1.4 One-command reproducibility
-- **File:** `src/cta/cli.py` (`cta reproduce-all`), `docs/reproduce.md`, pin the
+- **File:** `src/cta/cli.py` (`cta reproduce-all`), extend the existing root
+  `REPRODUCE.md` (do not create a second reproduce doc), pin the
   interpreter/toolchain versions in `pyproject.toml` and a short `constraints`.
 - **Change:** a single entry point regenerates every figure, table and the CSV
-  from seeds, and a `docs/reproduce.md` appendix documents it. A paper stands or
-  falls on this for a synthetic-data claim.
+  from seeds, documented by extending `REPRODUCE.md`. A paper stands or falls on
+  this for a synthetic-data claim.
 - **Acceptance:** `cta reproduce-all` on a clean checkout reproduces the committed
   figures and `runs.csv` byte-for-byte (or within a documented tolerance); CI-style
   smoke test runs it at small scale.
@@ -308,6 +327,31 @@ full regenerate and invalidate any interim write-up. Do P1.0, then P1.1 to P1.3.
 
 ---
 
+## Further planning threads (beyond the experiments)
+
+These are not code experiments but they gate whether the paper and product land.
+Plan them now so they do not surface as surprises late.
+
+- **Submission target and format.** The paper is markdown. A real submission needs
+  a named venue and a format (LaTeX or PDF), print-quality figures (the SVGs must
+  survive black-and-white printing and small sizes), and a related-work table
+  positioning CTA against RouteLLM, EvoRoute, DiSRouter and MarketBench. Decide
+  the venue before P2 so the figure and length budget are known.
+- **Threats-to-validity expansion.** Every new experiment adds a validity caveat
+  (synthetic generators, single-repo pilot tasks, pricing assumptions in the cost
+  model). Grow §2.7 in step, do not leave it as-is while the claims expand.
+- **Responsible-deployment note.** The commercial angle needs a short paragraph on
+  failure modes of the mechanism itself: agents gaming the integrity gate or the
+  track record (this is what P3.2 measures), and what a deployer should monitor.
+- **Artifact/data release.** For credibility and the product's "shippable
+  benchmark" claim, plan a versioned release of `results/dataset/runs.csv` with a
+  data card and a DOI (for example Zenodo). Couples to P1.3 and P1.4.
+- **CI and test-strength.** Confirm `.github/workflows` runs `ruff` and `pytest`
+  on every push, add a coverage floor, and consider property-based tests for the
+  `store.py` atomic-claim invariant (no double-claims) since Phase 3 stresses it.
+
+---
+
 ## Execution order, priority and the minimum viable paper
 
 Work the phases in order; within a phase the items are independent and can be
@@ -339,7 +383,7 @@ baseline given an equal information budget (P1.0); the biomimicry ablation shows
 each mechanism earns its place or reports it does not (P2.4); a cost/latency
 Pareto and dollar model plus a runnable PoC back the commercial claim (P2.2,
 P2.3, P2.6); the generators are anchored to measured data (P2.1); and the live
-reliability curve is two-sided (P2.5). At that point the four goals — large
+reliability curve is two-sided (P2.5). At that point the four goals (large
 supporting dataset, biomimicry justified, AI failure mode resolved,
-commercialisation credible — each have a figure, a test and a pre-registered
+commercialisation credible) each have a figure, a test and a pre-registered
 falsification criterion behind them.

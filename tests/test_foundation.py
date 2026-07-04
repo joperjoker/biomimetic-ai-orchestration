@@ -21,8 +21,11 @@ def test_key_documents_exist():
 
 
 def test_module_layout_exists():
-    for sub in ("signals", "agents", "gates", "orchestrator"):
-        assert (ROOT / "src" / sub).is_dir(), f"missing module directory: src/{sub}"
+    pkg = ROOT / "src" / "cta"
+    assert pkg.is_dir(), "missing package directory: src/cta"
+    for module in ("scoring", "engine", "harness", "baselines", "store"):
+        assert (pkg / f"{module}.py").is_file(), f"missing module: src/cta/{module}.py"
+    assert (pkg / "autoresearch" / "__init__.py").is_file(), "missing cta.autoresearch"
 
 
 def test_master_context_holds_the_equation():
