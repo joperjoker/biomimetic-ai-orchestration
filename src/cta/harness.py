@@ -284,7 +284,7 @@ def strategic_adversary(
     base: CellParams,
     seeds: int,
     rounds: int = 8,
-    n_adversaries: int = 6,
+    adversary_fraction: float = 0.15,
     bias: float = 0.6,
     low_capability: float = 0.15,
 ) -> dict[str, object]:
@@ -299,6 +299,8 @@ def strategic_adversary(
     is recorded for contrast (raw selection has no track-record feedback). Returns
     the adversary win share per round under each selection mode and the decay.
     """
+    n_adversaries = max(1, int(base.n_agents * adversary_fraction))
+
     def share_series(mode: str) -> list[float]:
         per_round: list[list[float]] = [[] for _ in range(rounds)]
         for seed in range(seeds):

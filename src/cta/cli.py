@@ -39,6 +39,7 @@ from cta.harness import (
     safety_ablation,
     scaling_sweep,
     stability_grid,
+    strategic_adversary,
     temporal_metrics,
     track_record_sweep,
 )
@@ -145,6 +146,8 @@ def autorun(
     pareto = pareto_sweep(protocol.base, protocol.seeds)
     # Calibration recovery when the miscalibration is the measured mixture (P2.1).
     fitted_recovery = fitted_calibration_recovery(protocol.base, protocol.seeds)
+    # Strategic adversary demoted by the track record over rounds (P3.2).
+    adversary = strategic_adversary(protocol.base, protocol.seeds)
     # Dollar cost of coordination against agent count (P2.3): central is N*M, the
     # decentralised fleet is bounded per node, so the bill diverges at scale.
     task_ratio = protocol.base.n_tasks / max(1, protocol.base.n_agents)
@@ -485,6 +488,7 @@ def autorun(
         "routing": routing,
         "pareto_latency_quality": pareto,
         "fitted_calibration_recovery": fitted_recovery,
+        "strategic_adversary": adversary,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
         "verdicts": verdicts,
