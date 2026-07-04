@@ -115,27 +115,40 @@ ruff check .
 pytest
 ```
 
-Run the autonomous research (Stage 1, deterministic, no external service):
+Reproduce every result, figure and the raw dataset from seeds with one command:
 
 ```
-cta autorun --out results
+cta reproduce-all --out results
 ```
 
-This runs the sweeps across the four conditions, computes the statistics,
-evaluates the hypotheses, and writes `results/summary.json`, `results/RESULTS.md`,
-and SVG figures. See `REPRODUCE.md` for detail.
+This runs the pre-registered sweeps across the six conditions (CTA, pull-based,
+central greedy, central optimal, central best, central bounded), computes the
+statistics, evaluates the hypotheses, and writes `results/summary.json`,
+`results/RESULTS.md`, the SVG figures, the dashboard, and the raw per-run dataset
+(`results/dataset/runs.csv`). A runnable product demo is `python -m examples.poc`.
+See `REPRODUCE.md` for detail.
 
 ## Status
 
-The foundation, the research write-up (introduction and methodology), the formal framework, the experimental architecture, and the implementation roadmap are in place. Implementation of the scoring module, the agent harnesses, the simulation, and the Auto-Researcher loop has not started; it follows the phased plan in `docs/roadmap.md`, and progress is tracked in `claude.md`.
+The framework is implemented and evaluated end to end. The scoring module, the two
+simulation engines (batch and round-based temporal), the SQLite coordination store
+with a transactional atomic claim, the baselines, the statistics, the report and
+dashboard, and the Auto-Researcher loop are all in place, with 112 tests passing
+and `ruff` clean. Ten pre-registered hypotheses (H1 to H10) are evaluated by
+`cta reproduce-all`: H1 (scaling), H3, H4 (safety), H5, H7, H8, H9, and H10 are
+supported, while H2 and H6 are not supported against the full-information optimum
+and are reported honestly. The calibration-robustness thesis (miscalibration is
+the failure mode of self-selection; a track-record correction recovers it) is the
+central result. Progress is tracked in `STATUS.md`; the forward plan is in
+`docs/next_experiments.md`.
 
 ## Considerations for Future Work
 
-The following points are offered as considerations rather than fixed directives:
-
-- A reference implementation of the Binding Energy calculation could be paired with a deterministic test fixture so that scoring behaviour stays reproducible across changes.
-- The Rejection Gate could expose its reliability threshold as a tunable parameter, which would let operators trade throughput against safety.
-- A small simulation harness might help observe emergent allocation patterns before the framework is connected to live agents.
+The next experiments are planned in `docs/next_experiments.md`. The open items are a
+two-sided real-agent calibration curve across several models, a concurrent
+multi-process engine over the store for contention at scale, streaming task
+arrival, and a real complex job with dependencies and live specialist subagents
+(the "CTA in the wild" follow-up). The commercial framing is in `docs/product.md`.
 
 ## References
 
