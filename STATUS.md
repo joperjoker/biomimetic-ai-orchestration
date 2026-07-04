@@ -16,7 +16,11 @@ The one claim under test: decentralised, signal-driven self-selection relieves t
 - Platform: self-contained, minimal. SQLite in WAL mode (transactional atomic claim) is the coordination store; an optional Postgres adapter exists. No external service in the default path.
 - The task wrapper computes compatibility `c` from role, skills, and prompt via measurable sub-scores; activation is on compatibility (`c >= Ea`); the Binding Energy `B = c x C_tilde / L` ranks the willing agents only.
 - Two stages run in order: Stage 1 deterministic simulation swarm, then Stage 2 the LLM stage (required, Claude Code agents).
-- Scaling sweep to about 2000 agents. Licence Apache-2.0. Language Python 3.11+.
+- Scaling sweep to ten thousand agents (fitted growth exponent, via a central load-only fast path). Licence Apache-2.0. Language Python 3.11+.
+
+## Latest state
+
+Current hypothesis verdicts from `cta reproduce-all` (97 tests pass, `ruff` clean): H1 (scaling), H3, H4 (safety), H5, H7, H8, and H9 supported; H2 and H6 not supported against the full-information optimum and reported honestly. H9 is the fair coordination result against an information-bounded central baseline. Evidence added this session: the bounded baseline, fitted scaling to ten thousand agents, bootstrap confidence intervals and power notes, the released dataset CSV, the biomimicry ablation (the gate carries the safety effect; the barrier is quality-neutral in the batch regime), and the token and dollar cost model. Next session resumes at plan item P2.7 (heterogeneous specialist routing, the planned H10) in `docs/next_experiments.md`.
 
 ## Completed
 
