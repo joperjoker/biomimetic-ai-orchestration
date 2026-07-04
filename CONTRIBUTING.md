@@ -33,9 +33,18 @@ pytest
 
 ## Where things live
 
-- `src/signals/`: scent envelope schema and signal strength scoring (S).
-- `src/agents/`: agent definitions, capability scoring (C), and Binding Energy.
-- `src/gates/`: the Rejection Gate, reliability scoring, and integrity checks.
-- `src/orchestrator/`: the decentralised event loop and task pool.
-- `docs/`: extended theory, the worked example, the glossary, and references.
+- `src/cta/`: the framework as one package. Scoring and Binding Energy
+  (`scoring.py`), the batch and temporal engines (`engine.py`, `temporal.py`), the
+  Rejection Gate (in `scoring.py`/`engine.py`), the coordination store
+  (`store.py`), baselines (`baselines.py`), generators and the realistic fleet
+  (`generators.py`, `realism.py`), the experiment harness (`harness.py`), statistics
+  (`stats.py`), the cost model (`cost.py`), routing (`routing.py`), the dataset
+  writer (`dataset.py`), reporting and figures (`report.py`, `dashboard.py`,
+  `viz.py`), the CLI (`cli.py`), the pilot seam (`pilot.py`), and the Auto-Researcher
+  loop (`autoresearch/`).
+- `pilot_tasks/`: the live-pilot coding task suite, scorer, and analyser.
+- `examples/poc/`: the runnable product proof of concept.
+- `docs/`: the paper, operational measures, theory, glossary, architecture,
+  product framing, and the next-experiments plan.
+- `results/`: committed run outputs, figures, dashboard, and the raw dataset.
 - `tests/`: validation suites, including the foundation guard.

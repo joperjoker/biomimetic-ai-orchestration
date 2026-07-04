@@ -1,5 +1,11 @@
 # Implementation Roadmap
 
+> Historical planning document. It records the original pre-build plan and its
+> proposed `src/agents`, `src/gates`, `src/orchestrator` layout, which the build
+> did not follow: the framework shipped as the single `src/cta` package (see
+> `docs/architecture.md` section 9). The forward plan is now
+> `docs/next_experiments.md`. Kept for provenance.
+
 This roadmap records the agreed plan for moving from write-up to build: the harnesses for each agent, an Auto-Researcher loop that speeds the work while staying reliable and safe, and the shaping of this repository as the final public report. It is a plan, not a record of completed work. The North Star is unchanged: show that decentralised, signal-driven self-selection relieves the central-orchestrator bottleneck while holding match quality and safety.
 
 ## 1. Auto-Researcher, adapted from Karpathy's AutoResearch
