@@ -13,17 +13,22 @@ power notes on the headline comparisons), P1.2 (scaling to N=10,000 with fitted
 growth exponents 0.0 vs 2.0), P1.3 (raw dataset released as
 `results/dataset/runs.csv`), P2.4 (biomimicry ablation isolating the barrier and
 the gate), P2.3 (token and dollar cost model), P1.4 (one-command reproducibility),
-and P2.7 (heterogeneous specialist routing, H10). Still open: P2.1 (fit generators
-to measured calibration), P2.2 (latency Pareto), P2.5 (two-sided live pilot), P2.6
-(product PoC), and all of Phase 3 including P3.4 (the real-agent, dependency-graph
-follow-up).
+P2.7 (heterogeneous specialist routing, H10), and P2.2 (latency-quality Pareto).
+Still open: P2.1 (fit generators to measured calibration), P2.5 (two-sided live
+pilot), P2.6 (product PoC), and all of Phase 3 including P3.4 (the real-agent,
+dependency-graph follow-up).
 
 **P2.7 landed (H10 supported).** The activation barrier holds specialist routing
 at 1.00 across observability (chance floor 0.25); without it routing collapses to
 0.47 under tight observability, at a coverage cost annealing (H5) reclaims. This
 gave the barrier the quality role P2.4 found it lacking. The full real-agent,
 dependency-graph version remains P3.4, a follow-up paper rather than a revision.
-Next likely target: P2.1 or P2.2.
+Next likely target: P2.1 (fit generators to measured calibration) or P2.6 (PoC).
+
+**P2.2 landed.** The Binding Energy's latency term now carries a swept exponent,
+tracing a non-dominated latency-quality frontier (quality about 0.91 at the
+slowest, high-quality end down to about 0.87 as the bid favours faster agents);
+with the cost model this is the second product dial.
 
 This is a code-first plan. Every item names the concrete file and function to
 add or change, the dataset or figure it produces, the paper section it feeds,
