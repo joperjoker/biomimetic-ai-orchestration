@@ -450,6 +450,10 @@ def main(argv: list[str] | None = None) -> int:
     run = sub.add_parser("autorun", help="run the autonomous research protocol")
     run.add_argument("--out", default="results", help="output directory")
     run.add_argument("--full", action="store_true", help="run the full protocol (slower)")
+    repro = sub.add_parser(
+        "reproduce-all", help="regenerate every result, figure and the dataset from seeds"
+    )
+    repro.add_argument("--out", default="results", help="output directory")
     dash = sub.add_parser("dashboard", help="rebuild the HTML dashboard from an existing run")
     dash.add_argument("--out", default="results", help="results directory to read")
     dash.add_argument("--to", default="results/dashboard.html", help="dashboard output path")
@@ -468,6 +472,19 @@ def main(argv: list[str] | None = None) -> int:
         for h, v in sorted(summary["verdicts"].items()):
             print(f"  {h}: {v.get('verdict')}")
         print(f"Artifacts written to {args.out}/ (summary.json, RESULTS.md, figures/, dashboard).")
+        return 0
+    if args.command == "reproduce-all":
+        # The single deterministic entry point: the full protocol plus the raw
+        # dataset, so every table, figure and CSV in the paper is regenerated from
+        # seeds by one command. autorun already writes the dataset at the end.
+        summary = autorun(args.out, demo=False)
+        print("reproduce-all complete. Verdicts:")
+        for h, v in sorted(summary["verdicts"].items()):
+            print(f"  {h}: {v.get('verdict')}")
+        print(
+            f"Regenerated {args.out}/ (summary.json, RESULTS.md, figures/, dashboard, "
+            "dataset/runs.csv)."
+        )
         return 0
     if args.command == "dashboard":
         path = write_dashboard(args.out, args.to)

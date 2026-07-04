@@ -11,20 +11,32 @@ ruff check .
 pytest
 ```
 
+## Reproduce everything with one command
+
+```
+cta reproduce-all --out results
+```
+
+This regenerates every table, figure and the raw dataset from seeds, so the whole
+Results section can be rebuilt from source. It is the full protocol plus the
+dataset in one deterministic entry point.
+
 ## Run the autonomous research (Stage 1, deterministic)
 
 ```
 cta autorun --out results
 ```
 
-This runs the pre-registered sweeps across the four conditions (CTA, pull-based,
-central greedy, central optimal), computes the statistics, evaluates the
-hypotheses, and writes:
+This runs the pre-registered sweeps across the six conditions (CTA, pull-based,
+central greedy, central optimal, central best, central bounded), computes the
+statistics, evaluates the hypotheses, and writes:
 
 - `results/summary.json`: the full aggregated results and verdicts.
 - `results/RESULTS.md`: a readable Results document with the hypothesis table.
-- `results/figures/*.svg`: the scaling and heterogeneity figures (pure SVG, no
-  plotting library required).
+- `results/figures/*.svg`: the scaling, calibration, ablation, cost and other
+  figures (pure SVG, no plotting library required).
+- `results/dataset/runs.csv`: the raw per-seed, per-condition rows behind every
+  aggregate, with a data dictionary (also written by `cta dataset`).
 
 Use `--full` for the larger protocol (slower). Runs are deterministic: the same
 command reproduces the same numbers.
