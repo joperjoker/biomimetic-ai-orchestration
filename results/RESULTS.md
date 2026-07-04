@@ -42,6 +42,8 @@ pending.
 
 ![bounded_central](figures/bounded_central.svg)
 
+![biomimicry_ablation](figures/biomimicry_ablation.svg)
+
 ![reliability_diagram](figures/reliability_diagram.svg)
 
 ![fleet_mix](figures/fleet_mix.svg)

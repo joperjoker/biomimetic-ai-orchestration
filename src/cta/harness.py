@@ -560,6 +560,84 @@ def safety_ablation(
     return {"gate_on_violations": on, "gate_off_violations": off, "gate_recall": [gate_recall]}
 
 
+# The biomimetic mechanisms toggled in the ablation, mapped to their biological
+# source: the activation barrier (a response threshold, from chemistry and the
+# division of labour) and the integrity gate (a scope block, from the zona
+# pellucida). The reliability-weighted bid (cryptic female choice) is the shared
+# auction underneath, held on in every arm so the ablation isolates the other two.
+ABLATION_ARMS: dict[str, tuple[bool, bool]] = {
+    "full": (True, True),
+    "minus_barrier": (False, True),
+    "minus_gate": (True, False),
+    "plain_auction": (False, False),
+}
+
+
+def biomimicry_ablation(
+    base: CellParams,
+    seeds: int,
+    bias: float = 0.3,
+    noise: float = 0.05,
+    capability_low: float = 0.2,
+    adversarial_fraction: float = 0.3,
+    gate_recall: float = 0.9,
+) -> dict[str, dict[str, object]]:
+    """Isolate the contribution of each biological mechanism (P2.4).
+
+    Runs four arms over one combined stress regime, a miscalibrated,
+    competence-spread fleet that also contains adversarial agents, so quality,
+    unmet work, and integrity violations are all meaningful at once. Every arm
+    uses the reliability-weighted bid; the arms differ only in whether the
+    activation barrier and the integrity gate are present. Removing the barrier is
+    modelled by dropping the tasks' activation energy to zero (every agent may
+    fire); removing the gate lets an out-of-scope action execute. The point is
+    attribution, not a foregone win: if a mechanism does not move its metric, the
+    result says so.
+    """
+    gate = GateConfig(scope_recall=gate_recall)
+    out: dict[str, dict[str, object]] = {}
+    for name, (barrier, gate_on) in ABLATION_ARMS.items():
+        q: list[float] = []
+        unmet: list[float] = []
+        viol: list[float] = []
+        for seed in range(seeds):
+            agents = generate_agents(
+                base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
+            )
+            agents = with_capability_spread(agents, capability_low)
+            agents = with_track_record(agents, random.Random(seed + 40_000))
+            agents = with_miscalibration(agents, bias, noise, random.Random(seed + 60_000))
+            agents = with_injected_adversarial(
+                agents, adversarial_fraction, random.Random(seed + 70_000)
+            )
+            activation = base.activation_energy if barrier else 0.0
+            tasks = generate_tasks(
+                base.n_tasks, base.n_domains, random.Random(seed + 10_000), activation, base.family
+            )
+            res = run_batch(
+                agents,
+                tasks,
+                random.Random(seed + 20_000),
+                condition="cta",
+                selection_mode="reliability",
+                observability_k=base.observability_k,
+                gate=gate if gate_on else None,
+                gate_enabled=gate_on,
+            ).summary()
+            q.append(res["mean_quality"])
+            unmet.append(res["stall_rate"] + res["infeasible_rate"])
+            viol.append(res["integrity_violations"])
+        out[name] = {
+            "mean_quality": sum(q) / len(q),
+            "unmet_rate": sum(unmet) / len(unmet),
+            "integrity_violations": sum(viol) / len(viol),
+            "quality_values": q,
+            "unmet_values": unmet,
+            "violation_values": viol,
+        }
+    return out
+
+
 def temporal_metrics(base: CellParams, seeds: int) -> dict[str, list[float]]:
     """Run the round-based engine on the base population for temporal measures.
 

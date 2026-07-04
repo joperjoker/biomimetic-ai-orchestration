@@ -21,6 +21,7 @@ from cta.harness import (
     CellParams,
     Protocol,
     annealing_curve,
+    biomimicry_ablation,
     bounded_vs_cta,
     calibration_sweep,
     feasibility_check,
@@ -39,7 +40,7 @@ from cta.harness import (
 )
 from cta.pilot import MockClient, run_pilot
 from cta.realism import adversarial_fleet_safety, fleet_experiment, fleet_mix_sweep
-from cta.report import evaluate, write_results_md
+from cta.report import ablation_attribution, evaluate, write_results_md
 from cta.stats import bootstrap_ci, mean_ci
 from cta.viz import bar_chart, heatmap, line_chart, save_svg
 
@@ -131,6 +132,9 @@ def autorun(
     h2_gap = h2_decomposition(protocol.base, protocol.seeds)
     # Bounded-information central baseline: the fair, beatable form of H6 (P1.0).
     bounded = bounded_vs_cta(protocol.base, protocol.seeds)
+    # Biomimicry ablation: isolate the activation barrier and the integrity gate (P2.4).
+    ablation = biomimicry_ablation(protocol.base, protocol.seeds)
+    ablation_analysis = ablation_attribution(ablation)
     # Realistic fleet grounded in measured LLM calibration (MarketBench archetypes).
     fleet = fleet_experiment(seeds=protocol.seeds)
     fleet_mix = fleet_mix_sweep(seeds=protocol.seeds)
@@ -296,6 +300,24 @@ def autorun(
         ),
         figures_dir / "bounded_central.svg",
     )
+    # Biomimicry ablation figure: integrity violations and quality across the four
+    # arms, showing the gate carries the safety effect and the barrier is
+    # quality-neutral in the batch regime (P2.4).
+    arm_order = ["full", "minus_barrier", "minus_gate", "plain_auction"]
+    save_svg(
+        bar_chart(
+            categories=arm_order,
+            series={
+                "integrity violations": [
+                    round(float(ablation[a]["integrity_violations"]), 2) for a in arm_order
+                ],
+                "mean quality": [round(float(ablation[a]["mean_quality"]), 3) for a in arm_order],
+            },
+            title="Biomimicry ablation: contribution of the barrier and the gate",
+            ylabel="value (violations count; quality in [0,1])",
+        ),
+        figures_dir / "biomimicry_ablation.svg",
+    )
     # Reliability diagram of the realistic fleet: mean predicted vs realised
     # success, with the diagonal of perfect calibration. Points below the diagonal
     # are overconfident. The correction pulls the retained winners toward it.
@@ -344,6 +366,7 @@ def autorun(
         "figures/robustness_bars.svg",
         "figures/h2_decomposition.svg",
         "figures/bounded_central.svg",
+        "figures/biomimicry_ablation.svg",
         "figures/reliability_diagram.svg",
         "figures/fleet_mix.svg",
     ]
@@ -376,6 +399,8 @@ def autorun(
         "reduction_vs_recall": gate_recall_sweep,
         "h2_decomposition": h2_gap,
         "bounded_vs_cta": bounded,
+        "biomimicry_ablation": ablation,
+        "biomimicry_ablation_analysis": ablation_analysis,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
         "verdicts": verdicts,

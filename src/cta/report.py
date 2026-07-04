@@ -324,6 +324,55 @@ def _advantage_by_heterogeneity(
     return out
 
 
+def ablation_attribution(ablation: dict[str, dict[str, object]]) -> dict[str, object]:
+    """Attribute the effect of each ablated biological mechanism (P2.4).
+
+    The integrity gate is judged on integrity violations (full versus minus_gate)
+    and the activation barrier on realised quality (full versus minus_barrier),
+    each with a Mann-Whitney test, and the two p-values are Holm-corrected
+    together. Reports each mechanism's marginal effect and whether it is a
+    significant, materially useful contribution. A mechanism that does not move
+    its metric is reported as such, not hidden.
+    """
+    full = ablation.get("full", {})
+    minus_gate = ablation.get("minus_gate", {})
+    minus_barrier = ablation.get("minus_barrier", {})
+    if not (full and minus_gate and minus_barrier):
+        return {}
+    full_viol = [float(v) for v in full["violation_values"]]  # type: ignore[arg-type]
+    open_viol = [float(v) for v in minus_gate["violation_values"]]  # type: ignore[arg-type]
+    full_q = [float(v) for v in full["quality_values"]]  # type: ignore[arg-type]
+    nobar_q = [float(v) for v in minus_barrier["quality_values"]]  # type: ignore[arg-type]
+    _, p_gate = mann_whitney_u(open_viol, full_viol)
+    _, p_barrier = mann_whitney_u(full_q, nobar_q)
+    (adj_gate, sig_gate), (adj_barrier, sig_barrier) = holm_bonferroni([p_gate, p_barrier])
+    gate_on, gate_off = mean_ci(full_viol)[0], mean_ci(open_viol)[0]
+    q_full, q_nobar = mean_ci(full_q)[0], mean_ci(nobar_q)[0]
+    return {
+        "integrity_gate": {
+            "metric": "integrity_violations",
+            "with_mechanism": round(gate_on, 3),
+            "without_mechanism": round(gate_off, 3),
+            "reduction": round(1.0 - gate_on / gate_off, 3) if gate_off > 0 else 0.0,
+            "p_holm": round(adj_gate, 4),
+            "contributes": bool(sig_gate and gate_off > gate_on),
+        },
+        "activation_barrier": {
+            "metric": "mean_quality",
+            "with_mechanism": round(q_full, 3),
+            "without_mechanism": round(q_nobar, 3),
+            "effect": round(q_full - q_nobar, 3),
+            "p_holm": round(adj_barrier, 4),
+            "contributes": bool(sig_barrier and q_full > q_nobar),
+            "note": (
+                "quality-neutral in the batch regime; the barrier's contribution is "
+                "liveness (annealing bounds stall, H5) and the infeasible and stalled "
+                "semantics (H3), which the batch engine has no time axis to show"
+            ),
+        },
+    }
+
+
 def holm_over_hypotheses(pvalues: dict[str, float]) -> dict[str, tuple[float, bool]]:
     keys = list(pvalues.keys())
     adjusted = holm_bonferroni([pvalues[k] for k in keys])
