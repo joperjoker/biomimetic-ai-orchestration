@@ -15,10 +15,12 @@ growth exponents 0.0 vs 2.0), P1.3 (raw dataset released as
 the gate), P2.3 (token and dollar cost model), P1.4 (one-command reproducibility),
 P2.7 (heterogeneous specialist routing, H10), P2.2 (latency-quality Pareto), P2.6
 (product PoC, `examples/poc`), and P2.1 (calibration grounded in the measured
-MarketBench mixture). Still open: P2.5 (two-sided live pilot, needs subagent
-budget) and all of Phase 3 including P3.4 (the real-agent, dependency-graph
-follow-up). Phase 2 is essentially complete; the remaining open items need either
-budget (P2.5) or are stretch depth (Phase 3).
+MarketBench mixture). Also done: P3.2 (strategic
+adversary demoted by the track record over rounds, a light sequential-batch
+experiment with no core-engine change). Still open: P2.5 (two-sided live pilot,
+needs subagent budget), and the heavier Phase 3 items P3.1 (concurrent
+multi-process engine) and P3.3 (streaming arrival), which need core temporal or
+store changes, plus P3.4 (the real-agent, dependency-graph follow-up).
 
 **P2.7 landed (H10 supported).** The activation barrier holds specialist routing
 at 1.00 across observability (chance floor 0.25); without it routing collapses to
