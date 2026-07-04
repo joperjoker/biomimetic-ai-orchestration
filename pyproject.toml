@@ -38,4 +38,7 @@ select = ["E", "F", "I", "B", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+# "src" makes the cta package importable; "." makes the repo-root pilot_tasks
+# package importable under a bare `pytest` invocation (CI), matching `python -m
+# pytest`, which adds the working directory automatically.
+pythonpath = ["src", "."]
