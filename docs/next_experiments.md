@@ -14,7 +14,16 @@ growth exponents 0.0 vs 2.0), P1.3 (raw dataset released as
 `results/dataset/runs.csv`), P2.4 (biomimicry ablation isolating the barrier and
 the gate), and P2.3 (token and dollar cost model). Still open: P1.4 (one-command
 reproducibility), P2.1 (fit generators to measured calibration), P2.2 (latency
-Pareto), P2.5 (two-sided live pilot), P2.6 (product PoC), and all of Phase 3.
+Pareto), P2.5 (two-sided live pilot), P2.6 (product PoC), P2.7 (heterogeneous
+specialist routing, H10, the next session's first target), and all of Phase 3
+including P3.4 (the real-agent, dependency-graph follow-up).
+
+**Next session resumes here: P2.7.** It plugs the most face-valid gap left (the
+mechanism has never been shown routing different subtasks to different
+specialists) and is the setting most likely to give the activation barrier the
+quality role P2.4 found it lacking, at small effort because the engine and gate
+already exist. The full real-agent, dependency-graph version is P3.4, a follow-up
+paper rather than a revision.
 
 This is a code-first plan. Every item names the concrete file and function to
 add or change, the dataset or figure it produces, the paper section it feeds,
@@ -308,6 +317,41 @@ full regenerate and invalidate any interim write-up. Do P1.0, then P1.1 to P1.3.
 - **Acceptance:** `python -m examples.poc` runs end-to-end offline (mock client)
   and, when budget is available, with real subagents; a test runs the mock path.
 
+### P2.7 Heterogeneous complex-task routing: binding and rejection with specialists (H10)
+- **Why:** the paper never shows the binding energy routing qualitatively
+  different subtasks to qualitatively different specialists. The synthetic sweeps
+  use abstract compatibility vectors, and the live pilot was degenerate (one
+  agent type, independent micro-tasks all solved by everyone), so self-selection
+  had nothing to discriminate. This is the most face-valid gap left, and it is
+  the setting most likely to give the activation barrier a *quality* role, which
+  P2.4's batch ablation found neutral. Keep it dependency-free (parallel subtasks)
+  so the allocation signal is not confounded by scheduling; the DAG version is the
+  follow-up P3.4.
+- **File:** new `with_specialist_roles` (a `roles` scenario) in
+  `src/cta/generators.py`; new `harness.routing_experiment`; reuse `run_batch`,
+  `eligible` and the integrity gate.
+- **Change:** build a designed "job" of parallel subtasks, each tagged with a
+  required role, skill and scope, and a fleet of role-specialised agents (high
+  capability on their role, low elsewhere, tools and scope matching the role; the
+  `domains` family at high heterogeneity already produces specialists). Inject
+  miscast overclaimers, agents that self-report high fit for a role they cannot
+  do. Measure routing accuracy (the fraction of subtasks whose winning agent is
+  the ground-truth-correct specialist) and the deflection of miscast winners, with
+  the activation barrier and the integrity gate each on and off.
+- **Hypothesis H10:** the Binding Energy selection routes each subtask to its
+  correct specialist (routing accuracy materially above a chance floor, and higher
+  with the barrier than without), and the Rejection Gate plus the reliability
+  correction deflect the miscast overclaimer. Report honestly if the barrier does
+  not lift routing.
+- **Feeds:** §2 (the division-of-labour biomimicry becomes evidence, not
+  assertion), §3 (an H10 row and a figure), §4. It is the direct test of whether
+  the barrier earns a quality role by keeping badly matched agents from firing.
+- **Acceptance:** `figures/specialist_routing.svg`; a test that routing accuracy
+  exceeds the chance floor and rises with the barrier, and that miscast-winner
+  violations fall with the gate; deterministic under seeds. Effort is small, one
+  generator plus one sweep plus one figure, because the engine and gate already
+  exist.
+
 ---
 
 ## Phase 3: stretch (depth, only after Phases 0 to 2 land)
@@ -334,6 +378,27 @@ full regenerate and invalidate any interim write-up. Do P1.0, then P1.1 to P1.3.
   annealing schedule (H8/E14) under non-stationary load.
 - **Acceptance:** quality and stall rate under streaming arrival are reported
   against the batch baseline; annealing still helps or the paper says it does not.
+
+### P3.4 Real complex task in the wild: decomposition, dependencies, real specialists (follow-up)
+- **Scope note:** this is the full form of the specialist-routing idea and the
+  natural headline of a *follow-up* paper, not a revision of this one. It absorbs
+  P2.5 (a harder, multi-model live suite) and P2.6 (the product PoC). The in-paper
+  H10 (P2.7) is the dependency-free core that isolates the allocation signal; this
+  item adds the real agents and the dependency graph on top, which is a separate,
+  larger arc.
+- **File:** builds on `src/cta/pilot.py`, `pilot_tasks/`, and `examples/poc/`
+  (P2.6).
+- **Change:** take a genuine complex job (for example a small feature that needs a
+  designer, a backend developer and a test writer), decompose it into a subtask
+  graph with dependencies, allocate it to real heterogeneous Claude subagents
+  through the calibrated gated bid, and execute in dependency order. Measure
+  end-to-end routing correctness, realised quality, prevented out-of-scope
+  actions, and the whole job's cost and latency against a central-scheduler
+  baseline. Budget is spent only through sanctioned Claude Code subagents.
+- **Acceptance:** a real job is decomposed, allocated and executed end to end;
+  each subtask reaches a correctly specialised agent or the miscast one is
+  deflected; the job's total cost and latency are reported against the central
+  baseline.
 
 ---
 
