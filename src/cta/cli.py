@@ -20,6 +20,7 @@ from cta.harness import (
     CellParams,
     Protocol,
     annealing_curve,
+    bounded_vs_cta,
     calibration_sweep,
     feasibility_check,
     gate_ablation,
@@ -127,6 +128,8 @@ def autorun(
     recovery_grid = recovery_surface(protocol.base, protocol.seeds)
     gate_recall_sweep = reduction_vs_recall(protocol.base, protocol.seeds)
     h2_gap = h2_decomposition(protocol.base, protocol.seeds)
+    # Bounded-information central baseline: the fair, beatable form of H6 (P1.0).
+    bounded = bounded_vs_cta(protocol.base, protocol.seeds)
     # Realistic fleet grounded in measured LLM calibration (MarketBench archetypes).
     fleet = fleet_experiment(seeds=protocol.seeds)
     fleet_mix = fleet_mix_sweep(seeds=protocol.seeds)
@@ -141,6 +144,7 @@ def autorun(
         calibration,
         safety,
         annealing,
+        bounded,
     )
 
     # Generalisability: re-run the population-dependent hypotheses under a second,
@@ -271,6 +275,26 @@ def autorun(
         ),
         figures_dir / "h2_decomposition.svg",
     )
+    # Bounded-central figure: CTA versus an information-bounded central scheduler
+    # as its reliability table goes stale (H9). CTA is flat; the central scheduler
+    # starts ahead with fresh information and falls away as staleness rises.
+    bounded_series = {
+        "CTA (decentralised)": [
+            (float(p["staleness"]), float(p["cta_quality"])) for p in bounded
+        ],
+        "central (bounded info)": [
+            (float(p["staleness"]), float(p["bounded_quality"])) for p in bounded
+        ],
+    }
+    save_svg(
+        line_chart(
+            bounded_series,
+            title="CTA vs a central scheduler with a stale reliability table",
+            xlabel="coordinator reliability staleness",
+            ylabel="mean realised quality",
+        ),
+        figures_dir / "bounded_central.svg",
+    )
     # Reliability diagram of the realistic fleet: mean predicted vs realised
     # success, with the diagonal of perfect calibration. Points below the diagonal
     # are overconfident. The correction pulls the retained winners toward it.
@@ -318,6 +342,7 @@ def autorun(
         "figures/calibration_surface.svg",
         "figures/robustness_bars.svg",
         "figures/h2_decomposition.svg",
+        "figures/bounded_central.svg",
         "figures/reliability_diagram.svg",
         "figures/fleet_mix.svg",
     ]
@@ -347,6 +372,7 @@ def autorun(
         "recovery_surface": recovery_grid,
         "reduction_vs_recall": gate_recall_sweep,
         "h2_decomposition": h2_gap,
+        "bounded_vs_cta": bounded,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
         "verdicts": verdicts,

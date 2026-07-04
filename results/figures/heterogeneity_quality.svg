@@ -5,19 +5,19 @@
 <line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
 <text x="315" y="422" text-anchor="middle">agent heterogeneity</text>
 <text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">mean quality</text>
-<path d="M70.0 82.0 L192.5 77.3 L315.0 66.5 L437.5 61.0 L560.0 59.9" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="82.0" r="3" fill="#2f6f9f"/>
-<circle cx="192.5" cy="77.3" r="3" fill="#2f6f9f"/>
-<circle cx="315.0" cy="66.5" r="3" fill="#2f6f9f"/>
-<circle cx="437.5" cy="61.0" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="59.9" r="3" fill="#2f6f9f"/>
+<path d="M70.0 89.8 L192.5 83.7 L315.0 68.5 L437.5 63.7 L560.0 63.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="70.0" cy="89.8" r="3" fill="#2f6f9f"/>
+<circle cx="192.5" cy="83.7" r="3" fill="#2f6f9f"/>
+<circle cx="315.0" cy="68.5" r="3" fill="#2f6f9f"/>
+<circle cx="437.5" cy="63.7" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="63.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">cta</text>
-<path d="M70.0 68.0 L192.5 62.3 L315.0 47.6 L437.5 41.2 L560.0 40.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="68.0" r="3" fill="#c25a3d"/>
-<circle cx="192.5" cy="62.3" r="3" fill="#c25a3d"/>
-<circle cx="315.0" cy="47.6" r="3" fill="#c25a3d"/>
-<circle cx="437.5" cy="41.2" r="3" fill="#c25a3d"/>
+<path d="M70.0 79.2 L192.5 66.4 L315.0 47.4 L437.5 41.1 L560.0 40.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="70.0" cy="79.2" r="3" fill="#c25a3d"/>
+<circle cx="192.5" cy="66.4" r="3" fill="#c25a3d"/>
+<circle cx="315.0" cy="47.4" r="3" fill="#c25a3d"/>
+<circle cx="437.5" cy="41.1" r="3" fill="#c25a3d"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">central_best</text>

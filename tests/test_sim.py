@@ -2,7 +2,14 @@
 
 import random
 
-from cta.baselines import coordinator_cost, greedy_assignment, optimal_assignment, run_central
+from cta.baselines import (
+    bounded_assignment,
+    coordinator_cost,
+    greedy_assignment,
+    optimal_assignment,
+    run_central,
+    run_central_bounded,
+)
 from cta.engine import _brier_ece, run_batch
 from cta.generators import (
     generate_agents,
@@ -190,6 +197,51 @@ def test_run_central_completes_some():
     summary = run_central(agents, tasks, random.Random(33), method="greedy")
     assert summary["tasks"] == 6
     assert summary["assigned"] >= 1
+
+
+def test_bounded_central_is_reliability_weighted_auction_with_fresh_info():
+    # With fresh info (staleness 0), no observation noise, and default calibration,
+    # the self-report equals the true fit, so the bounded scheduler assigns each
+    # task to the agent maximising compatibility times reliability: a fully
+    # informed reliability-weighted central auction.
+    from cta.scoring import compatibility, eligible, reliability
+
+    agents = generate_agents(10, 3, 0.8, random.Random(41))
+    tasks = generate_tasks(8, 3, random.Random(42))
+    bounded = bounded_assignment(agents, tasks, random.Random(0), staleness=0.0, noise=0.0)
+    picked = {tid: aid for aid, tid in bounded.pairs}
+    by_id = {a.agent_id: a for a in agents}
+
+    def perceived(agent, task):
+        return compatibility(agent, task) * reliability(agent)
+
+    for t in tasks:
+        eligible_agents = [a for a in agents if eligible(a, t) and compatibility(a, t) > 0.0]
+        if not eligible_agents:
+            continue
+        best_score = max(perceived(a, t) for a in eligible_agents)
+        assert perceived(by_id[picked[t.task_id]], t) == best_score
+
+
+def test_bounded_central_quality_degrades_with_staleness_under_miscalibration():
+    # Under an overconfident, competence-spread fleet the bounded scheduler
+    # allocates worse as its reliability estimate goes stale.
+    def mean_quality(staleness: float) -> float:
+        vals = []
+        for seed in range(6):
+            agents = generate_agents(30, 4, 0.8, random.Random(seed))
+            agents = with_capability_spread(agents, 0.2)
+            agents = with_track_record(agents, random.Random(seed + 40_000))
+            agents = with_miscalibration(agents, 0.3, 0.05, random.Random(seed + 60_000))
+            tasks = generate_tasks(24, 4, random.Random(seed + 10_000))
+            vals.append(
+                run_central_bounded(
+                    agents, tasks, random.Random(seed + 20_000), staleness=staleness
+                )["mean_quality"]
+            )
+        return sum(vals) / len(vals)
+
+    assert mean_quality(1.0) < mean_quality(0.0)
 
 
 def test_coordinator_cost_fast_path_matches_full_run_load_fields():

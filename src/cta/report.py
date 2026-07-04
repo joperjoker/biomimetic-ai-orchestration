@@ -28,6 +28,7 @@ def evaluate(
     calibration: dict[str, list[dict[str, object]]] | None = None,
     safety: dict[str, list[float]] | None = None,
     annealing: list[dict[str, float]] | None = None,
+    bounded: list[dict[str, object]] | None = None,
 ) -> dict[str, dict[str, object]]:
     """Return a verdict record per hypothesis.
 
@@ -143,7 +144,7 @@ def evaluate(
     if annealing:
         no_anneal = annealing[0]
         full_anneal = annealing[-1]
-        bounded = full_anneal["unmet_rate"] <= 0.1 and full_anneal["max_stall"] < no_anneal[
+        stall_bounded = full_anneal["unmet_rate"] <= 0.1 and full_anneal["max_stall"] < no_anneal[
             "max_stall"
         ]
         needs_annealing = no_anneal["unmet_rate"] >= 0.5
@@ -163,7 +164,7 @@ def evaluate(
             "unmet_with_annealing": round(full_anneal["unmet_rate"], 3),
             "max_stall_without_annealing": round(no_anneal["max_stall"], 1),
             "max_stall_with_annealing": round(full_anneal["max_stall"], 1),
-            "verdict": _verdict(bounded and needs_annealing and monotone_ok),
+            "verdict": _verdict(stall_bounded and needs_annealing and monotone_ok),
         }
     else:
         verdicts["H5"] = {"claim": "annealing bounds stall time", "verdict": "PENDING"}
@@ -211,6 +212,30 @@ def evaluate(
             "verdict": "PENDING",
         }
 
+    # H9: CTA matches or beats a central scheduler that, like any real one,
+    # allocates from self-reports and a reliability table that lags because it is
+    # synchronised in batches (P1.0). This is the fair form of the H6 question:
+    # the unbeatable full-information optimum is replaced by an information-bounded
+    # central baseline. Supported when, at a stale table, CTA's per-seed quality is
+    # significantly higher than the bounded central's.
+    if bounded:
+        fresh = bounded[0]
+        stale = bounded[-1]
+        cta_stale = [float(v) for v in stale["cta_values"]]  # type: ignore[arg-type]
+        bnd_stale = [float(v) for v in stale["bounded_values"]]  # type: ignore[arg-type]
+        _, p_bounded = mann_whitney_u(cta_stale, bnd_stale)
+        verdicts["H9"] = {
+            "claim": "CTA matches or beats central coordination once its table is stale",
+            "staleness_fresh": round(float(fresh["staleness"]), 2),  # type: ignore[arg-type]
+            "staleness_stale": round(float(stale["staleness"]), 2),  # type: ignore[arg-type]
+            "advantage_fresh": round(float(fresh["advantage"]), 3),  # type: ignore[arg-type]
+            "advantage_stale": round(float(stale["advantage"]), 3),  # type: ignore[arg-type]
+            "cta_quality_stale": round(mean_ci(cta_stale)[0], 3),
+            "bounded_quality_stale": round(mean_ci(bnd_stale)[0], 3),
+            "p": round(p_bounded, 4),
+            "verdict": _verdict(mean_ci(cta_stale)[0] > mean_ci(bnd_stale)[0]),
+        }
+
     # Multiple-comparison control across the family of hypotheses that rest on a
     # p-value (H2 against the pull-based baseline, H8 the calibration recovery).
     # Holm-Bonferroni is applied and the corrected value and significance are
@@ -220,6 +245,8 @@ def evaluate(
         p_family["H2"] = float(verdicts["H2"]["p_vs_pull"])
     if "p" in verdicts.get("H8", {}):
         p_family["H8"] = float(verdicts["H8"]["p"])
+    if "p" in verdicts.get("H9", {}):
+        p_family["H9"] = float(verdicts["H9"]["p"])
     if p_family:
         corrected = holm_over_hypotheses(p_family)
         for key, (adj_p, significant) in corrected.items():
@@ -229,6 +256,10 @@ def evaluate(
         if "H8" in verdicts and "significant_holm" in verdicts["H8"]:
             recovers = float(verdicts["H8"].get("recovery", 0.0)) > 0.0
             verdicts["H8"]["verdict"] = _verdict(recovers and verdicts["H8"]["significant_holm"])
+        # H9's support rests on the corrected significance too.
+        if "H9" in verdicts and "significant_holm" in verdicts["H9"]:
+            ahead = float(verdicts["H9"].get("advantage_stale", 0.0)) > 0.0
+            verdicts["H9"]["verdict"] = _verdict(ahead and verdicts["H9"]["significant_holm"])
     return verdicts
 
 

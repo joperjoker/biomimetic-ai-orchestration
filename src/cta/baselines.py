@@ -20,7 +20,15 @@ import random
 from dataclasses import dataclass
 
 from cta.quality import is_success, realised_quality
-from cta.scoring import Agent, Task, binding_energy, compatibility, eligible
+from cta.scoring import (
+    Agent,
+    Task,
+    binding_energy,
+    compatibility,
+    eligible,
+    reliability,
+    self_reported_compatibility,
+)
 
 BRUTE_FORCE_LIMIT = 7
 
@@ -197,4 +205,106 @@ def run_central(
         # design avoids by distributing evaluation across agents.
         **coordinator_cost(agents, tasks),
         "method": assignment.method,
+    }
+
+
+def _stale_reliability_table(
+    agents: list[Agent], staleness: float, rng: random.Random
+) -> dict[str, float]:
+    """Per-agent reliability estimates degraded by ``staleness`` in [0, 1].
+
+    A coordinator's reliability table is synchronised in batches, so it lags. We
+    model the lag as a blend between each agent's current reliability (staleness
+    0) and an out-of-date value drawn from the prior (staleness 1). Blending
+    toward an independent per-agent draw, rather than a shared constant,
+    progressively scrambles the competence ranking, which is what a stale table
+    actually costs: not a uniform shrink but a loss of who-is-good ordering. Drawn
+    once per agent so the estimate is a property of the agent, not of the pair.
+    """
+    s = 0.0 if staleness < 0.0 else 1.0 if staleness > 1.0 else staleness
+    return {a.agent_id: (1.0 - s) * reliability(a) + s * rng.random() for a in agents}
+
+
+def bounded_assignment(
+    agents: list[Agent],
+    tasks: list[Task],
+    rng: random.Random,
+    staleness: float,
+    noise: float,
+) -> Assignment:
+    """Assign each task to the agent that looks best from what a coordinator sees.
+
+    A real central scheduler does not observe true fit or true competence. It
+    observes each agent's self-reported compatibility (miscalibrated by the
+    agent's own bias and noise, E13, plus ``noise`` of its own observation error)
+    and a possibly stale reliability estimate that is its only window onto
+    competence. It ranks by the product of the two. Agent reuse is allowed,
+    mirroring ``best_assignment`` so the only difference from the full-information
+    reference is the *information*, not the matching rule. With ``staleness`` and
+    ``noise`` zero and a well-calibrated, uniform fleet the reliability term is a
+    common factor, so each task goes to its most compatible eligible agent.
+    """
+    stale_r = _stale_reliability_table(agents, staleness, rng)
+    pairs: list[tuple[str, str]] = []
+    for t in tasks:
+        best_score = -1.0
+        best_id: str | None = None
+        for a in agents:
+            if not eligible(a, t):
+                continue
+            true_c = compatibility(a, t)
+            if true_c <= 0.0:
+                continue
+            c_hat = self_reported_compatibility(
+                true_c, a.calibration_bias, a.calibration_noise + noise, rng
+            )
+            perceived = c_hat * stale_r[a.agent_id]
+            if perceived > best_score or (perceived == best_score and (
+                best_id is None or a.agent_id < best_id
+            )):
+                best_score = perceived
+                best_id = a.agent_id
+        if best_id is not None:
+            pairs.append((best_id, t.task_id))
+    return Assignment(pairs, "bounded")
+
+
+def run_central_bounded(
+    agents: list[Agent],
+    tasks: list[Task],
+    rng: random.Random,
+    staleness: float = 0.0,
+    noise: float = 0.0,
+) -> dict[str, float]:
+    """Central scheduling under bounded information, then execute and summarise.
+
+    This is the honest opponent for CTA: it has the coordinator's ``N`` times
+    ``M`` load but only the self-reports and a stale track record to allocate on,
+    so unlike the full-information ``best`` reference it is a target CTA's local
+    reliability correction can match or beat. Realised quality still uses the true
+    compatibility, so the ground truth is identical across all conditions.
+    """
+    assignment = bounded_assignment(agents, tasks, rng, staleness, noise)
+    by_id = {a.agent_id: a for a in agents}
+    task_by_id = {t.task_id: t for t in tasks}
+    qualities: list[float] = []
+    completed = 0
+    for aid, tid in assignment.pairs:
+        agent, task = by_id[aid], task_by_id[tid]
+        q = realised_quality(compatibility(agent, task), agent.capability, rng)
+        qualities.append(q)
+        if is_success(q):
+            completed += 1
+    n = len(tasks)
+    assigned = len(assignment.pairs)
+    return {
+        "tasks": n,
+        "assigned": assigned,
+        "completed": completed,
+        "infeasible_rate": (n - assigned) / n if n else 0.0,
+        "mean_quality": sum(qualities) / len(qualities) if qualities else 0.0,
+        **coordinator_cost(agents, tasks),
+        "method": assignment.method,
+        "staleness": staleness,
+        "report_noise": noise,
     }

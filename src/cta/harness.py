@@ -14,7 +14,7 @@ from __future__ import annotations
 import random
 from dataclasses import dataclass, field, replace
 
-from cta.baselines import run_central
+from cta.baselines import coordinator_cost, run_central, run_central_bounded
 from cta.engine import run_batch
 from cta.generators import (
     generate_agents,
@@ -29,7 +29,14 @@ from cta.scoring import Agent, GateConfig, Task, compatibility, eligible
 from cta.stats import mean_ci
 from cta.temporal import TemporalConfig, run_temporal
 
-CONDITIONS = ("cta", "pull_based", "central_greedy", "central_optimal", "central_best")
+CONDITIONS = (
+    "cta",
+    "pull_based",
+    "central_greedy",
+    "central_optimal",
+    "central_best",
+    "central_bounded",
+)
 
 # Load fields that run_central reports analytically (N times M), independent of
 # the assignment; a sweep reading only these can skip computing the assignment.
@@ -48,6 +55,10 @@ class CellParams:
     temperature: float = 0.0
     observability_k: int | None = 32  # bounded task sampling per agent (A2); None means full
     family: str = "domains"  # generative distribution family (2.7): domains or latent
+    # Bounded-information central baseline (P1.0): how stale the coordinator's
+    # reliability estimate is, and how much observation noise it adds to reports.
+    central_staleness: float = 0.0
+    central_report_noise: float = 0.0
 
 
 @dataclass
@@ -92,6 +103,25 @@ def run_cell(
             observability_k=params.observability_k,
         )
         summary = result.summary()
+    elif condition == "central_bounded":
+        if not quality:
+            summary = {
+                "tasks": len(tasks),
+                "assigned": 0,
+                "completed": 0,
+                "infeasible_rate": 0.0,
+                "mean_quality": 0.0,
+                **coordinator_cost(agents, tasks),
+                "method": "bounded-load-only",
+            }
+        else:
+            summary = run_central_bounded(
+                agents,
+                tasks,
+                exec_rng,
+                staleness=params.central_staleness,
+                noise=params.central_report_noise,
+            )
     else:
         method = {
             "central_greedy": "greedy",
@@ -242,6 +272,80 @@ def calibration_sweep(
                     "completion_values": comp_vals,
                 }
             )
+    return out
+
+
+def bounded_vs_cta(
+    base: CellParams,
+    seeds: int,
+    staleness_values: tuple[float, ...] = (0.0, 0.25, 0.5, 0.75, 1.0),
+    bias: float = 0.3,
+    noise: float = 0.05,
+    report_noise: float = 0.0,
+    capability_low: float = 0.2,
+) -> list[dict[str, object]]:
+    """H6, refit: CTA against an information-bounded central scheduler (P1.0).
+
+    The full-information ``central_best`` reference is unbeatable by construction,
+    so H6 (CTA matches or beats central coordination) is only a fair question
+    against a central scheduler that, like any real one, allocates from
+    self-reports and a possibly stale reliability table. Both conditions face the
+    same miscalibrated, competence-spread fleet with the same track record, so the
+    comparison isolates centralised versus decentralised coordination, not the
+    information each is handed. Staleness is the coordinator's structural
+    disadvantage: a central table is synchronised in batches and lags, whereas a
+    decentralised agent acts on its own current record.
+
+    Returns, per staleness level, the mean realised quality of CTA (reliability
+    selection) and of the bounded central, their per-seed values for a
+    significance test, and CTA's advantage. At zero staleness the central
+    scheduler has fresh information and the two are close; as staleness rises CTA's
+    local correction pulls ahead.
+    """
+    out: list[dict[str, object]] = []
+    for stale in staleness_values:
+        cta_q: list[float] = []
+        bnd_q: list[float] = []
+        for seed in range(seeds):
+            agents = generate_agents(
+                base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
+            )
+            agents = with_capability_spread(agents, capability_low)
+            agents = with_track_record(agents, random.Random(seed + 40_000))
+            agents = with_miscalibration(agents, bias, noise, random.Random(seed + 60_000))
+            tasks = generate_tasks(
+                base.n_tasks,
+                base.n_domains,
+                random.Random(seed + 10_000),
+                base.activation_energy,
+                base.family,
+            )
+            cta = run_batch(
+                agents,
+                tasks,
+                random.Random(seed + 20_000),
+                condition="cta",
+                temperature=base.temperature,
+                observability_k=base.observability_k,
+                selection_mode="reliability",
+            ).summary()
+            bnd = run_central_bounded(
+                agents, tasks, random.Random(seed + 20_000), staleness=stale, noise=report_noise
+            )
+            cta_q.append(cta["mean_quality"])
+            bnd_q.append(bnd["mean_quality"])
+        cta_mean = sum(cta_q) / len(cta_q)
+        bnd_mean = sum(bnd_q) / len(bnd_q)
+        out.append(
+            {
+                "staleness": stale,
+                "cta_quality": cta_mean,
+                "bounded_quality": bnd_mean,
+                "advantage": cta_mean - bnd_mean,
+                "cta_values": cta_q,
+                "bounded_values": bnd_q,
+            }
+        )
     return out
 
 

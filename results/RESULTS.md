@@ -16,6 +16,7 @@ pending.
 | H6 | NOT SUPPORTED | CTA advantage over the optimum increases with heterogeneity |
 | H7 | SUPPORTED | self-reports over-predict realised success because they omit competence |
 | H8 | SUPPORTED | the track-record correction recovers completion under miscalibration |
+| H9 | SUPPORTED | CTA matches or beats central coordination once its table is stale |
 
 ## Figures
 
@@ -39,16 +40,19 @@ pending.
 
 ![h2_decomposition](figures/h2_decomposition.svg)
 
+![bounded_central](figures/bounded_central.svg)
+
 ![reliability_diagram](figures/reliability_diagram.svg)
 
 ![fleet_mix](figures/fleet_mix.svg)
 
 ## Peak per-node load scaling
 
-| N | cta | pull_based | central_greedy | central_optimal | central_best |
-| --- | --- | --- | --- | --- | --- |
-| 50 | 32.0 | 45.5 | 2000.0 | 2000.0 | 2000.0 |
-| 100 | 32.0 | 53.1 | 8000.0 | 8000.0 | 8000.0 |
-| 200 | 32.0 | 56.2 | 32000.0 | 32000.0 | 32000.0 |
-| 500 | 32.0 | 59.8 | 200000.0 | 200000.0 | 200000.0 |
-| 1000 | 32.0 | 61.0 | 800000.0 | 800000.0 | 800000.0 |
+| N | cta | pull_based | central_greedy | central_optimal | central_best | central_bounded |
+| --- | --- | --- | --- | --- | --- | --- |
+| 50 | 32.0 | 45.5 | 2000.0 | 2000.0 | 2000.0 | 2000.0 |
+| 100 | 32.0 | 53.1 | 8000.0 | 8000.0 | 8000.0 | 8000.0 |
+| 200 | 32.0 | 56.2 | 32000.0 | 32000.0 | 32000.0 | 32000.0 |
+| 500 | 32.0 | 59.8 | 200000.0 | 200000.0 | 200000.0 | 200000.0 |
+| 1000 | 32.0 | 61.0 | 800000.0 | 800000.0 | 800000.0 | 800000.0 |
+| 2000 | 32.0 | 62.8 | 3200000.0 | 3200000.0 | 3200000.0 | 3200000.0 |

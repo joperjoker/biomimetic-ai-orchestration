@@ -5,16 +5,16 @@
 <line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
 <text x="315" y="422" text-anchor="middle">competence spread (1 - capability floor)</text>
 <text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">completion recovery</text>
-<path d="M560.0 40.0 L478.3 61.5 L355.8 105.3 L233.3 184.2 L70.0 343.1" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<path d="M560.0 40.0 L478.3 49.0 L355.8 73.0 L233.3 167.2 L70.0 331.6" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
-<circle cx="478.3" cy="61.5" r="3" fill="#2f6f9f"/>
-<circle cx="355.8" cy="105.3" r="3" fill="#2f6f9f"/>
-<circle cx="233.3" cy="184.2" r="3" fill="#2f6f9f"/>
-<circle cx="70.0" cy="343.1" r="3" fill="#2f6f9f"/>
+<circle cx="478.3" cy="49.0" r="3" fill="#2f6f9f"/>
+<circle cx="355.8" cy="73.0" r="3" fill="#2f6f9f"/>
+<circle cx="233.3" cy="167.2" r="3" fill="#2f6f9f"/>
+<circle cx="70.0" cy="331.6" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">recovery</text>
 <text x="70" y="398" text-anchor="middle">0.30</text>
 <text x="560" y="398" text-anchor="middle">0.90</text>
 <text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">0.41</text>
+<text x="62" y="50" text-anchor="end">0.40</text>
 </svg>
