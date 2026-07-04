@@ -2341,6 +2341,70 @@
       "note": "quality-neutral in the batch regime; the barrier's contribution is liveness (annealing bounds stall, H5) and the infeasible and stalled semantics (H3), which the batch engine has no time axis to show"
     }
   },
+  "cost_curve": [
+    {
+      "n_agents": 50,
+      "n_tasks": 40,
+      "central_usd": 3.6,
+      "decentralised_total_usd": 2.88,
+      "decentralised_per_node_usd": 0.0576
+    },
+    {
+      "n_agents": 100,
+      "n_tasks": 80,
+      "central_usd": 14.4,
+      "decentralised_total_usd": 5.76,
+      "decentralised_per_node_usd": 0.0576
+    },
+    {
+      "n_agents": 200,
+      "n_tasks": 160,
+      "central_usd": 57.6,
+      "decentralised_total_usd": 11.52,
+      "decentralised_per_node_usd": 0.0576
+    },
+    {
+      "n_agents": 500,
+      "n_tasks": 400,
+      "central_usd": 360.0,
+      "decentralised_total_usd": 28.8,
+      "decentralised_per_node_usd": 0.0576
+    },
+    {
+      "n_agents": 1000,
+      "n_tasks": 800,
+      "central_usd": 1440.0,
+      "decentralised_total_usd": 57.6,
+      "decentralised_per_node_usd": 0.0576
+    },
+    {
+      "n_agents": 2000,
+      "n_tasks": 1600,
+      "central_usd": 5760.0,
+      "decentralised_total_usd": 115.2,
+      "decentralised_per_node_usd": 0.0576
+    },
+    {
+      "n_agents": 5000,
+      "n_tasks": 4000,
+      "central_usd": 36000.0,
+      "decentralised_total_usd": 288.0,
+      "decentralised_per_node_usd": 0.0576
+    },
+    {
+      "n_agents": 10000,
+      "n_tasks": 8000,
+      "central_usd": 144000.0,
+      "decentralised_total_usd": 576.0,
+      "decentralised_per_node_usd": 0.0576
+    }
+  ],
+  "cost_savings": {
+    "n_agents": 10000,
+    "central_usd": 144000.0,
+    "decentralised_total_usd": 576.0,
+    "savings_multiple": 250.0
+  },
   "fleet": {
     "experiment": {
       "raw_completion": 0.7635416666666667,

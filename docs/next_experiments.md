@@ -6,6 +6,16 @@
 confirms its hypotheses, resolves a real AI failure mode, and carries a credible
 commercialisation story.
 
+**Progress (the minimum-viable-paper cut line is done).** Completed and committed:
+P0.1 (header), P0.2 (scaling fast path), P0.3 (repo hygiene), P1.0 (bounded-
+information central baseline and the fair H9 comparison), P1.1 (bootstrap CIs and
+power notes on the headline comparisons), P1.2 (scaling to N=10,000 with fitted
+growth exponents 0.0 vs 2.0), P1.3 (raw dataset released as
+`results/dataset/runs.csv`), P2.4 (biomimicry ablation isolating the barrier and
+the gate), and P2.3 (token and dollar cost model). Still open: P1.4 (one-command
+reproducibility), P2.1 (fit generators to measured calibration), P2.2 (latency
+Pareto), P2.5 (two-sided live pilot), P2.6 (product PoC), and all of Phase 3.
+
 This is a code-first plan. Every item names the concrete file and function to
 add or change, the dataset or figure it produces, the paper section it feeds,
 and an acceptance test that decides whether the item is done. Keep the house

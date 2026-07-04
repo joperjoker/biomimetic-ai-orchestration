@@ -33,6 +33,7 @@ def line_chart(
     xlabel: str,
     ylabel: str,
     logx: bool = False,
+    logy: bool = False,
 ) -> str:
     """Render a multi-series line chart to an SVG string."""
     import math
@@ -40,13 +41,17 @@ def line_chart(
     def tx(x: float) -> float:
         return math.log10(x) if logx and x > 0 else x
 
+    def ty(y: float) -> float:
+        return math.log10(y) if logy and y > 0 else y
+
     xs = [tx(x) for pts in series.values() for x, _ in pts]
-    ys = [y for pts in series.values() for _, y in pts]
+    ys = [ty(y) for pts in series.values() for _, y in pts]
     if not xs or not ys:
         xs, ys = [0.0, 1.0], [0.0, 1.0]
     xlo, xhi = min(xs), max(xs)
     ylo, yhi = min(ys), max(ys)
-    ylo = min(ylo, 0.0)
+    if not logy:
+        ylo = min(ylo, 0.0)
 
     px0, px1 = _ML, _W - _MR
     py0, py1 = _H - _MB, _MT
@@ -66,7 +71,7 @@ def line_chart(
         coords = [
             (
                 _scale(tx(x), xlo, xhi, px0, px1),
-                _scale(y, ylo, yhi, py0, py1),
+                _scale(ty(y), ylo, yhi, py0, py1),
             )
             for x, y in pts
         ]
@@ -84,8 +89,12 @@ def line_chart(
     x_min_lbl, x_max_lbl = _fmt(min(raw_x)), _fmt(max(raw_x))
     parts.append(f'<text x="{px0}" y="{py0+18}" text-anchor="middle">{x_min_lbl}</text>')
     parts.append(f'<text x="{px1}" y="{py0+18}" text-anchor="middle">{x_max_lbl}</text>')
-    parts.append(f'<text x="{px0-8}" y="{py0}" text-anchor="end">{_fmt(ylo)}</text>')
-    parts.append(f'<text x="{px0-8}" y="{py1+10}" text-anchor="end">{_fmt(yhi)}</text>')
+    # Axis end labels show the raw y range even when the axis is log-scaled.
+    raw_y = [y for _, y in _flat(series)]
+    y_lo_lbl = _fmt(min(raw_y)) if logy else _fmt(ylo)
+    y_hi_lbl = _fmt(max(raw_y)) if logy else _fmt(yhi)
+    parts.append(f'<text x="{px0-8}" y="{py0}" text-anchor="end">{y_lo_lbl}</text>')
+    parts.append(f'<text x="{px0-8}" y="{py1+10}" text-anchor="end">{y_hi_lbl}</text>')
     parts.append("</svg>")
     return "\n".join(parts)
 

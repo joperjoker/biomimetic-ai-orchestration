@@ -13,6 +13,7 @@ import json
 from dataclasses import replace
 from pathlib import Path
 
+from cta.cost import cost_curve, savings_at
 from cta.dashboard import write_dashboard
 from cta.dataset import dump_runs
 from cta.generators import generate_agents, generate_tasks
@@ -135,6 +136,12 @@ def autorun(
     # Biomimicry ablation: isolate the activation barrier and the integrity gate (P2.4).
     ablation = biomimicry_ablation(protocol.base, protocol.seeds)
     ablation_analysis = ablation_attribution(ablation)
+    # Dollar cost of coordination against agent count (P2.3): central is N*M, the
+    # decentralised fleet is bounded per node, so the bill diverges at scale.
+    task_ratio = protocol.base.n_tasks / max(1, protocol.base.n_agents)
+    obs_k = protocol.base.observability_k
+    cost = cost_curve(list(protocol.scaling_n), task_ratio=task_ratio, observability_k=obs_k)
+    cost_savings = savings_at(protocol.scaling_n[-1], task_ratio=task_ratio, observability_k=obs_k)
     # Realistic fleet grounded in measured LLM calibration (MarketBench archetypes).
     fleet = fleet_experiment(seeds=protocol.seeds)
     fleet_mix = fleet_mix_sweep(seeds=protocol.seeds)
@@ -318,6 +325,27 @@ def autorun(
         ),
         figures_dir / "biomimicry_ablation.svg",
     )
+    # Cost figure: coordinator dollar cost against agent count, central versus the
+    # decentralised busiest node, on a log-log axis (P2.3).
+    cost_series = {
+        "central (one node, N*M)": [
+            (float(p["n_agents"]), float(p["central_usd"])) for p in cost
+        ],
+        "decentralised (busiest node)": [
+            (float(p["n_agents"]), float(p["decentralised_per_node_usd"])) for p in cost
+        ],
+    }
+    save_svg(
+        line_chart(
+            cost_series,
+            title="Coordination dollar cost vs agent count (standard tier)",
+            xlabel="agents (log scale)",
+            ylabel="USD per allocation round (log scale)",
+            logx=True,
+            logy=True,
+        ),
+        figures_dir / "cost_vs_n.svg",
+    )
     # Reliability diagram of the realistic fleet: mean predicted vs realised
     # success, with the diagonal of perfect calibration. Points below the diagonal
     # are overconfident. The correction pulls the retained winners toward it.
@@ -367,6 +395,7 @@ def autorun(
         "figures/h2_decomposition.svg",
         "figures/bounded_central.svg",
         "figures/biomimicry_ablation.svg",
+        "figures/cost_vs_n.svg",
         "figures/reliability_diagram.svg",
         "figures/fleet_mix.svg",
     ]
@@ -401,6 +430,8 @@ def autorun(
         "bounded_vs_cta": bounded,
         "biomimicry_ablation": ablation,
         "biomimicry_ablation_analysis": ablation_analysis,
+        "cost_curve": cost,
+        "cost_savings": cost_savings,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
         "verdicts": verdicts,

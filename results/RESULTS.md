@@ -44,6 +44,8 @@ pending.
 
 ![biomimicry_ablation](figures/biomimicry_ablation.svg)
 
+![cost_vs_n](figures/cost_vs_n.svg)
+
 ![reliability_diagram](figures/reliability_diagram.svg)
 
 ![fleet_mix](figures/fleet_mix.svg)
