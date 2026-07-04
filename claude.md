@@ -208,7 +208,7 @@ The framework is evaluated in two modes that share one core, so results are comp
 
 ### 5.1 Execution Loop
 
-For every action follow this sequence: Plan, Analyse Plan, Evaluate Plan, Revise Plan, Execute Plan, Verify Execution, then Loop to Plan again if the objective is not met.
+For every action follow this sequence: Plan, Analyse Plan, Evaluate Plan, Revise Plan, Execute Plan, Verify Execution, then Loop to Plan again if the objective is not met. Each pass is reasoned through the Consortium (section 2) and checked against the Research North Star (section 1), so the elite team and the purpose stay in view on every iteration and the loop continues until the objective is met rather than after a single attempt.
 
 ### 5.2 Loop Constraints
 
@@ -219,7 +219,13 @@ For every action follow this sequence: Plan, Analyse Plan, Evaluate Plan, Revise
 
 - Do not halt to ask for clarification. When data is missing, make the highest probability architectural decision and record the assumption in this file or in the relevant document.
 
-### 5.4 Stylistic Constraints (apply to all artifacts)
+### 5.4 Delegation and parallel teams
+
+- Where the objective divides into independent parts, spin up many subagent teams to run them in parallel rather than working through them in sequence, then integrate and verify their results before keeping any of them. This is the same decentralised, self-selecting principle the framework studies, applied to the research process itself.
+- Give every spawned team its purpose and its standard so nothing is lost across the boundary: hand it the Research North Star (section 1) and the relevant Consortium roles (section 2), so each team inherits the elite team's reasoning and the one claim under test.
+- Keep each team small and its output verifiable, and pass that output through the same Rejection Gate discipline (a reliability and integrity check) before integrating it, in the spirit of the loop constraints in section 5.2. Prefer several small, reviewable teams over one large unreviewable batch.
+
+### 5.5 Stylistic Constraints (apply to all artifacts)
 
 - Do not use the clause separating dash. Use commas, colons, or parentheses instead. This rule is enforced automatically by the foundation test suite, which scans tracked Markdown for dash variants.
 - Avoid puffery words such as pivotal, tapestry, and delve.
