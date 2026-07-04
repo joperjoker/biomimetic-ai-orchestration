@@ -638,6 +638,67 @@ def biomimicry_ablation(
     return out
 
 
+def routing_experiment(
+    base: CellParams,
+    seeds: int,
+    observability_levels: tuple[int, ...] = (2, 4, 8, 16),
+    n_roles: int = 4,
+    heterogeneity: float = 0.5,
+) -> list[dict[str, float]]:
+    """H10: does the activation barrier route each subtask to a correct specialist?
+
+    A heterogeneous job of one-domain subtasks is run over a fleet of one-domain
+    specialists (the domains family, where eligibility is tools and scope only, so
+    the Binding Energy alone routes). Because badly matched agents fire only when
+    their self-report clears the activation energy, the barrier should keep the
+    wrong specialist from ever winning a task. We compare routing accuracy with the
+    barrier on (the pre-registered activation energy) and off (activation energy
+    zero, every agent fires) across observability levels, since under tight
+    observability a task may be seen only by an ill-matched agent, which without
+    the barrier would win it. The chance floor is ``1 / n_roles``.
+    """
+    from cta.routing import routing_accuracy
+
+    out: list[dict[str, float]] = []
+    for k in observability_levels:
+        on_acc: list[float] = []
+        off_acc: list[float] = []
+        on_won: list[float] = []
+        off_won: list[float] = []
+        for seed in range(seeds):
+            agents = generate_agents(base.n_agents, n_roles, heterogeneity, random.Random(seed))
+            agents = with_track_record(agents, random.Random(seed + 40_000))
+            tasks_on = generate_tasks(
+                base.n_tasks, n_roles, random.Random(seed + 10_000), base.activation_energy
+            )
+            tasks_off = generate_tasks(base.n_tasks, n_roles, random.Random(seed + 10_000), 0.0)
+            res_on = run_batch(
+                agents, tasks_on, random.Random(seed + 20_000), condition="cta",
+                selection_mode="reliability", observability_k=k,
+            )
+            res_off = run_batch(
+                agents, tasks_off, random.Random(seed + 20_000), condition="cta",
+                selection_mode="reliability", observability_k=k,
+            )
+            r_on = routing_accuracy(agents, tasks_on, res_on.outcomes)
+            r_off = routing_accuracy(agents, tasks_off, res_off.outcomes)
+            on_acc.append(r_on["accuracy"])
+            off_acc.append(r_off["accuracy"])
+            on_won.append(r_on["won"])
+            off_won.append(r_off["won"])
+        out.append(
+            {
+                "observability_k": k,
+                "chance_floor": 1.0 / n_roles,
+                "barrier_on_accuracy": sum(on_acc) / len(on_acc),
+                "barrier_off_accuracy": sum(off_acc) / len(off_acc),
+                "barrier_on_won": sum(on_won) / len(on_won),
+                "barrier_off_won": sum(off_won) / len(off_won),
+            }
+        )
+    return out
+
+
 def temporal_metrics(base: CellParams, seeds: int) -> dict[str, list[float]]:
     """Run the round-based engine on the base population for temporal measures.
 
