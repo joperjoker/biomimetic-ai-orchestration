@@ -35,7 +35,7 @@ first-class, pre-registered-going-forward hypotheses.
 - **H11 (task-wrapper lift):** wrapping a task in an explicit interface contract
   and acceptance criteria raises weak-model completion toward the frontier and
   is a precondition for independently built modules to integrate. Evidence:
-  ladder (Haiku 0.875 to 1.00) and project (every model 0 to 1.00 completion).
+  ladder (Haiku 0.925 to 1.00, five agents) and project (every model 0 to 1.00 completion).
 - **H12 (agent-wrapper cost-efficiency):** routing by reliability-corrected
   self-report holds frontier-level completion at a fraction of the
   always-frontier cost when tasks are wrapped, and loses completion when they are

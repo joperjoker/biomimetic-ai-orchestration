@@ -145,6 +145,222 @@
  },
  {
   "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__3",
+  "task": "fraction_to_decimal",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__3",
+  "task": "int_to_words",
+  "confidence": 0.82,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__3",
+  "task": "full_justify",
+  "confidence": 0.78,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__3",
+  "task": "calculate3",
+  "confidence": 0.8,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__3",
+  "task": "multiply_strings",
+  "confidence": 0.91,
+  "pass_fraction": 0.5,
+  "passed": false
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__3",
+  "task": "min_window",
+  "confidence": 0.89,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__3",
+  "task": "word_break",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__3",
+  "task": "is_match",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__4",
+  "task": "fraction_to_decimal",
+  "confidence": 0.82,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__4",
+  "task": "int_to_words",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__4",
+  "task": "full_justify",
+  "confidence": 0.83,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__4",
+  "task": "calculate3",
+  "confidence": 0.75,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__4",
+  "task": "multiply_strings",
+  "confidence": 0.91,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__4",
+  "task": "min_window",
+  "confidence": 0.89,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__4",
+  "task": "word_break",
+  "confidence": 0.94,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__4",
+  "task": "is_match",
+  "confidence": 0.81,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__5",
+  "task": "fraction_to_decimal",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__5",
+  "task": "int_to_words",
+  "confidence": 0.82,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__5",
+  "task": "full_justify",
+  "confidence": 0.78,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__5",
+  "task": "calculate3",
+  "confidence": 0.75,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__5",
+  "task": "multiply_strings",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__5",
+  "task": "min_window",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__5",
+  "task": "word_break",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__5",
+  "task": "is_match",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
   "condition": "wrapped",
   "agent": "haiku__wrapped__1",
   "task": "fraction_to_decimal",

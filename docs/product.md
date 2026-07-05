@@ -63,8 +63,8 @@ model fleet, extracted as a small library in `src/cta/wrappers.py`.
 
 - **The task wrapper** (`wrap_task`) turns a loose task into an explicit interface
   contract with named acceptance criteria and a self-check. On real Claude agents
-  this lifts a weak model to a strong model's completion (Haiku 0.88 to 1.00 on
-  the expert tier) and is the precondition for independently built modules to
+  this lifts a weak model to a strong model's completion (Haiku 0.925 to 1.00 on
+  the expert tier, five agents) and is the precondition for independently built modules to
   integrate into a working project (H11). It makes a cheap model reliable.
 - **The agent wrapper** (`Fleet`, `route`) picks, for each task, the cheapest
   model whose reliability-corrected self-report clears the activation barrier. Fed

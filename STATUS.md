@@ -11,11 +11,29 @@ A running log of what is complete and what comes next. Read this, then `claude.m
 - **Capability ladder** (`results/live_pilot/ladder/`, `pilot_tasks/ladder.py`): Haiku/Sonnet/Opus x bare/task-wrapped over 8 expert tasks. Task wrapper lifts the weak model to the frontier; agent-wrapper routing holds frontier completion at ~47x lower cost with the wrapper, loses completion without it.
 - **Project** (`results/live_pilot/project/`, `pilot_tasks/project.py`): miniquery, 5 modules with a dependency graph. Bare spec: every model fails (divergent interfaces); the task wrapper's interface contract makes all three deliver a conforming project; the agent wrapper assembles a working cross-model project at ~39x lower cost. Bare assembly fails at any price.
 
-**What is next (planned, not started).**
-1. **Coherence pass on `docs/paper.md`** (cheap, high value): §3 has grown to six result blocks. Restructure into one arc with a unified results table, foreground the wrapper/cost story in the abstract and contributions, and decide whether to elevate the wrapper findings to pre-registered hypotheses (H11 task-wrapper lift, H12 agent-wrapper routing) or keep them as external-validity contributions. Refresh `cta dashboard` to inline the ladder/project figures.
-2. **Publication track** (non-code, the main remaining bucket): choose a venue; convert the Markdown paper to LaTeX/PDF with print-safe figures; write the related-work table versus RouteLLM, EvoRoute, DiSRouter, MarketBench; polish the abstract.
-3. **Commercial doc** (`docs/product.md`): add the wrapper cost story (the ~39 to 47x saving from task wrapper + calibrated routing is the strongest commercial hook).
-4. **Optional deeper empirics (budget-gated):** more agents per cell for statistical power on the ladder/project; a genuinely overconfident model family or out-of-distribution tasks to finally populate the two-sided reliability curve (the open P2.5 gap); a larger project.
+**Sprints 1 to 5 done (this session).** Following `docs/strategy.md`: (1) paper
+coherence pass, a "results at a glance" headline table and arc framing in §3 and a
+wrapper/cost-centred abstract; (2) real-agent analysis hardened with bootstrap CIs
+and a per-task-reliability router; the wrapper results elevated to hypotheses H11
+(task-wrapper lift) and H12 (agent-wrapper cost-efficiency) with RQ11/RQ12; (3) a
+polished, theme-aware results dashboard (`results/showcase.html`, published as an
+Artifact); (4) the wrapper layer extracted as a product (`src/cta/wrappers.py`,
+`examples/wrapper_demo.py`, `docs/product.md`); (5) evidence-hardening: three more
+Haiku bare agents on the expert tier (now five agents, 40 attempts), which
+tightened Haiku bare completion to 0.925, CI [0.85, 1.00] and honestly corrected
+an over-clean two-agent escalation claim (the cheap model clears the barrier on
+every task at this size). 127 tests pass, ruff clean.
+
+**What is next.**
+1. **Publication track** (non-code, the main remaining bucket): choose a venue;
+   convert the Markdown paper to LaTeX/PDF with print-safe figures; write the
+   related-work table versus RouteLLM, EvoRoute, DiSRouter, MarketBench.
+2. **Deeper empirics (budget-gated):** more agents per cell on the other ladder
+   and project cells (only Haiku bare is at five agents); a genuinely
+   overconfident model family or out-of-distribution tasks to populate the
+   two-sided reliability curve (the open P2.5 gap); a second project for H11/H12
+   generality; a split-routing task the cheap model cannot do even wrapped, to
+   exercise the router's escalation on real data.
 
 **Operational notes.** An hourly self check-in cron (session-scoped) watches PR #1's CI and re-arms silently; it stops when the PR merges or closes. `claude.md` section 5 encodes the four operating pillars. Reproduce the synthetic results from seeds with `cta reproduce-all`; reproduce the real-agent tiers with `python -m pilot_tasks.analyse`, `python -m pilot_tasks.ladder`, `python -m pilot_tasks.project`.
 

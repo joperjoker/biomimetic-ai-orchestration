@@ -1,10 +1,13 @@
 """Demo: the CTA wrapper layer routing a fleet, from `cta.wrappers`.
 
-Runs offline and deterministically, no model calls. It shows the two product
-wrappers on a small task set that mirrors the real-agent finding: with only a
-coarse track record the router sends a hard task to a cheap model that fails it,
-and with a per-task track record it escalates exactly that task to a stronger
-model, holding completion at the frontier level for a fraction of the cost.
+Runs offline and deterministically, no model calls. It illustrates the routing
+mechanism on a constructed case where the cheap model is genuinely unreliable on
+one task: with only a coarse track record the router sends that task to the cheap
+model and it fails, and with a per-task track record it escalates exactly that
+task to a stronger model, holding completion at the frontier level for a fraction
+of the cost. (In the measured expert tier the cheap model turned out reliable
+enough that no escalation was needed; this demo shows what the router does when it
+is not.)
 
     python -m examples.wrapper_demo
 """

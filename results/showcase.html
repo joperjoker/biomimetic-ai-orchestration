@@ -117,7 +117,7 @@
         <tr><td class="h">Calibration fix</td><td>H8</td><td class="r">Track-record correction recovers completion 0.37 → 0.76, no privileged information</td></tr>
         <tr><td class="h">Safety</td><td>H4</td><td class="r">Integrity gate cuts out-of-scope violations ≈90% under adversarial agents</td></tr>
         <tr><td class="h">Routing</td><td>H10</td><td class="r">Activation barrier routes every subtask to a correct specialist (1.00 vs 0.25 floor)</td></tr>
-        <tr><td class="h">Task wrapper</td><td>H11</td><td class="r">Interface contract lifts the weak model 0.88 → 1.00; precondition for modules to integrate</td></tr>
+        <tr><td class="h">Task wrapper</td><td>H11</td><td class="r">Interface contract lifts the weak model 0.925 → 1.00; precondition for modules to integrate</td></tr>
         <tr><td class="h">Agent wrapper</td><td>H12</td><td class="r">Calibrated routing holds frontier completion at ≈1/40th of always-frontier cost</td></tr>
       </tbody>
     </table>
@@ -135,13 +135,13 @@
       </div>
       <figure class="chart"><div id="c-ladder"></div></figure>
       <p class="read"><strong>Completion on the 8-task expert tier.</strong> Under a
-        bare prompt, completion climbs with capability (Haiku 0.875, Sonnet and Opus
-        1.00). The task wrapper names the exact edge case the weak model missed and
-        lifts Haiku to 1.00, leaving the already-saturated models unchanged: the
-        contract helps most where the model is weakest.</p>
+        bare prompt, completion climbs with capability (Haiku 0.925 over five agents,
+        Sonnet and Opus 1.00). The task wrapper names the exact edge case the weak
+        model missed and lifts Haiku to 1.00, leaving the already-saturated models
+        unchanged: the contract helps most where the model is weakest.</p>
       <p class="note">Bars show completion (fraction of tasks fully passing). Haiku
-        bare carries a wide interval on a small sample: 0.875, bootstrap 95% CI
-        [0.69, 1.00].</p>
+        bare is 0.925 over five agents, bootstrap 95% CI [0.85, 1.00]; its residual
+        misses are on the wildcard-matching task.</p>
     </div>
   </section>
 
@@ -151,18 +151,18 @@
     <div class="card">
       <div class="legend">
         <span class="lg"><span class="sw" style="background:var(--opus)"></span> always-frontier</span>
-        <span class="lg"><span class="sw" style="background:var(--accent)"></span> routed · wrapped</span>
-        <span class="lg"><span class="sw" style="background:var(--sonnet)"></span> routed · bare, per-task track record</span>
-        <span class="lg"><span class="sw" style="background:var(--bad)"></span> routed · bare, coarse track record</span>
+        <span class="lg"><span class="sw" style="background:var(--accent)"></span> routed · task-wrapped</span>
+        <span class="lg"><span class="sw" style="background:var(--bad)"></span> routed · bare</span>
       </div>
       <figure class="chart"><div id="c-cost"></div></figure>
-      <p class="read"><strong>Completion against relative cost</strong> for four
-        strategies on the expert tier. Always using the frontier model reaches 1.00
-        at full cost. Routing over task-wrapped tasks matches it (1.00) at about
-        1/47th of the cost. Routing over bare tasks with only a coarse track record
-        loses completion (0.875) — the weak model's overconfident bid on the hardest
-        task clears the barrier and fails. Give the router a per-task track record
-        and it escalates exactly that task, recovering 1.00 at ≈1/20th cost.</p>
+      <p class="read"><strong>Completion against relative cost</strong> on the expert
+        tier. Always using the frontier model reaches 1.00 at full cost. Routing over
+        task-wrapped tasks matches it (1.00) at about 1/47th of the cost, because the
+        cheap model, once wrapped, is reliable enough to keep the work. Routing over
+        bare tasks reaches 0.925 at about 1/50th of the cost — the residual gap is the
+        cheap model's wildcard-task failures, which the wrapper closes. The router
+        escalates a task to a stronger model only when the cheap model's corrected
+        bid on it falls below the barrier.</p>
       <p class="note">Cost is relative to always-frontier (log axis), priced at
         representative economy-to-premium tiers; the multiples illustrate the
         mechanism, not a live quote.</p>
@@ -277,9 +277,8 @@ function dots(host){
   const pw=W-m.l-m.r, ph=H-m.t-m.b;
   const pts=[
     {label:'always-frontier', cost:1, comp:1.00, color:col('--opus'), dy:-16},
-    {label:'routed · wrapped', cost:1/47, comp:1.00, color:col('--accent'), dy:-16},
-    {label:'routed · bare, per-task track record', cost:1/20, comp:1.00, color:col('--sonnet'), dy:-16},
-    {label:'routed · bare, coarse track record', cost:1/51, comp:0.875, color:col('--bad'), dy:22},
+    {label:'routed · task-wrapped', cost:1/47, comp:1.00, color:col('--accent'), dy:-16},
+    {label:'routed · bare', cost:1/50, comp:0.925, color:col('--bad'), dy:22},
   ];
   const xs=[1,1/10,1/100], xmin=Math.log10(1/100), xmax=Math.log10(1.6);
   const x=c=>m.l+pw*(Math.log10(c)-xmin)/(xmax-xmin);
@@ -308,7 +307,7 @@ bars($('c-ladder'), {
   aria:'completion by model, bare versus task-wrapped',
   cats:['Haiku 4.5','Sonnet 5','Opus 4.8'],
   groups:[
-    [{label:'bare',val:0.875,color:H,hollow:true,ci:[0.69,1.0]},{label:'wrapped',val:1.0,color:H}],
+    [{label:'bare',val:0.925,color:H,hollow:true,ci:[0.85,1.0]},{label:'wrapped',val:1.0,color:H}],
     [{label:'bare',val:1.0,color:S,hollow:true},{label:'wrapped',val:1.0,color:S}],
     [{label:'bare',val:1.0,color:O,hollow:true},{label:'wrapped',val:1.0,color:O}],
   ], ymax:1, tickfmt:v=>v.toFixed(2)

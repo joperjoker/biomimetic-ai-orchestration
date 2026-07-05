@@ -12,17 +12,17 @@
  "cells": {
   "haiku": {
    "bare": {
-    "attempts": 16,
-    "fidelity": 0.9464285714285714,
-    "completion": 0.875,
+    "attempts": 40,
+    "fidelity": 0.9660714285714286,
+    "completion": 0.925,
     "completion_ci": [
-     0.6875,
+     0.85,
      1.0
     ],
-    "mean_confidence": 0.865,
-    "overconfidence_gap": -0.010000000000000009,
-    "brier": 0.10909999999999999,
-    "ece": 0.024999999999999925
+    "mean_confidence": 0.8595,
+    "overconfidence_gap": -0.0655,
+    "brier": 0.07851499999999997,
+    "ece": 0.06700000000000014
    },
    "wrapped": {
     "attempts": 16,
@@ -97,9 +97,9 @@
  },
  "task_wrapper_lift": {
   "haiku": {
-   "completion_lift": 0.125,
-   "fidelity_lift": 0.0535714285714286,
-   "ece_change": 0.08750000000000008
+   "completion_lift": 0.07499999999999996,
+   "fidelity_lift": 0.03392857142857142,
+   "ece_change": 0.04549999999999986
   },
   "sonnet": {
    "completion_lift": 0.0,
@@ -115,9 +115,9 @@
  "telemetry": {
   "haiku": {
    "bare": {
-    "mean_tokens": 28340,
-    "mean_duration_s": 61.4265,
-    "runs": 2
+    "mean_tokens": 28922.6,
+    "mean_duration_s": 63.9508,
+    "runs": 5
    },
    "wrapped": {
     "mean_tokens": 31809,
@@ -196,22 +196,22 @@
    "word_break": "haiku",
    "is_match": "haiku"
   },
-  "routed_completion": 0.875,
+  "routed_completion": 0.925,
   "always_top_completion": 1.0,
   "top_model": "opus",
-  "routed_cost_usd": 0.021255,
+  "routed_cost_usd": 0.02169195,
   "always_top_cost_usd": 1.0923750000000003,
-  "cost_saving_multiple": 51.39,
-  "routed_latency_s": 61.42649999999999,
+  "cost_saving_multiple": 50.36,
+  "routed_latency_s": 63.95080000000001,
   "always_top_latency_s": 74.222,
-  "latency_saving_multiple": 1.21,
+  "latency_saving_multiple": 1.16,
   "per_task_cost_usd": {
-   "haiku": 0.002656875,
+   "haiku": 0.00271149375,
    "sonnet": 0.037060875,
    "opus": 0.136546875
   },
   "per_task_latency_s": {
-   "haiku": 7.6783125,
+   "haiku": 7.99385,
    "sonnet": 10.912625,
    "opus": 9.27775
   }
@@ -227,24 +227,24 @@
    "multiply_strings": "haiku",
    "min_window": "haiku",
    "word_break": "haiku",
-   "is_match": "sonnet"
+   "is_match": "haiku"
   },
-  "routed_completion": 1.0,
+  "routed_completion": 0.925,
   "always_top_completion": 1.0,
   "top_model": "opus",
-  "routed_cost_usd": 0.055659,
+  "routed_cost_usd": 0.02169195,
   "always_top_cost_usd": 1.0923750000000003,
-  "cost_saving_multiple": 19.63,
-  "routed_latency_s": 64.66081249999999,
+  "cost_saving_multiple": 50.36,
+  "routed_latency_s": 63.95080000000001,
   "always_top_latency_s": 74.222,
-  "latency_saving_multiple": 1.15,
+  "latency_saving_multiple": 1.16,
   "per_task_cost_usd": {
-   "haiku": 0.002656875,
+   "haiku": 0.00271149375,
    "sonnet": 0.037060875,
    "opus": 0.136546875
   },
   "per_task_latency_s": {
-   "haiku": 7.6783125,
+   "haiku": 7.99385,
    "sonnet": 10.912625,
    "opus": 9.27775
   }

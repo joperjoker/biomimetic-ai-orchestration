@@ -30,5 +30,17 @@
  "opus__wrapped__1": {
   "tokens": 24967,
   "duration_ms": 76401
+ },
+ "haiku__bare__3": {
+  "tokens": 29390,
+  "duration_ms": 70112
+ },
+ "haiku__bare__4": {
+  "tokens": 26941,
+  "duration_ms": 53255
+ },
+ "haiku__bare__5": {
+  "tokens": 31602,
+  "duration_ms": 73534
  }
 }

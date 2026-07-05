@@ -4,7 +4,7 @@
 <line x1="70" y1="380.0" x2="560" y2="380.0" stroke="#333"/>
 <line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
 <text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">completion (fraction of tasks fully passed)</text>
-<rect x="86.3" y="82.5" width="58.8" height="297.5" fill="#2f6f9f"/>
+<rect x="86.3" y="65.5" width="58.8" height="314.5" fill="#2f6f9f"/>
 <rect x="151.7" y="40.0" width="58.8" height="340.0" fill="#c25a3d"/>
 <text x="152" y="398" text-anchor="middle">Haiku</text>
 <rect x="249.7" y="40.0" width="58.8" height="340.0" fill="#2f6f9f"/>
