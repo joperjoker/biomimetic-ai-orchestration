@@ -1003,6 +1003,46 @@ def annealing_curve(
     return out
 
 
+def streaming_arrival(
+    base: CellParams, seeds: int, arrival_span: int | None = None
+) -> dict[str, object]:
+    """H5 under non-stationary load (P3.3): does annealing still bound stall when
+    tasks arrive over time rather than all at once?
+
+    Uses the same stall-prone scenario as ``annealing_curve`` but staggers the
+    tasks' arrival over ``arrival_span`` rounds, and compares the maximum stall,
+    the unmet rate, and completion with annealing on and off. A task's stall and
+    its barrier annealing are measured from its own arrival, so the mechanism is
+    tested under streaming, not just batch, arrival.
+    """
+    n_agents = max(4, base.n_agents // 4)
+    n_tasks = max(4, base.n_tasks // 4)
+    span = arrival_span if arrival_span is not None else n_tasks
+
+    def measure(annealing: bool) -> dict[str, float]:
+        stalls: list[float] = []
+        unmets: list[float] = []
+        comps: list[float] = []
+        for seed in range(seeds):
+            agents, tasks = _stall_scenario(n_agents, n_tasks, random.Random(seed + 90_000))
+            res = run_temporal(
+                agents,
+                tasks,
+                random.Random(seed + 80_000),
+                TemporalConfig(annealing=annealing, anneal_rate=0.05, arrival_span=span),
+            ).summary()
+            stalls.append(res["max_stall"])
+            unmets.append(res["unmet_rate"])
+            comps.append(res["completion_rate"])
+        return {
+            "max_stall": sum(stalls) / len(stalls),
+            "unmet_rate": sum(unmets) / len(unmets),
+            "completion_rate": sum(comps) / len(comps),
+        }
+
+    return {"arrival_span": span, "anneal_on": measure(True), "anneal_off": measure(False)}
+
+
 def h2_decomposition(base: CellParams, seeds: int) -> dict[str, float]:
     """Decompose the H2 quality gap into its two causes.
 

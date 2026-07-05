@@ -53,6 +53,10 @@ class TemporalConfig:
     ea_min: float = 0.0
     annealing: bool = True
     max_rounds: int = 300
+    # Streaming arrival (P3.3): tasks arrive evenly over this many rounds instead
+    # of all at round 0. Zero keeps the batch-arrival behaviour. A task's stall and
+    # its barrier annealing are measured from its own arrival round, not from 0.
+    arrival_span: int = 0
     selection_mode: str = "reliability"
     observability_k: int | None = None
     gate_enabled: bool = True
@@ -163,13 +167,25 @@ def run_temporal(
             )
         eligible_any.append(any_elig)
 
+    # Arrival schedule (P3.3): evenly staggered over arrival_span rounds, else all
+    # at round 0. A task is PENDING until its arrival round, then advertised.
+    if cfg.arrival_span > 0 and m > 0:
+        arrival = [(i * cfg.arrival_span) // m for i in range(m)]
+    else:
+        arrival = [0] * m
+
+    def initial_status(i: int) -> str:
+        if not eligible_any[i]:
+            return "INFEASIBLE"
+        return "OPEN" if arrival[i] == 0 else "PENDING"
+
     outcomes = [
         TemporalOutcome(
             task_id=t.task_id,
-            status="INFEASIBLE" if not eligible_any[i] else "OPEN",
+            status=initial_status(i),
             winner=None,
             quality=None,
-            advertised_at=0,
+            advertised_at=arrival[i],
             claimed_at=None,
             completed_at=None,
             stall_rounds=0,
@@ -194,9 +210,19 @@ def run_temporal(
                 q = o.quality if o.quality is not None else 0.0
                 o.status = "COMPLETED" if is_success(q) else "FAILED"
 
+        # Advertise tasks that have now arrived (streaming arrival, P3.3).
+        awaiting = False
+        for i, o in enumerate(outcomes):
+            if o.status == "PENDING":
+                if arrival[i] <= t:
+                    o.status = "OPEN"
+                else:
+                    awaiting = True
+
         pending = open_indices()
         in_flight = any(o.status == "CLAIMED" for o in outcomes)
-        if not pending and not in_flight:
+        # Stop only when nothing is open, in flight, or still to arrive.
+        if not pending and not in_flight and not awaiting:
             break
 
         free = [a for a in agents if busy_until[a.agent_id] <= t]
@@ -251,13 +277,12 @@ def run_temporal(
 
         t += 1
 
-    # Anything still open or in flight at the horizon is unresolved.
+    # Anything still open, awaiting arrival, or in flight at the horizon is unresolved.
     for o in outcomes:
-        if o.status in ("OPEN", "CLAIMED"):
+        if o.status in ("OPEN", "PENDING", "CLAIMED"):
             o.stall_rounds = max(o.stall_rounds, t - o.advertised_at)
-            o.status = "UNRESOLVED" if o.status == "OPEN" else o.status
-            if o.status == "CLAIMED":
-                # Started but not finished by the horizon; count as unresolved work.
-                o.status = "UNRESOLVED"
+            # Open, awaiting arrival, or started but unfinished by the horizon all
+            # count as unresolved work.
+            o.status = "UNRESOLVED"
 
     return TemporalResult(outcomes=outcomes, rounds=t, deflections=deflections)
