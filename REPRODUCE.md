@@ -51,6 +51,15 @@ A small fleet self-selects tasks through the calibrated, gated bid; the report
 shows the allocation, the out-of-scope actions the integrity gate stopped, and
 the coordinator cost avoided. No model calls.
 
+## Concurrent claiming under real processes (P3.1)
+
+```
+cta concurrency --tasks 50 --workers 1,2,4,8
+```
+
+Races several OS processes to claim tasks over the SQLite store and reports the
+throughput per worker count and the zero double-claims invariant. No model calls.
+
 ## Auto-Researcher loop (Stage 2, deterministic search)
 
 The propose, evaluate, keep-or-revert loop in `cta.autoresearch` tunes the
