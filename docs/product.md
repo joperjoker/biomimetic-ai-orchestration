@@ -56,6 +56,41 @@ without retraining or re-architecting:
   non-dominated latency-quality frontier: quality-first for a batch pipeline,
   latency-first for an interactive one (paper section 4, Pareto frontier).
 
+## The wrapper layer: frontier quality at a fraction of the cost
+
+The sharpest commercial result is the two-wrapper layer that sits in front of any
+model fleet, extracted as a small library in `src/cta/wrappers.py`.
+
+- **The task wrapper** (`wrap_task`) turns a loose task into an explicit interface
+  contract with named acceptance criteria and a self-check. On real Claude agents
+  this lifts a weak model to a strong model's completion (Haiku 0.88 to 1.00 on
+  the expert tier) and is the precondition for independently built modules to
+  integrate into a working project (H11). It makes a cheap model reliable.
+- **The agent wrapper** (`Fleet`, `route`) picks, for each task, the cheapest
+  model whose reliability-corrected self-report clears the activation barrier. Fed
+  the per-task track record a deployment accumulates from its own logs, it
+  escalates exactly the tasks a cheap model is unreliable on and keeps the rest on
+  the cheap model, holding frontier-level completion at roughly one fortieth of
+  the always-frontier cost (H12).
+
+The two are complementary: the task wrapper raises the floor, the agent wrapper
+turns that into a bill. The measured contrast is the pitch in one line: with only
+a coarse per-model track record the router trusts the cheap model on a task it
+fails (completion drops); with a per-task track record it escalates just that task
+and holds completion at the frontier level for a fraction of the cost. Run the
+demo:
+
+```
+python -m examples.wrapper_demo
+```
+
+It wraps a task, then routes the same fleet under a coarse and a per-task track
+record, printing the routing decisions and the cost multiple against always using
+the frontier model. Offline and deterministic, no model calls. The differentiator
+against static-capability routers (RouteLLM and similar) is that CTA routes on a
+reliability-corrected self-report screened by a safety gate, so it adapts to the
+model being miscalibrated rather than assuming a fixed capability.
+
 ## Safety
 
 The integrity gate is a pre-execution boundary, not a quality lever. Modelled as
