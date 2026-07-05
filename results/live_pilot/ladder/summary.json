@@ -15,6 +15,10 @@
     "attempts": 16,
     "fidelity": 0.9464285714285714,
     "completion": 0.875,
+    "completion_ci": [
+     0.6875,
+     1.0
+    ],
     "mean_confidence": 0.865,
     "overconfidence_gap": -0.010000000000000009,
     "brier": 0.10909999999999999,
@@ -24,6 +28,10 @@
     "attempts": 16,
     "fidelity": 1.0,
     "completion": 1.0,
+    "completion_ci": [
+     1.0,
+     1.0
+    ],
     "mean_confidence": 0.8875,
     "overconfidence_gap": -0.11250000000000004,
     "brier": 0.013925,
@@ -35,6 +43,10 @@
     "attempts": 8,
     "fidelity": 1.0,
     "completion": 1.0,
+    "completion_ci": [
+     1.0,
+     1.0
+    ],
     "mean_confidence": 0.89625,
     "overconfidence_gap": -0.10375000000000001,
     "brier": 0.011387499999999997,
@@ -44,6 +56,10 @@
     "attempts": 8,
     "fidelity": 1.0,
     "completion": 1.0,
+    "completion_ci": [
+     1.0,
+     1.0
+    ],
     "mean_confidence": 0.93875,
     "overconfidence_gap": -0.06125000000000003,
     "brier": 0.003862500000000001,
@@ -55,6 +71,10 @@
     "attempts": 8,
     "fidelity": 1.0,
     "completion": 1.0,
+    "completion_ci": [
+     1.0,
+     1.0
+    ],
     "mean_confidence": 0.88375,
     "overconfidence_gap": -0.11624999999999996,
     "brier": 0.0180875,
@@ -64,6 +84,10 @@
     "attempts": 8,
     "fidelity": 1.0,
     "completion": 1.0,
+    "completion_ci": [
+     1.0,
+     1.0
+    ],
     "mean_confidence": 0.9412499999999999,
     "overconfidence_gap": -0.05875000000000008,
     "brier": 0.004437500000000004,
@@ -181,6 +205,39 @@
   "routed_latency_s": 61.42649999999999,
   "always_top_latency_s": 74.222,
   "latency_saving_multiple": 1.21,
+  "per_task_cost_usd": {
+   "haiku": 0.002656875,
+   "sonnet": 0.037060875,
+   "opus": 0.136546875
+  },
+  "per_task_latency_s": {
+   "haiku": 7.6783125,
+   "sonnet": 10.912625,
+   "opus": 9.27775
+  }
+ },
+ "agent_wrapper_routing_bare_pertask": {
+  "condition": "bare",
+  "barrier": 0.7,
+  "choices": {
+   "fraction_to_decimal": "haiku",
+   "int_to_words": "haiku",
+   "full_justify": "haiku",
+   "calculate3": "haiku",
+   "multiply_strings": "haiku",
+   "min_window": "haiku",
+   "word_break": "haiku",
+   "is_match": "sonnet"
+  },
+  "routed_completion": 1.0,
+  "always_top_completion": 1.0,
+  "top_model": "opus",
+  "routed_cost_usd": 0.055659,
+  "always_top_cost_usd": 1.0923750000000003,
+  "cost_saving_multiple": 19.63,
+  "routed_latency_s": 64.66081249999999,
+  "always_top_latency_s": 74.222,
+  "latency_saving_multiple": 1.15,
   "per_task_cost_usd": {
    "haiku": 0.002656875,
    "sonnet": 0.037060875,

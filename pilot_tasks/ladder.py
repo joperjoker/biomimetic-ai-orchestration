@@ -33,6 +33,7 @@ from pathlib import Path
 
 from cta.cost import PRICING
 from cta.engine import _brier_ece
+from cta.stats import bootstrap_ci
 from cta.viz import bar_chart, line_chart, save_svg
 from pilot_tasks.expert_suite import TASK_NAMES, score
 
@@ -126,10 +127,12 @@ def _cell(records: list[dict], model: str, condition: str) -> dict:
     succ = [1.0 if r["passed"] else 0.0 for r in rows]
     frac = [r["pass_fraction"] for r in rows]
     brier, ece = _brier_ece(conf, succ)
+    _, comp_lo, comp_hi = bootstrap_ci(succ)
     return {
         "attempts": len(rows),
         "fidelity": statistics.mean(frac),
         "completion": statistics.mean(succ),
+        "completion_ci": [comp_lo, comp_hi],
         "mean_confidence": statistics.mean(conf),
         "overconfidence_gap": statistics.mean(conf) - statistics.mean(succ),
         "brier": brier,
@@ -156,14 +159,20 @@ def _task_stats(records: list[dict], condition: str) -> dict:
     return out
 
 
-def _route(records: list[dict], tele: dict, condition: str = "wrapped") -> dict:
+def _route(
+    records: list[dict], tele: dict, condition: str = "wrapped", granularity: str = "model"
+) -> dict:
     """CTA Binding-Energy routing across the ladder against always-most-capable.
 
-    Reliability R is each model's track record: its mean realised pass over the
-    tier (leave-one-task-out so a task never reads its own outcome). The bid is
-    the model's stated confidence on the task; the corrected bid is ``c * R``.
-    Each task goes to the cheapest model whose corrected bid clears the barrier,
-    else to the model with the highest corrected bid.
+    The bid is the model's stated confidence on the task; the corrected bid is
+    ``c * R``. Each task goes to the cheapest model whose corrected bid clears the
+    barrier, else to the model with the highest corrected bid. Reliability R is a
+    track record at one of two granularities: ``model`` is a single scalar per
+    model (its mean realised pass over the other tasks, leave-one-task-out), the
+    coarse track record a fresh deployment starts with; ``task`` is a per-task
+    reliability (the model's realised pass on that task type), the finer track
+    record a deployment accumulates from its own logs, which lets the router
+    escalate exactly the tasks a cheap model is unreliable on.
     """
     stats = _task_stats(records, condition)
     if not all(stats[m] for m in MODELS):
@@ -185,11 +194,13 @@ def _route(records: list[dict], tele: dict, condition: str = "wrapped") -> dict:
     top = MODELS[-1]  # most capable
     routed_completion, routed_cost, routed_latency, choices = [], [], [], {}
     for task in TASK_NAMES:
-        # leave-one-out reliability per model over the other tasks
         reliab = {}
         for model in MODELS:
-            others = [stats[model][t]["realised"] for t in TASK_NAMES if t != task]
-            reliab[model] = statistics.mean(others) if others else 0.0
+            if granularity == "task":
+                reliab[model] = stats[model][task]["realised"]
+            else:
+                others = [stats[model][t]["realised"] for t in TASK_NAMES if t != task]
+                reliab[model] = statistics.mean(others) if others else 0.0
         corrected = {m: stats[m][task]["confidence"] * reliab[m] for m in MODELS}
         eligible = [m for m in MODELS if corrected[m] >= BARRIER]
         if eligible:
@@ -260,6 +271,7 @@ def analyse(path: str | Path = LADDER) -> dict:
         "telemetry": tele_cells,
         "agent_wrapper_routing": _route(records, tele, "wrapped"),
         "agent_wrapper_routing_bare": _route(records, tele, "bare"),
+        "agent_wrapper_routing_bare_pertask": _route(records, tele, "bare", "task"),
     }
     LADDER.mkdir(parents=True, exist_ok=True)
     (LADDER / "records.json").write_text(json.dumps(records, indent=1), encoding="utf-8")

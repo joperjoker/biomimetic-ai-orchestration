@@ -30,9 +30,20 @@ def test_ladder_analysis_shows_capability_and_wrapper_effects():
     assert haiku_bare <= opus_bare
     # The task wrapper never lowers the weak model's completion and lifts it here.
     assert s["task_wrapper_lift"]["haiku"]["completion_lift"] >= 0.0
-    # The agent wrapper routing block is well formed under both conditions.
-    for key in ("agent_wrapper_routing", "agent_wrapper_routing_bare"):
+    # The agent wrapper routing block is well formed under all variants.
+    for key in ("agent_wrapper_routing", "agent_wrapper_routing_bare",
+                "agent_wrapper_routing_bare_pertask"):
         r = s[key]
         assert 0.0 <= r["routed_completion"] <= 1.0
         assert r["cost_saving_multiple"] > 1.0
         assert set(r["choices"]) == set(analyse.__globals__["TASK_NAMES"])
+    # A per-task track record discriminates: it recovers at least as much
+    # completion as the scalar-reliability router over the same bare tasks.
+    assert (s["agent_wrapper_routing_bare_pertask"]["routed_completion"]
+            >= s["agent_wrapper_routing_bare"]["routed_completion"])
+    # Completion carries a bootstrap CI on every cell.
+    for m in MODELS:
+        for c in s["conditions"]:
+            if c in s["cells"].get(m, {}):
+                lo, hi = s["cells"][m][c]["completion_ci"]
+                assert 0.0 <= lo <= hi <= 1.0
