@@ -112,3 +112,68 @@ that is overconfident in-distribution (the Gemini-class behaviour MarketBench
 reports). Populating the overconfident arm of the curve is therefore a deliberate
 task-design or model-choice exercise, not something a harder tier of standard
 algorithmic problems delivers.
+
+## Capability ladder x wrapper ablation (expert tier)
+
+The hard tier above shows both Claude families at the ceiling, so it cannot
+separate model capability or show what CTA's wrappers buy. For that we built a
+harder, trap-dense expert tier of eight tasks (`pilot_tasks/expert_suite.py`:
+repeating-decimal formatting, English number words, full text justification, a
+parenthesised calculator, big-integer string multiply, minimum window substring,
+word break, wildcard matching) whose references are hard-checked against
+canonical outputs. Three model families spanning least to most capable, Haiku
+4.5, Sonnet 5 and Opus 4.8, each solved the tier under two conditions:
+
+- **bare**: the unwrapped prompt (signature and one line).
+- **task-wrapped**: the CTA **task wrapper**, the full envelope with the
+  acceptance criteria and the edge cases named plus a self-check contract.
+
+Real per-run telemetry (tokens, wall-clock) is recorded in
+`results/live_pilot/ladder/telemetry.json`. Reproduce with `python -m
+pilot_tasks.ladder`.
+
+**The capability ladder (bare).** Completion (fraction of the eight tasks fully
+passed) rose with model capability: Haiku 0.875, Sonnet 1.00, Opus 1.00. Haiku's
+single miss was `is_match`, which it coded with regular-expression semantics
+(`*` as "zero or more of the preceding") instead of wildcard semantics (`*` as
+"any sequence") in one of its two runs, an honest weak-model slip on the hardest
+task. Sonnet and Opus were already at the ceiling.
+
+**The task wrapper (`ladder_completion.svg`, `ladder_wrapper_lift.svg`).**
+Wrapping the task lifts the weakest model to the ceiling and leaves the strong
+ones unchanged: Haiku's completion rose from 0.875 to 1.00 (+0.125 completion,
++0.05 fidelity), while Sonnet and Opus stayed at 1.00 (they had nowhere to gain).
+The wrapper's acceptance criterion for `is_match` ("`*` matches any sequence
+including empty") named exactly the distinction Haiku had missed, and both wrapped
+Haiku runs then wrote the correct wildcard solution. The task wrapper helps most
+where the model is weakest, which is the point: it raises the floor.
+
+**The agent wrapper (`ladder_cost_fidelity.svg`).** The agent wrapper is CTA
+Binding-Energy routing across the ladder: each task goes to the cheapest model
+whose reliability-corrected self-report clears the activation barrier. Running the
+identical router under the two conditions is the clean contrast:
+
+| Routing over | Completion | vs always-Opus | Cost saving | Latency |
+|---|---|---|---|---|
+| bare tasks | 0.875 | 1.00 | 51x cheaper | ~neutral |
+| task-wrapped tasks | 1.00 | 1.00 | 47x cheaper | ~neutral |
+
+With bare tasks the router sends work to the cheap model and **loses completion**
+(0.875): Haiku's self-report on `is_match` is overconfident, its overall track
+record is good, so the corrected bid clears the barrier and the task is routed to
+a model that fails it, exactly the miscalibration failure mode the paper studies.
+Add the task wrapper and the cheap model becomes genuinely reliable, so the same
+routing **keeps completion at the frontier level (1.00) at about one forty-seventh
+of the always-Opus cost** (representative economy-versus-premium price tiers from
+`cta.cost`). The two wrappers are complementary: the task wrapper raises the weak
+model's fidelity, and the agent wrapper turns that into a cost saving by routing
+away from the expensive model. The saving here is in cost, not latency; on these
+runs the small model was not faster, so we report the latency multiple as roughly
+neutral rather than claim a speed win.
+
+This is the commercialisation story in one experiment: a well-designed task
+wrapper lets a cheap model do frontier-quality work, and a calibrated agent
+wrapper routes to it, so a fleet reaches the strongest model's completion at a
+fraction of its cost. The sample is small (eight tasks, two agents per cell) and
+the price tiers are representative rather than a live quote, so the multiples are
+illustrative of the mechanism, not a benchmark figure.

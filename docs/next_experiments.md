@@ -39,6 +39,21 @@ The honest directional finding (real agents are underconfident in-distribution,
 so a naive auction under-selects rather than over-selects) is now in the paper.
 The two-sided curve is folded into P3.4 as a task-design or model-choice step.
 
+**Capability ladder x wrapper ablation (new, done).** Built an expert tier of
+eight trap-dense tasks (`pilot_tasks/expert_suite.py`) and ran three real model
+families least-to-most capable (Haiku 4.5, Sonnet 5, Opus 4.8) under a bare and a
+task-wrapped prompt, with real token and wall-clock telemetry
+(`results/live_pilot/ladder/`, analysed by `pilot_tasks/ladder.py`). Bare
+completion climbs the ladder (Haiku 0.88, Sonnet 1.00, Opus 1.00). The **task
+wrapper** lifts the weak model to the ceiling (Haiku 0.88 -> 1.00) and leaves the
+strong ones unchanged. The **agent wrapper** (Binding-Energy routing) over bare
+tasks loses completion (0.88, miscalibration bites) but over task-wrapped tasks
+holds frontier completion (1.00) at ~47x lower cost. The two wrappers are
+complementary: task wrapper raises fidelity, agent wrapper converts it to cost
+saving. Figures: `ladder_completion.svg`, `ladder_wrapper_lift.svg`,
+`ladder_cost_fidelity.svg`. Written into paper §3 and `docs/live_pilot.md`. Next:
+a small real project (P3.4) exercising the same two wrappers end-to-end.
+
 **P2.7 landed (H10 supported).** The activation barrier holds specialist routing
 at 1.00 across observability (chance floor 0.25); without it routing collapses to
 0.47 under tight observability, at a coverage cost annealing (H5) reclaims. This

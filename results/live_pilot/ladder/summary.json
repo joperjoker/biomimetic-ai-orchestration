@@ -1,0 +1,195 @@
+{
+ "models": [
+  "haiku",
+  "sonnet",
+  "opus"
+ ],
+ "conditions": [
+  "bare",
+  "wrapped"
+ ],
+ "n_tasks": 8,
+ "cells": {
+  "haiku": {
+   "bare": {
+    "attempts": 16,
+    "fidelity": 0.9464285714285714,
+    "completion": 0.875,
+    "mean_confidence": 0.865,
+    "overconfidence_gap": -0.010000000000000009,
+    "brier": 0.10909999999999999,
+    "ece": 0.024999999999999925
+   },
+   "wrapped": {
+    "attempts": 16,
+    "fidelity": 1.0,
+    "completion": 1.0,
+    "mean_confidence": 0.8875,
+    "overconfidence_gap": -0.11250000000000004,
+    "brier": 0.013925,
+    "ece": 0.1125
+   }
+  },
+  "sonnet": {
+   "bare": {
+    "attempts": 8,
+    "fidelity": 1.0,
+    "completion": 1.0,
+    "mean_confidence": 0.89625,
+    "overconfidence_gap": -0.10375000000000001,
+    "brier": 0.011387499999999997,
+    "ece": 0.10374999999999991
+   },
+   "wrapped": {
+    "attempts": 8,
+    "fidelity": 1.0,
+    "completion": 1.0,
+    "mean_confidence": 0.93875,
+    "overconfidence_gap": -0.06125000000000003,
+    "brier": 0.003862500000000001,
+    "ece": 0.06125000000000003
+   }
+  },
+  "opus": {
+   "bare": {
+    "attempts": 8,
+    "fidelity": 1.0,
+    "completion": 1.0,
+    "mean_confidence": 0.88375,
+    "overconfidence_gap": -0.11624999999999996,
+    "brier": 0.0180875,
+    "ece": 0.11625000000000003
+   },
+   "wrapped": {
+    "attempts": 8,
+    "fidelity": 1.0,
+    "completion": 1.0,
+    "mean_confidence": 0.9412499999999999,
+    "overconfidence_gap": -0.05875000000000008,
+    "brier": 0.004437500000000004,
+    "ece": 0.05875000000000001
+   }
+  }
+ },
+ "task_wrapper_lift": {
+  "haiku": {
+   "completion_lift": 0.125,
+   "fidelity_lift": 0.0535714285714286,
+   "ece_change": 0.08750000000000008
+  },
+  "sonnet": {
+   "completion_lift": 0.0,
+   "fidelity_lift": 0.0,
+   "ece_change": -0.042499999999999885
+  },
+  "opus": {
+   "completion_lift": 0.0,
+   "fidelity_lift": 0.0,
+   "ece_change": -0.05750000000000002
+  }
+ },
+ "telemetry": {
+  "haiku": {
+   "bare": {
+    "mean_tokens": 28340,
+    "mean_duration_s": 61.4265,
+    "runs": 2
+   },
+   "wrapped": {
+    "mean_tokens": 31809,
+    "mean_duration_s": 79.187,
+    "runs": 2
+   }
+  },
+  "sonnet": {
+   "bare": {
+    "mean_tokens": 32943,
+    "mean_duration_s": 87.301,
+    "runs": 1
+   },
+   "wrapped": {
+    "mean_tokens": 23346,
+    "mean_duration_s": 123.943,
+    "runs": 1
+   }
+  },
+  "opus": {
+   "bare": {
+    "mean_tokens": 24275,
+    "mean_duration_s": 74.222,
+    "runs": 1
+   },
+   "wrapped": {
+    "mean_tokens": 24967,
+    "mean_duration_s": 76.401,
+    "runs": 1
+   }
+  }
+ },
+ "agent_wrapper_routing": {
+  "condition": "wrapped",
+  "barrier": 0.7,
+  "choices": {
+   "fraction_to_decimal": "haiku",
+   "int_to_words": "haiku",
+   "full_justify": "haiku",
+   "calculate3": "haiku",
+   "multiply_strings": "haiku",
+   "min_window": "haiku",
+   "word_break": "haiku",
+   "is_match": "haiku"
+  },
+  "routed_completion": 1.0,
+  "always_top_completion": 1.0,
+  "top_model": "opus",
+  "routed_cost_usd": 0.023856749999999996,
+  "always_top_cost_usd": 1.123515,
+  "cost_saving_multiple": 47.09,
+  "routed_latency_s": 79.187,
+  "always_top_latency_s": 76.401,
+  "latency_saving_multiple": 0.96,
+  "per_task_cost_usd": {
+   "haiku": 0.0029820937499999995,
+   "sonnet": 0.02626425,
+   "opus": 0.140439375
+  },
+  "per_task_latency_s": {
+   "haiku": 9.898375,
+   "sonnet": 15.492875,
+   "opus": 9.550125
+  }
+ },
+ "agent_wrapper_routing_bare": {
+  "condition": "bare",
+  "barrier": 0.7,
+  "choices": {
+   "fraction_to_decimal": "haiku",
+   "int_to_words": "haiku",
+   "full_justify": "haiku",
+   "calculate3": "haiku",
+   "multiply_strings": "haiku",
+   "min_window": "haiku",
+   "word_break": "haiku",
+   "is_match": "haiku"
+  },
+  "routed_completion": 0.875,
+  "always_top_completion": 1.0,
+  "top_model": "opus",
+  "routed_cost_usd": 0.021255,
+  "always_top_cost_usd": 1.0923750000000003,
+  "cost_saving_multiple": 51.39,
+  "routed_latency_s": 61.42649999999999,
+  "always_top_latency_s": 74.222,
+  "latency_saving_multiple": 1.21,
+  "per_task_cost_usd": {
+   "haiku": 0.002656875,
+   "sonnet": 0.037060875,
+   "opus": 0.136546875
+  },
+  "per_task_latency_s": {
+   "haiku": 7.6783125,
+   "sonnet": 10.912625,
+   "opus": 9.27775
+  }
+ }
+}

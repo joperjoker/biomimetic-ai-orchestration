@@ -1,0 +1,257 @@
+### TASK: fraction_to_decimal
+CONFIDENCE: 0.85
+```python
+def fraction_to_decimal(numerator: int, denominator: int) -> str:
+    if numerator == 0:
+        return "0"
+
+    result = []
+    if (numerator < 0) ^ (denominator < 0):
+        result.append("-")
+
+    numerator = abs(numerator)
+    denominator = abs(denominator)
+
+    result.append(str(numerator // denominator))
+    remainder = numerator % denominator
+
+    if remainder == 0:
+        return "".join(result)
+
+    result.append(".")
+    remainder_map = {}
+
+    while remainder != 0:
+        if remainder in remainder_map:
+            pos = remainder_map[remainder]
+            result.insert(pos, "(")
+            result.append(")")
+            break
+
+        remainder_map[remainder] = len(result)
+        remainder *= 10
+        result.append(str(remainder // denominator))
+        remainder %= denominator
+
+    return "".join(result)
+```
+
+### TASK: int_to_words
+CONFIDENCE: 0.90
+```python
+def int_to_words(n: int) -> str:
+    if n == 0:
+        return "Zero"
+
+    ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"]
+    teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
+             "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
+    tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
+    thousands = ["", "Thousand", "Million", "Billion"]
+
+    def helper(num):
+        if num == 0:
+            return []
+        elif num < 10:
+            return [ones[num]]
+        elif num < 20:
+            return [teens[num - 10]]
+        elif num < 100:
+            return [tens[num // 10]] + helper(num % 10)
+        else:
+            return [ones[num // 100], "Hundred"] + helper(num % 100)
+
+    result = []
+    group_index = 0
+
+    while n > 0:
+        if n % 1000 != 0:
+            group_words = helper(n % 1000)
+            if group_index > 0:
+                group_words.append(thousands[group_index])
+            result = group_words + result
+        n //= 1000
+        group_index += 1
+
+    return " ".join(result)
+```
+
+### TASK: full_justify
+CONFIDENCE: 0.85
+```python
+def full_justify(words: list[str], max_width: int) -> list[str]:
+    result = []
+    current_line = []
+    current_len = 0
+
+    for word in words:
+        if current_len + len(word) + len(current_line) > max_width:
+            if len(current_line) == 1:
+                line = current_line[0] + " " * (max_width - len(current_line[0]))
+            else:
+                total_chars = sum(len(w) for w in current_line)
+                total_spaces = max_width - total_chars
+                gaps = len(current_line) - 1
+                spaces_per_gap = total_spaces // gaps
+                extra_spaces = total_spaces % gaps
+
+                line = ""
+                for i, w in enumerate(current_line[:-1]):
+                    line += w + " " * (spaces_per_gap + (1 if i < extra_spaces else 0))
+                line += current_line[-1]
+
+            result.append(line)
+            current_line = []
+            current_len = 0
+
+        current_line.append(word)
+        current_len += len(word)
+
+    if current_line:
+        line = " ".join(current_line)
+        line += " " * (max_width - len(line))
+        result.append(line)
+
+    return result
+```
+
+### TASK: calculate3
+CONFIDENCE: 0.80
+```python
+def calculate3(s: str) -> int:
+    s = s.replace(" ", "")
+
+    def parse_expression(index):
+        left, index = parse_term(index)
+        while index < len(s) and s[index] in "+-":
+            op = s[index]
+            index += 1
+            right, index = parse_term(index)
+            left = left + right if op == "+" else left - right
+        return left, index
+
+    def parse_term(index):
+        left, index = parse_factor(index)
+        while index < len(s) and s[index] in "*/":
+            op = s[index]
+            index += 1
+            right, index = parse_factor(index)
+            left = left * right if op == "*" else int(left / right)
+        return left, index
+
+    def parse_factor(index):
+        if s[index] == "(":
+            result, index = parse_expression(index + 1)
+            return result, index + 1
+        else:
+            start = index
+            while index < len(s) and s[index].isdigit():
+                index += 1
+            return int(s[start:index]), index
+
+    result, _ = parse_expression(0)
+    return result
+```
+
+### TASK: multiply_strings
+CONFIDENCE: 0.90
+```python
+def multiply_strings(num1: str, num2: str) -> str:
+    if num1 == "0" or num2 == "0":
+        return "0"
+
+    len1, len2 = len(num1), len(num2)
+    result = [0] * (len1 + len2)
+
+    for i in range(len1 - 1, -1, -1):
+        for j in range(len2 - 1, -1, -1):
+            mul = int(num1[i]) * int(num2[j])
+            p1, p2 = i + j, i + j + 1
+            total = mul + result[p2]
+            result[p2] = total % 10
+            result[p1] += total // 10
+
+    result_str = "".join(map(str, result))
+    return result_str.lstrip("0") or "0"
+```
+
+### TASK: min_window
+CONFIDENCE: 0.90
+```python
+def min_window(s: str, t: str) -> str:
+    if not t or not s:
+        return ""
+
+    char_count = {}
+    for char in t:
+        char_count[char] = char_count.get(char, 0) + 1
+
+    required = len(char_count)
+    window_counts = {}
+    formed = 0
+    left = 0
+    min_len = float("inf")
+    min_left = 0
+
+    for right in range(len(s)):
+        char = s[right]
+        window_counts[char] = window_counts.get(char, 0) + 1
+        if char in char_count and window_counts[char] == char_count[char]:
+            formed += 1
+
+        while left <= right and formed == required:
+            if right - left + 1 < min_len:
+                min_len = right - left + 1
+                min_left = left
+
+            char = s[left]
+            window_counts[char] -= 1
+            if char in char_count and window_counts[char] < char_count[char]:
+                formed -= 1
+            left += 1
+
+    return "" if min_len == float("inf") else s[min_left:min_left + min_len]
+```
+
+### TASK: word_break
+CONFIDENCE: 0.95
+```python
+def word_break(s: str, words: list[str]) -> bool:
+    if not s:
+        return True
+
+    word_set = set(words)
+    n = len(s)
+    dp = [False] * (n + 1)
+    dp[0] = True
+
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_set:
+                dp[i] = True
+                break
+
+    return dp[n]
+```
+
+### TASK: is_match
+CONFIDENCE: 0.90
+```python
+def is_match(s: str, p: str) -> bool:
+    m, n = len(s), len(p)
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+
+    for j in range(1, n + 1):
+        if p[j - 1] == "*":
+            dp[0][j] = dp[0][j - 1]
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j - 1] == "*":
+                dp[i][j] = dp[i][j - 1] or dp[i - 1][j]
+            elif p[j - 1] == "?" or s[i - 1] == p[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+
+    return dp[m][n]
+```

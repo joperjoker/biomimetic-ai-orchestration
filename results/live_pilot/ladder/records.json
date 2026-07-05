@@ -1,0 +1,578 @@
+[
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__1",
+  "task": "fraction_to_decimal",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__1",
+  "task": "int_to_words",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__1",
+  "task": "full_justify",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__1",
+  "task": "calculate3",
+  "confidence": 0.8,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__1",
+  "task": "multiply_strings",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__1",
+  "task": "min_window",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__1",
+  "task": "word_break",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__1",
+  "task": "is_match",
+  "confidence": 0.85,
+  "pass_fraction": 0.6428571428571429,
+  "passed": false
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__2",
+  "task": "fraction_to_decimal",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__2",
+  "task": "int_to_words",
+  "confidence": 0.87,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__2",
+  "task": "full_justify",
+  "confidence": 0.86,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__2",
+  "task": "calculate3",
+  "confidence": 0.82,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__2",
+  "task": "multiply_strings",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__2",
+  "task": "min_window",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__2",
+  "task": "word_break",
+  "confidence": 0.89,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "bare",
+  "agent": "haiku__bare__2",
+  "task": "is_match",
+  "confidence": 0.87,
+  "pass_fraction": 0.5,
+  "passed": false
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__1",
+  "task": "fraction_to_decimal",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__1",
+  "task": "int_to_words",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__1",
+  "task": "full_justify",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__1",
+  "task": "calculate3",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__1",
+  "task": "multiply_strings",
+  "confidence": 0.91,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__1",
+  "task": "min_window",
+  "confidence": 0.89,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__1",
+  "task": "word_break",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__1",
+  "task": "is_match",
+  "confidence": 0.87,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__2",
+  "task": "fraction_to_decimal",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__2",
+  "task": "int_to_words",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__2",
+  "task": "full_justify",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__2",
+  "task": "calculate3",
+  "confidence": 0.8,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__2",
+  "task": "multiply_strings",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__2",
+  "task": "min_window",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__2",
+  "task": "word_break",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "haiku",
+  "condition": "wrapped",
+  "agent": "haiku__wrapped__2",
+  "task": "is_match",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "bare",
+  "agent": "opus__bare__1",
+  "task": "fraction_to_decimal",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "bare",
+  "agent": "opus__bare__1",
+  "task": "int_to_words",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "bare",
+  "agent": "opus__bare__1",
+  "task": "full_justify",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "bare",
+  "agent": "opus__bare__1",
+  "task": "calculate3",
+  "confidence": 0.72,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "bare",
+  "agent": "opus__bare__1",
+  "task": "multiply_strings",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "bare",
+  "agent": "opus__bare__1",
+  "task": "min_window",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "bare",
+  "agent": "opus__bare__1",
+  "task": "word_break",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "bare",
+  "agent": "opus__bare__1",
+  "task": "is_match",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "wrapped",
+  "agent": "opus__wrapped__1",
+  "task": "fraction_to_decimal",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "wrapped",
+  "agent": "opus__wrapped__1",
+  "task": "int_to_words",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "wrapped",
+  "agent": "opus__wrapped__1",
+  "task": "full_justify",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "wrapped",
+  "agent": "opus__wrapped__1",
+  "task": "calculate3",
+  "confidence": 0.86,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "wrapped",
+  "agent": "opus__wrapped__1",
+  "task": "multiply_strings",
+  "confidence": 0.97,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "wrapped",
+  "agent": "opus__wrapped__1",
+  "task": "min_window",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "wrapped",
+  "agent": "opus__wrapped__1",
+  "task": "word_break",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "opus",
+  "condition": "wrapped",
+  "agent": "opus__wrapped__1",
+  "task": "is_match",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "bare",
+  "agent": "sonnet__bare__1",
+  "task": "fraction_to_decimal",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "bare",
+  "agent": "sonnet__bare__1",
+  "task": "int_to_words",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "bare",
+  "agent": "sonnet__bare__1",
+  "task": "full_justify",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "bare",
+  "agent": "sonnet__bare__1",
+  "task": "calculate3",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "bare",
+  "agent": "sonnet__bare__1",
+  "task": "multiply_strings",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "bare",
+  "agent": "sonnet__bare__1",
+  "task": "min_window",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "bare",
+  "agent": "sonnet__bare__1",
+  "task": "word_break",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "bare",
+  "agent": "sonnet__bare__1",
+  "task": "is_match",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "wrapped",
+  "agent": "sonnet__wrapped__1",
+  "task": "fraction_to_decimal",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "wrapped",
+  "agent": "sonnet__wrapped__1",
+  "task": "int_to_words",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "wrapped",
+  "agent": "sonnet__wrapped__1",
+  "task": "full_justify",
+  "confidence": 0.94,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "wrapped",
+  "agent": "sonnet__wrapped__1",
+  "task": "calculate3",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "wrapped",
+  "agent": "sonnet__wrapped__1",
+  "task": "multiply_strings",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "wrapped",
+  "agent": "sonnet__wrapped__1",
+  "task": "min_window",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "wrapped",
+  "agent": "sonnet__wrapped__1",
+  "task": "word_break",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "model": "sonnet",
+  "condition": "wrapped",
+  "agent": "sonnet__wrapped__1",
+  "task": "is_match",
+  "confidence": 0.94,
+  "pass_fraction": 1.0,
+  "passed": true
+ }
+]
