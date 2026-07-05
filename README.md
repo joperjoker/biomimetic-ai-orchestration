@@ -16,19 +16,19 @@ Each task publishes a structured metadata envelope describing its requirements, 
 
 ### Agent Binding Energy
 
-Agents rank their fit for a task using the Agent Binding Energy equation:
+Among the agents willing to take a task, the winner is chosen by the Binding Energy:
 
 ```
-Binding Energy = (S x C) / L
+Binding Energy  B = (c x C_tilde) / L
 ```
 
 Where:
 
-- `S` is the Task Signal strength (how strongly the task envelope matches the agent's declared domain).
-- `C` is the Agent Capability score (the agent's competence for the required skills).
-- `L` is the Latency or compute cost penalty (the expected time and resource cost of the agent taking the task).
+- `c` is the agent's compatibility with the task, a self-scored match in [0, 1] that the task wrapper computes from the agent's role, skills, and prompt against the task's advertised contract. Activation is on this compatibility (`c >= Ea`).
+- `C_tilde` is the effective capability, the agent's competence discounted by its observable reliability (the track record `R`), so a confident but historically unreliable agent is ranked down.
+- `L` is the normalised cost penalty (the expected time and resource cost of the agent taking the task).
 
-A higher Binding Energy indicates a stronger affinity. The activation barrier is compared against a compatibility score `c` computed by a task wrapper from the agent's role, skills, and prompt; among the agents that clear the barrier, the highest Binding Energy wins, which produces an emergent allocation without a central scheduler. A worked example and the edge-case guards are set out in `docs/theory.md`, and every quantity is defined operationally in `docs/measures.md`.
+A higher Binding Energy indicates a stronger affinity. The activation barrier is compared against the compatibility `c`; among the agents that clear the barrier, the highest Binding Energy wins, which produces an emergent allocation without a central scheduler. Because the bid is the agent's own self-report and language-model agents are miscalibrated about their fit, weighting by the track record `R` is what makes self-selection robust to that miscalibration (the study's central result). A worked example and the edge-case guards are in `docs/theory.md`, and every quantity is defined operationally in `docs/measures.md`.
 
 ### Selection in stages
 
@@ -58,8 +58,8 @@ Before any agent gains write access, it must pass the Rejection Gate, a pre-exec
                        |
                        v
             +---------------------+     stage two: eligible agents compute
-            | Binding Energy and  | <-- BE = (S x C) / L and attempt only
-            | activation (BE>=Ea) |     when BE reaches Ea; none clears -> stalled
+            | Binding Energy and  | <-- BE = (c x C~) / L, attempt only
+            | activation (c>=Ea)  |     when compatibility c reaches Ea; none -> stalled
             +----------+----------+
                        |
                        v
@@ -96,15 +96,21 @@ The framework is evaluated against a centralised baseline in two modes that shar
 ├── pyproject.toml       Project manifest and tooling configuration
 ├── src/cta/             The framework: scoring, engine, temporal, baselines,
 │                        generators, realism, harness, stats, store, cost,
-│                        routing, dataset, report, dashboard, viz, cli, pilot,
-│                        and the autoresearch loop
-├── pilot_tasks/         Live-pilot coding task suite, scorer, and analyser
-├── examples/poc/        Runnable product proof of concept (python -m examples.poc)
+│                        routing, concurrent, dataset, report, dashboard, viz,
+│                        cli, pilot, the wrapper product (wrappers), and the
+│                        autoresearch loop
+├── pilot_tasks/         Live-pilot task suites and analysers: the standard suite,
+│                        the expert-tier ladder, and the miniquery project
+├── examples/            Runnable demos: the product proof of concept (poc) and
+│                        the wrapper-layer demo (python -m examples.wrapper_demo)
 ├── results/             Committed run outputs: summary.json, RESULTS.md, figures,
-│                        dashboard.html, dataset/runs.csv, live_pilot/
+│                        the showcase dashboard (showcase.html), dataset/runs.csv,
+│                        and the real-agent runs under live_pilot/ (hard, ladder,
+│                        project)
 ├── tests/               Validation suites (including the foundation guard)
-├── docs/                Paper, measures, theory, glossary, architecture, product,
-│                        and the next-experiments plan
+├── docs/                Paper, executive summary and all sections; measures,
+│                        theory, glossary, architecture; the product and strategy
+│                        write-ups; live-pilot notes; and the next-experiments plan
 └── .github/             Continuous integration and repository configuration
 ```
 
@@ -133,25 +139,36 @@ See `REPRODUCE.md` for detail.
 
 ## Status
 
-The framework is implemented and evaluated end to end. The scoring module, the two
-simulation engines (batch and round-based temporal), the SQLite coordination store
-with a transactional atomic claim, the baselines, the statistics, the report and
-dashboard, and the Auto-Researcher loop are all in place, with 112 tests passing
-and `ruff` clean. Ten pre-registered hypotheses (H1 to H10) are evaluated by
-`cta reproduce-all`: H1 (scaling), H3, H4 (safety), H5, H7, H8, H9, and H10 are
-supported, while H2 and H6 are not supported against the full-information optimum
-and are reported honestly. The calibration-robustness thesis (miscalibration is
-the failure mode of self-selection; a track-record correction recovers it) is the
-central result. Progress is tracked in `STATUS.md`; the forward plan is in
-`docs/next_experiments.md`.
+The framework is implemented and evaluated end to end, with 127 tests passing and
+`ruff` clean. Ten pre-registered hypotheses on synthetic populations (H1 to H10)
+are evaluated by `cta reproduce-all`: H1 (scaling), H3, H4 (safety), H5, H7, H8,
+H9, and H10 are supported, while H2 and H6 are not supported against the
+full-information optimum and are reported honestly. The calibration-robustness
+thesis, that miscalibration is the failure mode of self-selection and a
+track-record correction recovers it, is the central result.
+
+Two further hypotheses are confirmed on real Claude agents across three model
+families (Haiku 4.5, Sonnet 5, Opus 4.8). H11: a **task wrapper**, an explicit
+interface contract, lifts a weak model to a frontier model's completion and is the
+precondition for independently built pieces to integrate into a working project.
+H12: a **calibrated agent wrapper** routes each task to the cheapest model whose
+reliability-corrected self-report clears the barrier, holding frontier-level
+completion at roughly one fortieth of the always-frontier cost. These two are
+extracted as a small product library (`src/cta/wrappers.py`, demo
+`python -m examples.wrapper_demo`) and visualised in a results dashboard
+(`results/showcase.html`). The real-agent sample is small and the paper marks that
+limit throughout. Progress is tracked in `STATUS.md`; the strategy and forward
+plan are in `docs/strategy.md` and `docs/next_experiments.md`.
 
 ## Considerations for Future Work
 
-The next experiments are planned in `docs/next_experiments.md`. The open items are a
-two-sided real-agent calibration curve across several models, a concurrent
-multi-process engine over the store for contention at scale, streaming task
-arrival, and a real complex job with dependencies and live specialist subagents
-(the "CTA in the wild" follow-up). The commercial framing is in `docs/product.md`.
+The forward plan is in `docs/strategy.md` and `docs/next_experiments.md`. The open
+items are the publication track (a formatted submission and a related-work table),
+powering the real-agent results to confidence intervals across every cell, a
+two-sided real-agent calibration curve (an out-of-distribution or
+in-distribution-overconfident model tier), and the full live-swarm allocation over
+the concurrent store already validated under real contention. The commercial
+framing is in `docs/product.md`.
 
 ## References
 

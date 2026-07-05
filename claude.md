@@ -70,13 +70,13 @@ If no agent in the present population is eligible, the task is infeasible given 
 Eligible agents quantify their affinity for a task using the Agent Binding Energy equation:
 
 ```
-Binding Energy = (S x C) / L
+Binding Energy = (c x C_tilde) / L
 ```
 
 Variables:
 
-- Compatibility `c` (replaces the abstract signal `S`): the match produced by the task wrapper from the agent's role, skills, and prompt against the task requirements, in [0, 1]. Defined operationally in `docs/measures.md`. The activation barrier is compared against `c`.
-- `C` (Agent Capability): the agent's competence for the specific skills the task requires. Normalised to [0, 1].
+- Compatibility `c` (replaces the abstract signal `S`): the match produced by the task wrapper from the agent's role, skills, and prompt against the task's advertised contract, in [0, 1]. Defined operationally in `docs/measures.md`. The activation barrier is compared against `c`.
+- `C_tilde` (effective capability): the agent's competence for the required skills, discounted by its observable reliability `R` (the track record), so a confident but historically unreliable agent is ranked down. This reliability weighting is what makes self-selection robust to miscalibration (the study's central result). Normalised to [0, 1].
 - `L` (Latency or compute cost penalty): the expected time and resource cost of the agent undertaking the task. Strictly greater than zero, floored at a small value (suggested 0.01) to keep the score bounded. `L` is a normalised relative cost with a typical value near 1, so `B` typically lies in [0, 1] and the absolute barrier `Ea` in [0, 1] is meaningful.
 
 Interpretation: Binding Energy rises with stronger compatibility and higher capability, and falls as cost rises. Among the agents that clear the activation barrier (section 3.5), the highest Binding Energy wins. A worked numerical example is given in `docs/theory.md` section 2.1.
@@ -145,8 +145,8 @@ src/
 1. A task is created and the signals module produces its scent envelope, including its eligibility requirements and its activation energy `Ea`.
 2. The envelope is published to the task pool in the orchestrator.
 3. Stage one: each agent applies the binary eligibility test. Ineligible agents ignore the task. If no agent is eligible, the task is infeasible.
-4. Each eligible agent computes Binding Energy = (S x C) / L.
-5. Stage two: an eligible agent attempts to claim only when its Binding Energy is at or above the task's `Ea`. If no eligible agent clears `Ea`, the task is stalled and returns to the pool.
+4. Each eligible agent computes its compatibility `c` and its Binding Energy = (c x C_tilde) / L.
+5. Stage two: an eligible agent attempts to claim only when its compatibility `c` is at or above the task's `Ea`. If no eligible agent clears `Ea`, the task is stalled and returns to the pool.
 6. Among the agents attempting to claim, the highest Binding Energy wins via the atomic claim (with the deterministic tie breaker from section 3.4).
 7. Stage three: the claiming agent presents its proposed action to the Rejection Gate.
 8. The gate admits or deflects. Admitted agents execute with write access; deflected and failed tasks return to the pool.

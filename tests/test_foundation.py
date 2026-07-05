@@ -30,7 +30,7 @@ def test_module_layout_exists():
 
 def test_master_context_holds_the_equation():
     text = (ROOT / "claude.md").read_text(encoding="utf-8")
-    assert "Binding Energy = (S x C) / L" in text
+    assert "Binding Energy = (c x C_tilde) / L" in text
 
 
 def test_master_context_holds_the_two_stage_frame():
