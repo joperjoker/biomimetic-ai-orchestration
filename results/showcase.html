@@ -1,0 +1,333 @@
+<style>
+  :root {
+    --surface:#fbfcfd; --panel:#ffffff; --panel-2:#f5f8fa;
+    --ink:#0f1a24; --muted:#5b6b78; --faint:#8595a1; --line:#e5eaee;
+    --accent:#0f766e; --accent-soft:#0f766e1a;
+    --haiku:#d97706; --sonnet:#2563eb; --opus:#7c3aed;
+    --good:#15803d; --bad:#b91c1c;
+    --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --surface:#0e1418; --panel:#151d23; --panel-2:#111a20;
+      --ink:#eef3f6; --muted:#93a4b0; --faint:#6b7c88; --line:#24303a;
+      --accent:#2dd4bf; --accent-soft:#2dd4bf1f;
+      --haiku:#dcae52; --sonnet:#82abf2; --opus:#bda3f2;
+      --good:#4ade80; --bad:#f87171;
+    }
+  }
+  :root[data-theme="light"]{
+    --surface:#fbfcfd; --panel:#ffffff; --panel-2:#f5f8fa;
+    --ink:#0f1a24; --muted:#5b6b78; --faint:#8595a1; --line:#e5eaee;
+    --accent:#0f766e; --accent-soft:#0f766e1a;
+    --haiku:#d97706; --sonnet:#2563eb; --opus:#7c3aed; --good:#15803d; --bad:#b91c1c;
+  }
+  :root[data-theme="dark"]{
+    --surface:#0e1418; --panel:#151d23; --panel-2:#111a20;
+    --ink:#eef3f6; --muted:#93a4b0; --faint:#6b7c88; --line:#24303a;
+    --accent:#2dd4bf; --accent-soft:#2dd4bf1f;
+    --haiku:#dcae52; --sonnet:#82abf2; --opus:#bda3f2; --good:#4ade80; --bad:#f87171;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--surface);color:var(--ink);font-family:var(--sans);
+    line-height:1.6;margin:0;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px 96px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,50px);
+    line-height:1.08;letter-spacing:-.015em;text-wrap:balance;margin:.35em 0 .3em}
+  h2{font-family:var(--serif);font-weight:600;font-size:26px;letter-spacing:-.01em;
+    text-wrap:balance;margin:0 0 4px}
+  .lede{font-size:19px;color:var(--muted);max-width:60ch;text-wrap:pretty}
+  .sub{color:var(--muted);font-size:15px;max-width:66ch;margin:2px 0 0}
+  header.hero{padding:72px 0 20px;border-bottom:1px solid var(--line)}
+  .hero-stat{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:18px 20px;flex:1 1 150px;min-width:150px}
+  .tile .n{font-family:var(--serif);font-size:34px;font-weight:600;letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;line-height:1}
+  .tile .k{color:var(--muted);font-size:13px;margin-top:7px}
+  .tile.hi{background:var(--accent-soft);border-color:transparent}
+  .tile.hi .n{color:var(--accent)}
+  section{padding:44px 0;border-bottom:1px solid var(--line)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:26px 26px 20px;margin-top:20px}
+  .read{color:var(--muted);font-size:15px;max-width:70ch;margin:16px 0 0}
+  .read strong{color:var(--ink);font-weight:600}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin:2px 0 18px;font-size:13px;
+    color:var(--muted);font-family:var(--mono)}
+  .lg{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .sw.hollow{background:transparent;border:1.5px dashed currentColor}
+  figure{margin:0}
+  .chart{width:100%;overflow-x:auto}
+  svg{display:block;max-width:100%;height:auto}
+  .axis{fill:var(--faint);font-family:var(--mono);font-size:12px}
+  .val{fill:var(--ink);font-family:var(--mono);font-size:13px;font-weight:600;
+    font-variant-numeric:tabular-nums}
+  .cat{fill:var(--muted);font-family:var(--sans);font-size:13px}
+  .grid{stroke:var(--line);stroke-width:1}
+  .note{font-size:13px;color:var(--faint);margin-top:14px;font-style:italic}
+  table.arc{width:100%;border-collapse:collapse;margin-top:18px;font-size:14.5px}
+  table.arc th,table.arc td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.arc th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--faint);font-weight:600}
+  table.arc td.h{font-family:var(--mono);color:var(--accent);white-space:nowrap;font-size:13px}
+  table.arc td.r{color:var(--muted)}
+  .foot{color:var(--faint);font-size:13.5px;max-width:74ch;margin-top:26px}
+  .foot code{font-family:var(--mono);background:var(--panel-2);padding:1px 6px;border-radius:5px;font-size:12.5px}
+  a{color:var(--accent)}
+  @media (prefers-reduced-motion:no-preference){
+    rect[data-grow]{transform-origin:bottom;animation:g .7s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes g{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Chemotactic Task Allocation · results</div>
+    <h1>Frontier-quality agent work at roughly one fortieth of the cost.</h1>
+    <p class="lede">A decentralised orchestration framework where tasks advertise
+      contracts and agents self-select by calibrated confidence. Two wrappers turn
+      that mechanism into a cost result on real Claude agents: a task wrapper lifts
+      a cheap model to the frontier model's completion, and a calibrated router
+      then routes to it.</p>
+    <div class="hero-stat">
+      <div class="tile hi"><div class="n">≈40×</div><div class="k">cheaper than always-frontier, at equal completion</div></div>
+      <div class="tile"><div class="n">1.00</div><div class="k">routed completion, matching the frontier model</div></div>
+      <div class="tile"><div class="n">0.0<span style="color:var(--faint)"> / </span>2.0</div><div class="k">peak-load growth exponent, decentralised vs central</div></div>
+      <div class="tile"><div class="n">114</div><div class="k">real-agent attempts behind the calibration result</div></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="eyebrow">The whole study</div>
+    <h2>One arc, from scaling to a cost result</h2>
+    <p class="sub">Decentralisation removes the coordinator bottleneck; the risk is
+      that self-selection rests on a miscalibrated self-report; a track-record
+      correction fixes it; and the two wrappers turn the mechanism into frontier
+      quality at a fraction of the cost.</p>
+    <table class="arc">
+      <thead><tr><th>Layer</th><th>Claim</th><th>Headline result</th></tr></thead>
+      <tbody>
+        <tr><td class="h">Scaling</td><td>H1</td><td class="r">Peak per-node load flat (exp 0.0) vs quadratic central (2.0) to 10,000 agents</td></tr>
+        <tr><td class="h">Calibration failure</td><td>H7</td><td class="r">Raw self-report winners over-predict success by ≈0.20 (Brier, ECE ≈0.25)</td></tr>
+        <tr><td class="h">Calibration fix</td><td>H8</td><td class="r">Track-record correction recovers completion 0.37 → 0.76, no privileged information</td></tr>
+        <tr><td class="h">Safety</td><td>H4</td><td class="r">Integrity gate cuts out-of-scope violations ≈90% under adversarial agents</td></tr>
+        <tr><td class="h">Routing</td><td>H10</td><td class="r">Activation barrier routes every subtask to a correct specialist (1.00 vs 0.25 floor)</td></tr>
+        <tr><td class="h">Task wrapper</td><td>H11</td><td class="r">Interface contract lifts the weak model 0.88 → 1.00; precondition for modules to integrate</td></tr>
+        <tr><td class="h">Agent wrapper</td><td>H12</td><td class="r">Calibrated routing holds frontier completion at ≈1/40th of always-frontier cost</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="eyebrow">Task wrapper · H11 · real agents</div>
+    <h2>The contract lifts the weak model to the frontier</h2>
+    <div class="card">
+      <div class="legend">
+        <span class="lg"><span class="sw hollow" style="color:var(--muted)"></span> bare prompt</span>
+        <span class="lg"><span class="sw" style="background:var(--haiku)"></span> Haiku 4.5</span>
+        <span class="lg"><span class="sw" style="background:var(--sonnet)"></span> Sonnet 5</span>
+        <span class="lg"><span class="sw" style="background:var(--opus)"></span> Opus 4.8</span>
+      </div>
+      <figure class="chart"><div id="c-ladder"></div></figure>
+      <p class="read"><strong>Completion on the 8-task expert tier.</strong> Under a
+        bare prompt, completion climbs with capability (Haiku 0.875, Sonnet and Opus
+        1.00). The task wrapper names the exact edge case the weak model missed and
+        lifts Haiku to 1.00, leaving the already-saturated models unchanged: the
+        contract helps most where the model is weakest.</p>
+      <p class="note">Bars show completion (fraction of tasks fully passing). Haiku
+        bare carries a wide interval on a small sample: 0.875, bootstrap 95% CI
+        [0.69, 1.00].</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Agent wrapper · H12 · real agents</div>
+    <h2>Frontier completion, at a fraction of the cost</h2>
+    <div class="card">
+      <div class="legend">
+        <span class="lg"><span class="sw" style="background:var(--opus)"></span> always-frontier</span>
+        <span class="lg"><span class="sw" style="background:var(--accent)"></span> routed · wrapped</span>
+        <span class="lg"><span class="sw" style="background:var(--sonnet)"></span> routed · bare, per-task track record</span>
+        <span class="lg"><span class="sw" style="background:var(--bad)"></span> routed · bare, coarse track record</span>
+      </div>
+      <figure class="chart"><div id="c-cost"></div></figure>
+      <p class="read"><strong>Completion against relative cost</strong> for four
+        strategies on the expert tier. Always using the frontier model reaches 1.00
+        at full cost. Routing over task-wrapped tasks matches it (1.00) at about
+        1/47th of the cost. Routing over bare tasks with only a coarse track record
+        loses completion (0.875) — the weak model's overconfident bid on the hardest
+        task clears the barrier and fails. Give the router a per-task track record
+        and it escalates exactly that task, recovering 1.00 at ≈1/20th cost.</p>
+      <p class="note">Cost is relative to always-frontier (log axis), priced at
+        representative economy-to-premium tiers; the multiples illustrate the
+        mechanism, not a live quote.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Project · H11 + H12 · real agents</div>
+    <h2>A contract is the precondition for a swarm to build software</h2>
+    <div class="card">
+      <div class="legend">
+        <span class="lg"><span class="sw hollow" style="color:var(--muted)"></span> bare spec</span>
+        <span class="lg"><span class="sw" style="background:var(--haiku)"></span> Haiku 4.5</span>
+        <span class="lg"><span class="sw" style="background:var(--sonnet)"></span> Sonnet 5</span>
+        <span class="lg"><span class="sw" style="background:var(--opus)"></span> Opus 4.8</span>
+      </div>
+      <figure class="chart"><div id="c-project"></div></figure>
+      <p class="read"><strong>Modules passing (of 5) on the miniquery project</strong>,
+        a five-module toolkit with a dependency graph. Under a loose spec every model,
+        including the frontier one, delivers a divergent interface and no working
+        project (0 completion). The interface contract makes all three deliver a
+        conforming project. The router then assembles a working cross-model project
+        from task-wrapped modules at ≈1/39th of always-frontier cost; the bare
+        assembly fails at any price.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Mechanism · H7 → H8 · simulation</div>
+    <h2>Why it works: a track record fixes miscalibration</h2>
+    <div class="card">
+      <div class="legend">
+        <span class="lg"><span class="sw" style="background:var(--bad)"></span> raw self-report auction</span>
+        <span class="lg"><span class="sw" style="background:var(--good)"></span> reliability-corrected</span>
+      </div>
+      <figure class="chart"><div id="c-calib"></div></figure>
+      <p class="read"><strong>Task completion under the worst injected
+        overconfidence.</strong> A raw self-report auction selects well-fitted but not
+        competent agents, and completion falls to 0.37. Discounting each bid by the
+        agent's observable track record — no privileged information — recovers it to
+        0.76 (Holm-corrected p &lt; 0.001, 20 seeds). This is the same correction the
+        agent wrapper uses to route, and the same failure the bare router shows on
+        real agents.</p>
+    </div>
+  </section>
+
+  <section style="border-bottom:none">
+    <div class="eyebrow">Honesty &amp; reproduction</div>
+    <h2>What this is, and is not</h2>
+    <p class="foot">The synthetic results are full-protocol scale (20 seeds, agent
+      counts to 10,000) and deterministic from seeds. The real-agent results (the
+      ladder, the project, the cost multiples) are a small but honest sample — one to
+      two agents per cell — so the direction is clear and the intervals are wide;
+      hardening to a powered estimate is future work. Prices are representative tiers,
+      not a live quote. Against a full-information optimum the quality claim is
+      reported as not clearing its margin. Reproduce the synthetic arc with
+      <code>cta reproduce-all</code> and the real-agent tiers with
+      <code>python -m pilot_tasks.ladder</code> and <code>python -m pilot_tasks.project</code>.</p>
+  </section>
+</div>
+
+<script type="module">
+const $ = id => document.getElementById(id);
+const cs = getComputedStyle(document.documentElement);
+const col = n => cs.getPropertyValue(n).trim();
+
+// Grouped/!overlaid bar chart. spec: {cats, groups:[{label,color,val,hollow,ci}], ymax, fmt, w,h}
+function bars(host, spec){
+  const W = spec.w||720, H = spec.h||300, m={t:18,r:16,b:46,l:44};
+  const pw = W-m.l-m.r, ph = H-m.t-m.b, ymax = spec.ymax||1;
+  const n = spec.cats.length, gw = pw/n;
+  const fmt = spec.fmt || (v=>v.toFixed(2));
+  const y = v => m.t + ph*(1 - v/ymax);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${spec.aria||''}">`;
+  (spec.ticks||[0,.25,.5,.75,1]).forEach(t=>{
+    const yy=y(t*ymax);
+    s+=`<line class="grid" x1="${m.l}" x2="${W-m.r}" y1="${yy}" y2="${yy}"/>`;
+    s+=`<text class="axis" x="${m.l-8}" y="${yy+4}" text-anchor="end">${spec.tickfmt?spec.tickfmt(t*ymax):(t*ymax).toFixed(0)}</text>`;
+  });
+  spec.cats.forEach((cat,ci)=>{
+    const items = spec.groups[ci];
+    const bw = Math.min(46, (gw*0.7)/items.length);
+    const tot = bw*items.length + (items.length-1)*8;
+    let x0 = m.l + ci*gw + (gw-tot)/2;
+    items.forEach(it=>{
+      const yy=y(it.val), h=Math.max(0, m.t+ph-yy);
+      const fill = it.hollow ? 'transparent' : it.color;
+      const stroke = it.color, sd = it.hollow ? 'stroke-dasharray="4 3"' : '';
+      s+=`<g><title>${cat} · ${it.label}: ${fmt(it.val)}</title>`;
+      s+=`<rect data-grow x="${x0}" y="${yy}" width="${bw}" height="${h}" rx="4"
+            fill="${fill}" stroke="${stroke}" stroke-width="${it.hollow?1.5:0}" ${sd}/>`;
+      // CI whisker
+      if(it.ci){ const lo=y(it.ci[0]), hi=y(it.ci[1]), cx=x0+bw/2;
+        s+=`<line x1="${cx}" x2="${cx}" y1="${hi}" y2="${lo}" stroke="var(--ink)" stroke-width="1.5"/>`;
+        s+=`<line x1="${cx-4}" x2="${cx+4}" y1="${hi}" y2="${hi}" stroke="var(--ink)" stroke-width="1.5"/>`;
+        s+=`<line x1="${cx-4}" x2="${cx+4}" y1="${lo}" y2="${lo}" stroke="var(--ink)" stroke-width="1.5"/>`;}
+      // value label: above the bar, unless it is tall enough to overflow — then inside
+      const tall = it.val/ymax > 0.86 && !it.ci;
+      const ly = tall ? yy+18 : yy-7;
+      const lc = tall ? (it.hollow ? it.color : 'var(--panel)') : 'var(--ink)';
+      s+=`<text class="val" x="${x0+bw/2}" y="${ly}" text-anchor="middle" fill="${lc}">${fmt(it.val)}</text></g>`;
+      x0 += bw+8;
+    });
+    s+=`<text class="cat" x="${m.l+ci*gw+gw/2}" y="${H-m.b+22}" text-anchor="middle">${cat}</text>`;
+  });
+  s+=`</svg>`; host.innerHTML=s;
+}
+
+// Dot plot: completion (y) vs relative cost (log x). points:[{label,cost,comp,color}]
+function dots(host){
+  const W=720,H=320,m={t:18,r:150,b:52,l:48};
+  const pw=W-m.l-m.r, ph=H-m.t-m.b;
+  const pts=[
+    {label:'always-frontier', cost:1, comp:1.00, color:col('--opus'), dy:-16},
+    {label:'routed · wrapped', cost:1/47, comp:1.00, color:col('--accent'), dy:-16},
+    {label:'routed · bare, per-task track record', cost:1/20, comp:1.00, color:col('--sonnet'), dy:-16},
+    {label:'routed · bare, coarse track record', cost:1/51, comp:0.875, color:col('--bad'), dy:22},
+  ];
+  const xs=[1,1/10,1/100], xmin=Math.log10(1/100), xmax=Math.log10(1.6);
+  const x=c=>m.l+pw*(Math.log10(c)-xmin)/(xmax-xmin);
+  const y=v=>m.t+ph*(1-(v-0.8)/(1.03-0.8));
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="completion versus relative cost">`;
+  [0.85,0.90,0.95,1.00].forEach(t=>{const yy=y(t);
+    s+=`<line class="grid" x1="${m.l}" x2="${W-m.r}" y1="${yy}" y2="${yy}"/>`;
+    s+=`<text class="axis" x="${m.l-8}" y="${yy+4}" text-anchor="end">${t.toFixed(2)}</text>`;});
+  // frontier reference at completion 1.0
+  s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(1)}" y2="${y(1)}" stroke="var(--faint)" stroke-width="1" stroke-dasharray="2 4"/>`;
+  xs.forEach(c=>{const xx=x(c);
+    s+=`<text class="axis" x="${xx}" y="${H-m.b+22}" text-anchor="middle">${c===1?'1×':('1/'+Math.round(1/c))}</text>`;});
+  s+=`<text class="axis" x="${m.l+pw/2}" y="${H-8}" text-anchor="middle">relative cost per task, log scale — cheaper is further right</text>`;
+  s+=`<text class="axis" x="14" y="${m.t+ph/2}" text-anchor="middle" transform="rotate(-90 14 ${m.t+ph/2})">completion</text>`;
+  pts.forEach(p=>{
+    const cx=x(p.cost), cy=y(p.comp);
+    s+=`<g><title>${p.label}: completion ${p.comp.toFixed(3)}, cost ${p.cost===1?'1×':('1/'+Math.round(1/p.cost))}</title>`;
+    s+=`<circle cx="${cx}" cy="${cy}" r="8" fill="${p.color}" stroke="var(--panel)" stroke-width="2"/>`;
+    s+=`<text class="val" x="${cx}" y="${cy+p.dy}" text-anchor="middle" fill="${p.color}">${p.comp.toFixed(3)}</text></g>`;
+  });
+  s+=`</svg>`; host.innerHTML=s;
+}
+
+const H=col('--haiku'), S=col('--sonnet'), O=col('--opus');
+bars($('c-ladder'), {
+  aria:'completion by model, bare versus task-wrapped',
+  cats:['Haiku 4.5','Sonnet 5','Opus 4.8'],
+  groups:[
+    [{label:'bare',val:0.875,color:H,hollow:true,ci:[0.69,1.0]},{label:'wrapped',val:1.0,color:H}],
+    [{label:'bare',val:1.0,color:S,hollow:true},{label:'wrapped',val:1.0,color:S}],
+    [{label:'bare',val:1.0,color:O,hollow:true},{label:'wrapped',val:1.0,color:O}],
+  ], ymax:1, tickfmt:v=>v.toFixed(2)
+});
+bars($('c-project'), {
+  aria:'modules passing of five, bare versus wrapped',
+  cats:['Haiku 4.5','Sonnet 5','Opus 4.8'], ymax:5, ticks:[0,.2,.4,.6,.8,1],
+  fmt:v=>v.toFixed(0), tickfmt:v=>v.toFixed(0),
+  groups:[
+    [{label:'bare',val:2,color:H,hollow:true},{label:'wrapped',val:5,color:H}],
+    [{label:'bare',val:1,color:S,hollow:true},{label:'wrapped',val:5,color:S}],
+    [{label:'bare',val:1,color:O,hollow:true},{label:'wrapped',val:5,color:O}],
+  ]
+});
+bars($('c-calib'), {
+  aria:'completion, raw versus reliability-corrected',
+  cats:['Task completion'], ymax:1, tickfmt:v=>v.toFixed(2),
+  groups:[[{label:'raw self-report',val:0.37,color:col('--bad')},
+           {label:'reliability-corrected',val:0.76,color:col('--good')}]]
+});
+dots($('c-cost'));
+</script>
