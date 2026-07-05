@@ -16,11 +16,11 @@ the gate), P2.3 (token and dollar cost model), P1.4 (one-command reproducibility
 P2.7 (heterogeneous specialist routing, H10), P2.2 (latency-quality Pareto), P2.6
 (product PoC, `examples/poc`), and P2.1 (calibration grounded in the measured
 MarketBench mixture). Also done: P3.2 (strategic
-adversary demoted by the track record over rounds, a light sequential-batch
-experiment with no core-engine change). Still open: P2.5 (two-sided live pilot,
-needs subagent budget), and the heavier Phase 3 items P3.1 (concurrent
-multi-process engine) and P3.3 (streaming arrival), which need core temporal or
-store changes, plus P3.4 (the real-agent, dependency-graph follow-up).
+adversary demoted by the track record over rounds) and P3.3 (streaming task
+arrival in the temporal engine, H5 confirmed under non-stationary load). Still
+open: P2.5 (two-sided live pilot, needs subagent budget), the heaviest Phase 3
+item P3.1 (concurrent multi-process engine over the SQLite store), and P3.4 (the
+real-agent, dependency-graph follow-up, needs budget).
 
 **P2.7 landed (H10 supported).** The activation barrier holds specialist routing
 at 1.00 across observability (chance floor 0.25); without it routing collapses to
