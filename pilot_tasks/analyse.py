@@ -21,8 +21,14 @@ SUBMISSIONS = "results/live_pilot/submissions"
 OUT = Path("results/live_pilot")
 
 
-def analyse() -> dict:
-    records = score_dir(SUBMISSIONS)
+def analyse(
+    submissions: str | Path = SUBMISSIONS,
+    out: str | Path = OUT,
+    figure: str | Path = "results/figures/reliability_live.svg",
+    title: str = "Live pilot: real agent calibration (predicted vs realised)",
+) -> dict:
+    out = Path(out)
+    records = score_dir(submissions)
     conf = [r["confidence"] for r in records]
     succ = [1.0 if r["passed"] else 0.0 for r in records]
     brier, ece = _brier_ece(conf, succ)
@@ -41,9 +47,9 @@ def analyse() -> dict:
         "per_task_pass_rate": {t: statistics.mean(v) for t, v in by_task.items()},
         "bins": reliability_bins(conf, succ),
     }
-    OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / "records.json").write_text(json.dumps(records, indent=1), encoding="utf-8")
-    (OUT / "summary.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "records.json").write_text(json.dumps(records, indent=1), encoding="utf-8")
+    (out / "summary.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
 
     # Reliability diagram: real confidence bins vs realised success, with the
     # diagonal of perfect calibration. Points above the diagonal are underconfident.
@@ -57,11 +63,11 @@ def analyse() -> dict:
     save_svg(
         line_chart(
             series,
-            title="Live pilot: real agent calibration (predicted vs realised)",
+            title=title,
             xlabel="stated confidence",
             ylabel="realised pass rate",
         ),
-        Path("results/figures/reliability_live.svg"),
+        Path(figure),
     )
     return summary
 

@@ -1,0 +1,401 @@
+[
+ {
+  "agent": "opusA",
+  "task": "run_length_encode",
+  "confidence": 0.97,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "roman_to_int",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "is_balanced",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "merge_intervals",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "expand_ranges",
+  "confidence": 0.75,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "chunk",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "deep_get",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "caesar",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "int_to_roman",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "valid_ipv4",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "next_bigger",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "spreadsheet_column",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "format_duration",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "my_atoi",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "compare_version",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "simplify_path",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "decode_string",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "calculate",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusA",
+  "task": "is_number",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "run_length_encode",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "roman_to_int",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "is_balanced",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "merge_intervals",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "expand_ranges",
+  "confidence": 0.8,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "chunk",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "deep_get",
+  "confidence": 0.87,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "caesar",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "int_to_roman",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "valid_ipv4",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "next_bigger",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "spreadsheet_column",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "format_duration",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "my_atoi",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "compare_version",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "simplify_path",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "decode_string",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "calculate",
+  "confidence": 0.87,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusB",
+  "task": "is_number",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "run_length_encode",
+  "confidence": 0.98,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "roman_to_int",
+  "confidence": 0.97,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "is_balanced",
+  "confidence": 0.98,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "merge_intervals",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "expand_ranges",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "chunk",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "deep_get",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "caesar",
+  "confidence": 0.97,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "int_to_roman",
+  "confidence": 0.98,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "valid_ipv4",
+  "confidence": 0.94,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "next_bigger",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "spreadsheet_column",
+  "confidence": 0.97,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "format_duration",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "my_atoi",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "compare_version",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "simplify_path",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "decode_string",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "calculate",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "opusC",
+  "task": "is_number",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ }
+]
