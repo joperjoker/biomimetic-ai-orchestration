@@ -40,6 +40,7 @@ from cta.harness import (
     scaling_sweep,
     stability_grid,
     strategic_adversary,
+    streaming_arrival,
     temporal_metrics,
     track_record_sweep,
 )
@@ -148,6 +149,8 @@ def autorun(
     fitted_recovery = fitted_calibration_recovery(protocol.base, protocol.seeds)
     # Strategic adversary demoted by the track record over rounds (P3.2).
     adversary = strategic_adversary(protocol.base, protocol.seeds)
+    # Annealing under streaming (non-stationary) task arrival (H5, P3.3).
+    streaming = streaming_arrival(protocol.base, protocol.seeds)
     # Dollar cost of coordination against agent count (P2.3): central is N*M, the
     # decentralised fleet is bounded per node, so the bill diverges at scale.
     task_ratio = protocol.base.n_tasks / max(1, protocol.base.n_agents)
@@ -489,6 +492,7 @@ def autorun(
         "pareto_latency_quality": pareto,
         "fitted_calibration_recovery": fitted_recovery,
         "strategic_adversary": adversary,
+        "streaming_arrival": streaming,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
         "verdicts": verdicts,

@@ -2495,6 +2495,19 @@
     ],
     "reliability_decay": 0.21662909836065575
   },
+  "streaming_arrival": {
+    "arrival_span": 20,
+    "anneal_on": {
+      "max_stall": 3.0,
+      "unmet_rate": 0.0,
+      "completion_rate": 0.06
+    },
+    "anneal_off": {
+      "max_stall": 300.0,
+      "unmet_rate": 1.0,
+      "completion_rate": 0.0
+    }
+  },
   "fleet": {
     "experiment": {
       "raw_completion": 0.7635416666666667,
