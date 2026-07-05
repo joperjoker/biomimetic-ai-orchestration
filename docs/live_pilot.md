@@ -133,20 +133,21 @@ Real per-run telemetry (tokens, wall-clock) is recorded in
 pilot_tasks.ladder`.
 
 **The capability ladder (bare).** Completion (fraction of the eight tasks fully
-passed) rose with model capability: Haiku 0.875, Sonnet 1.00, Opus 1.00. Haiku's
-single miss was `is_match`, which it coded with regular-expression semantics
-(`*` as "zero or more of the preceding") instead of wildcard semantics (`*` as
-"any sequence") in one of its two runs, an honest weak-model slip on the hardest
-task. Sonnet and Opus were already at the ceiling.
+passed) rose with model capability: over five Haiku agents Haiku reached 0.925
+(bootstrap 95 per cent CI [0.85, 1.00]) against Sonnet and Opus at 1.00. Haiku's
+residual misses were on `is_match`, which it sometimes coded with
+regular-expression semantics (`*` as "zero or more of the preceding") instead of
+wildcard semantics (`*` as "any sequence"), an honest weak-model slip on the
+hardest task. Sonnet and Opus were already at the ceiling.
 
 **The task wrapper (`ladder_completion.svg`, `ladder_wrapper_lift.svg`).**
 Wrapping the task lifts the weakest model to the ceiling and leaves the strong
-ones unchanged: Haiku's completion rose from 0.875 to 1.00 (+0.125 completion,
-+0.05 fidelity), while Sonnet and Opus stayed at 1.00 (they had nowhere to gain).
-The wrapper's acceptance criterion for `is_match` ("`*` matches any sequence
-including empty") named exactly the distinction Haiku had missed, and both wrapped
-Haiku runs then wrote the correct wildcard solution. The task wrapper helps most
-where the model is weakest, which is the point: it raises the floor.
+ones unchanged: Haiku's completion rose from 0.925 to 1.00 (+0.075 completion),
+while Sonnet and Opus stayed at 1.00 (they had nowhere to gain). The wrapper's
+acceptance criterion for `is_match` ("`*` matches any sequence including empty")
+named exactly the distinction Haiku had missed, and the wrapped Haiku runs then
+wrote the correct wildcard solution. The task wrapper helps most where the model
+is weakest, which is the point: it raises the floor.
 
 **The agent wrapper (`ladder_cost_fidelity.svg`).** The agent wrapper is CTA
 Binding-Energy routing across the ladder: each task goes to the cheapest model
@@ -155,28 +156,31 @@ identical router under the two conditions is the clean contrast:
 
 | Routing over | Completion | vs always-Opus | Cost saving | Latency |
 |---|---|---|---|---|
-| bare tasks | 0.875 | 1.00 | 51x cheaper | ~neutral |
+| bare tasks | 0.925 | 1.00 | 50x cheaper | ~neutral |
 | task-wrapped tasks | 1.00 | 1.00 | 47x cheaper | ~neutral |
 
-With bare tasks the router sends work to the cheap model and **loses completion**
-(0.875): Haiku's self-report on `is_match` is overconfident, its overall track
-record is good, so the corrected bid clears the barrier and the task is routed to
-a model that fails it, exactly the miscalibration failure mode the paper studies.
-Add the task wrapper and the cheap model becomes genuinely reliable, so the same
-routing **keeps completion at the frontier level (1.00) at about one forty-seventh
-of the always-Opus cost** (representative economy-versus-premium price tiers from
-`cta.cost`). The two wrappers are complementary: the task wrapper raises the weak
-model's fidelity, and the agent wrapper turns that into a cost saving by routing
-away from the expensive model. The saving here is in cost, not latency; on these
-runs the small model was not faster, so we report the latency multiple as roughly
-neutral rather than claim a speed win.
+Over task-wrapped tasks the cheap model is genuinely reliable, so routing **keeps
+completion at the frontier level (1.00) at about one forty-seventh of the
+always-Opus cost** (representative economy-versus-premium price tiers from
+`cta.cost`). Over bare tasks routing reaches 0.925: the cheap model's residual
+`is_match` failures are the gap, which the wrapper closes. The router escalates by
+task, using a per-task reliability, so it would send a task to a stronger model
+whenever the cheap model's corrected bid on that task falls below the barrier; on
+this tier, once a five-agent track record accrues, the cheap model clears the
+barrier on every task, so the router keeps the work cheap and the wrapper carries
+the completion. (An earlier two-agent sample put `is_match` just under the barrier
+and escalated it, an artifact the larger sample corrected.) The two wrappers are
+complementary: the task wrapper raises the weak model's fidelity, and the agent
+wrapper turns that into a cost saving by routing away from the expensive model.
+The saving here is in cost, not latency; on these runs the small model was not
+faster, so we report the latency multiple as roughly neutral.
 
 This is the commercialisation story in one experiment: a well-designed task
 wrapper lets a cheap model do frontier-quality work, and a calibrated agent
 wrapper routes to it, so a fleet reaches the strongest model's completion at a
-fraction of its cost. The sample is small (eight tasks, two agents per cell) and
-the price tiers are representative rather than a live quote, so the multiples are
-illustrative of the mechanism, not a benchmark figure.
+fraction of its cost. The sample is small (eight tasks, one to five agents per
+cell) and the price tiers are representative rather than a live quote, so the
+multiples are illustrative of the mechanism, not a benchmark figure.
 
 ## The project tier: a dependency graph, decomposition and assembly (P3.4)
 
