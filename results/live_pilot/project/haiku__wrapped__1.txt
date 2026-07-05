@@ -1,0 +1,194 @@
+### MODULE: parse
+CONFIDENCE: 0.85
+```python
+def parse(query: str) -> list[dict]:
+    if not query or not query.strip():
+        return []
+
+    conditions = query.split(" AND ")
+    predicates = []
+
+    for condition in conditions:
+        condition = condition.strip()
+        if not condition:
+            continue
+
+        # Find operator: check two-char operators first (>=, <=, !=), then single-char
+        op = None
+        op_index = -1
+        op_len = 0
+
+        # Search for two-character operators
+        for op_candidate in ['>=', '<=', '!=']:
+            idx = condition.find(op_candidate)
+            if idx != -1:
+                op = op_candidate
+                op_index = idx
+                op_len = 2
+                break
+
+        # If no two-char operator found, search for single-char operators
+        if op is None:
+            for op_candidate in ['=', '>', '<']:
+                idx = condition.find(op_candidate)
+                if idx != -1:
+                    op = op_candidate
+                    op_index = idx
+                    op_len = 1
+                    break
+
+        if op is None:
+            continue
+
+        field = condition[:op_index].strip()
+        value_str = condition[op_index + op_len:].strip()
+
+        # Parse value: check for quoted string, then integer, then bareword
+        value = None
+        if value_str.startswith("'"):
+            # Single-quoted string
+            closing_idx = value_str.find("'", 1)
+            if closing_idx != -1:
+                value = value_str[1:closing_idx]
+            else:
+                # Unclosed quote, treat as bareword
+                value = value_str
+        else:
+            # Try to parse as integer (handles negative)
+            try:
+                value = int(value_str)
+            except ValueError:
+                # Bareword string
+                value = value_str
+
+        predicates.append({"field": field, "op": op, "value": value})
+
+    return predicates
+```
+
+### MODULE: match
+CONFIDENCE: 0.95
+```python
+def match(row: dict, predicates: list[dict]) -> bool:
+    for predicate in predicates:
+        field = predicate["field"]
+        op = predicate["op"]
+        value = predicate["value"]
+
+        # If field is missing, return False
+        if field not in row:
+            return False
+
+        row_value = row[field]
+
+        if op == "=":
+            if row_value != value:
+                return False
+        elif op == "!=":
+            if row_value == value:
+                return False
+        elif op in [">", "<", ">=", "<="]:
+            # For comparison operators, check type compatibility
+            if type(row_value) != type(value):
+                return False
+
+            if op == ">":
+                if not (row_value > value):
+                    return False
+            elif op == "<":
+                if not (row_value < value):
+                    return False
+            elif op == ">=":
+                if not (row_value >= value):
+                    return False
+            elif op == "<=":
+                if not (row_value <= value):
+                    return False
+
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.98
+```python
+def select(rows: list[dict], query: str) -> list[dict]:
+    predicates = parse(query)
+    result = []
+    for row in rows:
+        if match(row, predicates):
+            result.append(row)
+    return result
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.92
+```python
+def summarize(rows: list[dict], field: str, op: str) -> float:
+    if op == "count":
+        return float(len(rows))
+
+    # For other operations, collect numeric values from the field
+    values = []
+    for row in rows:
+        if field in row:
+            val = row[field]
+            # Check if it's already numeric
+            if isinstance(val, (int, float)):
+                values.append(val)
+            else:
+                # Try to convert to float
+                try:
+                    values.append(float(val))
+                except (ValueError, TypeError):
+                    # Skip non-numeric values
+                    pass
+
+    # If no numeric values found, return 0.0
+    if not values:
+        return 0.0
+
+    if op == "sum":
+        return float(sum(values))
+    elif op == "min":
+        return float(min(values))
+    elif op == "max":
+        return float(max(values))
+    elif op == "avg":
+        return float(sum(values)) / len(values)
+
+    return 0.0
+```
+
+### MODULE: render
+CONFIDENCE: 0.93
+```python
+def render(rows: list[dict], columns: list[str]) -> str:
+    # Determine the maximum width for each column
+    widths = {}
+    for col in columns:
+        widths[col] = len(col)  # Start with header width
+
+    # Update widths based on row data
+    for row in rows:
+        for col in columns:
+            cell_value = str(row.get(col, ""))
+            widths[col] = max(widths[col], len(cell_value))
+
+    # Build header line
+    header_cells = []
+    for col in columns:
+        header_cells.append(col.ljust(widths[col]))
+    header_line = " | ".join(header_cells)
+
+    lines = [header_line]
+
+    # Build data lines
+    for row in rows:
+        row_cells = []
+        for col in columns:
+            cell_value = str(row.get(col, ""))
+            row_cells.append(cell_value.ljust(widths[col]))
+        lines.append(" | ".join(row_cells))
+
+    return "\n".join(lines)
+```

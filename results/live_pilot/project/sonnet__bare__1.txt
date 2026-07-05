@@ -1,0 +1,140 @@
+### MODULE: parse
+CONFIDENCE: 0.4
+```python
+import re
+
+# Longest operators must precede shorter overlapping prefixes (>= before >, etc.)
+_COND_RE = re.compile(
+    r'^\s*([A-Za-z_][A-Za-z0-9_]*)\s*(>=|<=|!=|==|=|>|<)\s*(.+?)\s*$'
+)
+_OP_MAP = {'=': 'eq', '==': 'eq', '!=': 'ne', '>': 'gt', '<': 'lt', '>=': 'ge', '<=': 'le'}
+
+
+def _parse_value(raw):
+    raw = raw.strip()
+    if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in ('"', "'"):
+        return raw[1:-1]
+    low = raw.lower()
+    if low == 'true':
+        return True
+    if low == 'false':
+        return False
+    if low in ('null', 'none'):
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        pass
+    try:
+        return float(raw)
+    except ValueError:
+        pass
+    return raw
+
+
+def parse(query):
+    if not query or not query.strip():
+        return []
+    clauses = re.split(r'\s+AND\s+', query.strip(), flags=re.IGNORECASE)
+    conditions = []
+    for clause in clauses:
+        clause = clause.strip()
+        if not clause:
+            continue
+        m = _COND_RE.match(clause)
+        if not m:
+            raise ValueError(f"Invalid condition: {clause!r}")
+        field, op, raw_value = m.groups()
+        conditions.append((field, _OP_MAP[op], _parse_value(raw_value)))
+    return conditions
+```
+
+### MODULE: match
+CONFIDENCE: 0.45
+```python
+def match(row, predicates):
+    for field, op, value in predicates:
+        row_value = row.get(field)
+        try:
+            if op == 'eq':
+                ok = row_value == value
+            elif op == 'ne':
+                ok = row_value != value
+            elif op == 'gt':
+                ok = row_value > value
+            elif op == 'lt':
+                ok = row_value < value
+            elif op == 'ge':
+                ok = row_value >= value
+            elif op == 'le':
+                ok = row_value <= value
+            else:
+                ok = False
+        except TypeError:
+            ok = False
+        if not ok:
+            return False
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.55
+```python
+def select(rows, query):
+    conditions = parse(query)
+    return [row for row in rows if match(row, conditions)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.45
+```python
+def summarize(rows, field, op):
+    op_l = (op or '').strip().lower()
+
+    if op_l == 'count':
+        if field in (None, '*'):
+            return len(rows)
+        return sum(1 for r in rows if r.get(field) is not None)
+
+    values = [
+        r[field] for r in rows
+        if field in r
+        and isinstance(r[field], (int, float))
+        and not isinstance(r[field], bool)
+    ]
+
+    if op_l == 'sum':
+        return sum(values) if values else 0
+    if op_l == 'min':
+        return min(values) if values else None
+    if op_l == 'max':
+        return max(values) if values else None
+    if op_l == 'avg':
+        return sum(values) / len(values) if values else None
+
+    raise ValueError(f"Unsupported aggregation op: {op!r}")
+```
+
+### MODULE: render
+CONFIDENCE: 0.3
+```python
+def render(rows, columns):
+    def cell(row, col):
+        val = row.get(col)
+        return '' if val is None else str(val)
+
+    widths = [len(str(col)) for col in columns]
+    for row in rows:
+        for i, col in enumerate(columns):
+            widths[i] = max(widths[i], len(cell(row, col)))
+
+    lines = [
+        "  ".join(str(col).ljust(widths[i]) for i, col in enumerate(columns)),
+        "  ".join('-' * widths[i] for i in range(len(columns))),
+    ]
+    for row in rows:
+        lines.append(
+            "  ".join(cell(row, col).ljust(widths[i]) for i, col in enumerate(columns))
+        )
+    return "\n".join(lines)
+```

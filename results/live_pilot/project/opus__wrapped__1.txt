@@ -1,0 +1,142 @@
+### MODULE: parse
+CONFIDENCE: 0.83
+```python
+def parse(query: str) -> list[dict]:
+    '''Parse a query into predicates.'''
+    if query is None or query.strip() == "":
+        return []
+    def parse_value(v):
+        v = v.strip()
+        if len(v) >= 2 and v[0] == "'" and v[-1] == "'":
+            return v[1:-1]
+        try:
+            return int(v)
+        except (ValueError, TypeError):
+            return v
+    ops = [">=", "<=", "!=", ">", "<", "="]
+    result = []
+    conditions = query.split(" AND ")
+    for cond in conditions:
+        cond = cond.strip()
+        if cond == "":
+            continue
+        chosen_op = None
+        idx = None
+        # find leftmost operator, preferring multi-char (>=,<=,!=) over single
+        best_pos = None
+        for op in ops:
+            p = cond.find(op)
+            if p != -1:
+                # prefer earliest position; on tie, longer op (ordering handles it)
+                if best_pos is None or p < best_pos:
+                    best_pos = p
+                    chosen_op = op
+                    idx = p
+        # re-scan to make sure at the chosen position we take the longest match
+        if idx is not None:
+            for op in ops:
+                if cond[idx:idx+len(op)] == op and len(op) > len(chosen_op):
+                    chosen_op = op
+        field = cond[:idx].strip()
+        value_str = cond[idx + len(chosen_op):].strip()
+        result.append({
+            "field": field,
+            "op": chosen_op,
+            "value": parse_value(value_str),
+        })
+    return result
+```
+
+### MODULE: match
+CONFIDENCE: 0.9
+```python
+def match(row: dict, predicates: list[dict]) -> bool:
+    '''True iff row satisfies every predicate.'''
+    for pred in predicates:
+        field = pred["field"]
+        op = pred["op"]
+        pval = pred["value"]
+        if field not in row:
+            return False
+        rval = row[field]
+        if op == "=":
+            if not (rval == pval):
+                return False
+        elif op == "!=":
+            if not (rval != pval):
+                return False
+        else:
+            if type(rval) != type(pval):
+                return False
+            if op == ">":
+                if not (rval > pval):
+                    return False
+            elif op == "<":
+                if not (rval < pval):
+                    return False
+            elif op == ">=":
+                if not (rval >= pval):
+                    return False
+            elif op == "<=":
+                if not (rval <= pval):
+                    return False
+            else:
+                return False
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.86
+```python
+def select(rows: list[dict], query: str) -> list[dict]:
+    '''Return rows matching the parsed query.'''
+    preds = parse(query)
+    return [r for r in rows if match(r, preds)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.8
+```python
+def summarize(rows: list[dict], field: str, op: str) -> float:
+    '''Aggregate a field over rows.'''
+    if op == "count":
+        return float(len(rows))
+    def is_num(v):
+        return isinstance(v, (int, float)) and not isinstance(v, bool)
+    vals = [r[field] for r in rows if field in r and is_num(r[field])]
+    if not vals:
+        return 0.0
+    if op == "sum":
+        return float(sum(vals))
+    if op == "min":
+        return float(min(vals))
+    if op == "max":
+        return float(max(vals))
+    if op == "avg":
+        return float(sum(vals)) / len(vals)
+    return 0.0
+```
+
+### MODULE: render
+CONFIDENCE: 0.82
+```python
+def render(rows: list[dict], columns: list[str]) -> str:
+    '''Render a padded text table.'''
+    def cell_text(row, col):
+        if col in row:
+            return str(row[col])
+        return ""
+    widths = {}
+    for c in columns:
+        w = len(str(c))
+        for r in rows:
+            w = max(w, len(cell_text(r, c)))
+        widths[c] = w
+    lines = []
+    header = " | ".join(str(c).ljust(widths[c]) for c in columns)
+    lines.append(header)
+    for r in rows:
+        line = " | ".join(cell_text(r, c).ljust(widths[c]) for c in columns)
+        lines.append(line)
+    return "\n".join(lines)
+```

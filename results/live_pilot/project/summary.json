@@ -1,0 +1,180 @@
+{
+ "models": [
+  "haiku",
+  "sonnet",
+  "opus"
+ ],
+ "conditions": [
+  "bare",
+  "wrapped"
+ ],
+ "modules": [
+  "parse",
+  "match",
+  "select",
+  "summarize",
+  "render"
+ ],
+ "depends": {
+  "select": [
+   "parse",
+   "match"
+  ]
+ },
+ "cells": {
+  "haiku": {
+   "bare": {
+    "per_module": {
+     "parse": 1.0,
+     "match": 0.8333333333333334,
+     "select": 1.0,
+     "summarize": 0.7142857142857143,
+     "render": 0.0
+    },
+    "completion": 0.0,
+    "integration": 1.0,
+    "mean_confidence": 0.89,
+    "modules_passed": 2
+   },
+   "wrapped": {
+    "per_module": {
+     "parse": 1.0,
+     "match": 1.0,
+     "select": 1.0,
+     "summarize": 1.0,
+     "render": 1.0
+    },
+    "completion": 1.0,
+    "integration": 1.0,
+    "mean_confidence": 0.926,
+    "modules_passed": 5
+   }
+  },
+  "sonnet": {
+   "bare": {
+    "per_module": {
+     "parse": 0.14285714285714285,
+     "match": 0.5,
+     "select": 1.0,
+     "summarize": 0.8571428571428571,
+     "render": 0.0
+    },
+    "completion": 0.0,
+    "integration": 1.0,
+    "mean_confidence": 0.43,
+    "modules_passed": 1
+   },
+   "wrapped": {
+    "per_module": {
+     "parse": 1.0,
+     "match": 1.0,
+     "select": 1.0,
+     "summarize": 1.0,
+     "render": 1.0
+    },
+    "completion": 1.0,
+    "integration": 1.0,
+    "mean_confidence": 0.85,
+    "modules_passed": 5
+   }
+  },
+  "opus": {
+   "bare": {
+    "per_module": {
+     "parse": 0.14285714285714285,
+     "match": 0.5,
+     "select": 1.0,
+     "summarize": 0.7142857142857143,
+     "render": 0.0
+    },
+    "completion": 0.0,
+    "integration": 1.0,
+    "mean_confidence": 0.62,
+    "modules_passed": 1
+   },
+   "wrapped": {
+    "per_module": {
+     "parse": 1.0,
+     "match": 1.0,
+     "select": 1.0,
+     "summarize": 1.0,
+     "render": 1.0
+    },
+    "completion": 1.0,
+    "integration": 1.0,
+    "mean_confidence": 0.842,
+    "modules_passed": 5
+   }
+  }
+ },
+ "task_wrapper_lift": {
+  "haiku": {
+   "completion_lift": 1.0,
+   "modules_passed_lift": 3
+  },
+  "sonnet": {
+   "completion_lift": 1.0,
+   "modules_passed_lift": 4
+  },
+  "opus": {
+   "completion_lift": 1.0,
+   "modules_passed_lift": 4
+  }
+ },
+ "assembly_wrapped": {
+  "condition": "wrapped",
+  "choices": {
+   "parse": "haiku",
+   "match": "haiku",
+   "select": "haiku",
+   "summarize": "haiku",
+   "render": "haiku"
+  },
+  "assembled_completion": 1.0,
+  "assembled_integration": 1.0,
+  "assembled_per_module": {
+   "parse": 1.0,
+   "match": 1.0,
+   "select": 1.0,
+   "summarize": 1.0,
+   "render": 1.0
+  },
+  "assembled_cost_usd": 0.02407725,
+  "always_top_completion": 1.0,
+  "always_top_cost_usd": 0.9446399999999999,
+  "cost_saving_multiple": 39.23,
+  "single_model_completion": {
+   "haiku": 1.0,
+   "sonnet": 1.0,
+   "opus": 1.0
+  }
+ },
+ "assembly_bare": {
+  "condition": "bare",
+  "choices": {
+   "parse": "haiku",
+   "match": "haiku",
+   "select": "haiku",
+   "summarize": "haiku",
+   "render": "haiku"
+  },
+  "assembled_completion": 0.0,
+  "assembled_integration": 1.0,
+  "assembled_per_module": {
+   "parse": 1.0,
+   "match": 0.8333333333333334,
+   "select": 1.0,
+   "summarize": 0.7142857142857143,
+   "render": 0.0
+  },
+  "assembled_cost_usd": 0.02087475,
+  "always_top_completion": 0.0,
+  "always_top_cost_usd": 0.9262350000000001,
+  "cost_saving_multiple": 44.37,
+  "single_model_completion": {
+   "haiku": 0.0,
+   "sonnet": 0.0,
+   "opus": 0.0
+  }
+ }
+}

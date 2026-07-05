@@ -1,0 +1,120 @@
+### MODULE: parse
+CONFIDENCE: 0.6
+```python
+import re
+
+def parse(query):
+    """Turn a query string into a list of (field, op, value) conditions."""
+    if not query or not query.strip():
+        return []
+    parts = re.split(r'\s+AND\s+', query.strip(), flags=re.IGNORECASE)
+    # longest operators first so ">=" is matched before ">"
+    operators = ['>=', '<=', '!=', '==', '=', '>', '<']
+    conditions = []
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        for op in operators:
+            idx = part.find(op)
+            if idx != -1:
+                field = part[:idx].strip()
+                raw = part[idx + len(op):].strip()
+                # parse the value: quoted string, int, float, else bare string
+                if len(raw) >= 2 and (
+                    (raw[0] == "'" and raw[-1] == "'") or
+                    (raw[0] == '"' and raw[-1] == '"')
+                ):
+                    value = raw[1:-1]
+                else:
+                    try:
+                        value = int(raw)
+                    except ValueError:
+                        try:
+                            value = float(raw)
+                        except ValueError:
+                            value = raw
+                conditions.append((field, op, value))
+                break
+    return conditions
+```
+
+### MODULE: match
+CONFIDENCE: 0.7
+```python
+def match(row, predicates):
+    """Return True if the row (a dict) satisfies every condition."""
+    import operator
+    ops = {
+        '=': operator.eq, '==': operator.eq, '!=': operator.ne,
+        '>': operator.gt, '<': operator.lt,
+        '>=': operator.ge, '<=': operator.le,
+    }
+    for field, op, value in predicates:
+        if field not in row:
+            return False
+        func = ops.get(op)
+        if func is None:
+            return False
+        try:
+            if not func(row[field], value):
+                return False
+        except TypeError:
+            return False
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.85
+```python
+def select(rows, query):
+    """Return the rows matching the query (uses parse and match)."""
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.55
+```python
+def summarize(rows, field, op):
+    """Aggregate a field with op in count/sum/min/max/avg."""
+    values = [
+        row[field] for row in rows
+        if isinstance(row, dict) and field in row and row[field] is not None
+    ]
+    if op == 'count':
+        return len(values)
+    if op == 'sum':
+        return sum(values)
+    if not values:
+        return None
+    if op == 'min':
+        return min(values)
+    if op == 'max':
+        return max(values)
+    if op == 'avg':
+        return sum(values) / len(values)
+    raise ValueError("unknown op: %s" % op)
+```
+
+### MODULE: render
+CONFIDENCE: 0.4
+```python
+def render(rows, columns):
+    """Format the rows as a simple text table."""
+    header = [str(c) for c in columns]
+    table = [header]
+    for row in rows:
+        table.append([str(row.get(c, '')) for c in columns])
+    n = len(columns)
+    widths = [max(len(r[i]) for r in table) for i in range(n)] if n else []
+
+    def fmt(cells):
+        return ' | '.join(cell.ljust(widths[i]) for i, cell in enumerate(cells))
+
+    lines = [fmt(header)]
+    lines.append('-+-'.join('-' * widths[i] for i in range(n)))
+    for r in table[1:]:
+        lines.append(fmt(r))
+    return '\n'.join(lines)
+```

@@ -51,8 +51,22 @@ tasks loses completion (0.88, miscalibration bites) but over task-wrapped tasks
 holds frontier completion (1.00) at ~47x lower cost. The two wrappers are
 complementary: task wrapper raises fidelity, agent wrapper converts it to cost
 saving. Figures: `ladder_completion.svg`, `ladder_wrapper_lift.svg`,
-`ladder_cost_fidelity.svg`. Written into paper §3 and `docs/live_pilot.md`. Next:
-a small real project (P3.4) exercising the same two wrappers end-to-end.
+`ladder_cost_fidelity.svg`. Written into paper §3 and `docs/live_pilot.md`.
+
+**P3.4 done: a project with a dependency graph.** Built the miniquery project
+(`pilot_tasks/project_suite.py`, `pilot_tasks/project.py`): five modules with a
+dependency graph (`select -> parse, match`) and a hidden interface contract, each
+model building the whole project under a bare and a task-wrapped spec (six real
+runs, `results/live_pilot/project/`). Under the bare spec every model fails the
+project (completion 0; divergent interfaces, tuples vs dicts, extra separators),
+and the stronger models honestly lower confidence (Sonnet 0.43, Opus 0.62) while
+Haiku stays overconfident (0.89). The task wrapper's interface contract makes all
+three deliver a conforming project (5/5, completion 1.0, confidence 0.84-0.93).
+The agent wrapper then assembles a working cross-model project from task-wrapped
+modules at ~39x lower cost than always-Opus, while bare assembly still fails (no
+conforming render exists at any price). Figure: `project_modules.svg`. Written
+into paper §3 and `docs/live_pilot.md`. This closes the wrapper track; the
+remaining work is the publication track (venue, LaTeX/PDF, related-work table).
 
 **P2.7 landed (H10 supported).** The activation barrier holds specialist routing
 at 1.00 across observability (chance floor 0.25); without it routing collapses to

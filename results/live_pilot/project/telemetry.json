@@ -1,0 +1,26 @@
+{
+ "haiku__bare__1": {
+  "tokens": 27833,
+  "duration_ms": 73882
+ },
+ "sonnet__bare__1": {
+  "tokens": 30102,
+  "duration_ms": 78848
+ },
+ "opus__bare__1": {
+  "tokens": 20583,
+  "duration_ms": 49177
+ },
+ "haiku__wrapped__1": {
+  "tokens": 32103,
+  "duration_ms": 88434
+ },
+ "sonnet__wrapped__1": {
+  "tokens": 34314,
+  "duration_ms": 113266
+ },
+ "opus__wrapped__1": {
+  "tokens": 20992,
+  "duration_ms": 52592
+ }
+}

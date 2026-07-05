@@ -177,3 +177,63 @@ wrapper routes to it, so a fleet reaches the strongest model's completion at a
 fraction of its cost. The sample is small (eight tasks, two agents per cell) and
 the price tiers are representative rather than a live quote, so the multiples are
 illustrative of the mechanism, not a benchmark figure.
+
+## The project tier: a dependency graph, decomposition and assembly (P3.4)
+
+The ladder uses flat, independent tasks. To exercise the wrappers on real
+software with a **dependency graph and specialist modules**, we built the
+miniquery project (`pilot_tasks/project_suite.py`): a small in-memory query
+toolkit of five modules, `parse` (lex and parse a query), `match` (evaluate a
+predicate against a row), `select` (filter rows, depending on parse and match),
+`summarize` (aggregate a numeric field) and `render` (format a text table). The
+dependency `select -> {parse, match}` and the need for the modules to share one
+interface are the point. Each of the three model families built the whole project
+under a **bare** spec (a loose paragraph) and a **task-wrapped** spec (the exact
+interface contract and acceptance criteria per module). Reproduce with `python -m
+pilot_tasks.project`.
+
+**Bare: every model fails the project.** Under the loose spec, each model made a
+self-consistent but divergent interface choice, and none delivered a project that
+met the hidden contract: Haiku passed 2 of 5 modules, Sonnet 1, Opus 1, and the
+whole-project completion was 0 for all three. The recurring divergence was the
+`parse` return shape (Sonnet and Opus returned tuples `(field, op, value)` where
+the contract wanted `{"field","op","value"}` dicts) and the `render` layout (both
+added a separator line the contract did not ask for). Capability did not rescue
+integration: Opus failed the project as surely as Haiku, because the failure is
+about an unstated interface, not code quality.
+
+**A calibration signal falls out.** Under the ambiguous bare spec the stronger
+models correctly lowered their confidence (Sonnet mean 0.43, Opus 0.62), while
+the weakest model stayed overconfident (Haiku 0.89 on a 2-of-5 result). Stronger
+models were better calibrated about specification ambiguity. This is the same
+miscalibration the paper studies, now at the level of a software interface.
+
+**The task wrapper makes the project integrate.** With the exact interface
+contract, all three models delivered a fully conforming project: 5 of 5 modules
+and completion 1.0 across the board (a completion lift of +1.0 for every model),
+and their confidence rose to a well-calibrated 0.84 to 0.93. The interface
+contract, not model capability, is what turns independently built modules into a
+working whole.
+
+**The agent wrapper assembles a project from the cheapest parts
+(`project_modules.svg`).** We then route each module to the cheapest model whose
+reliability-corrected self-report clears the barrier, take that model's code for
+the module, and assemble the pieces into one namespace:
+
+| Assembling over | Assembled project | Cost vs always-Opus |
+|---|---|---|
+| bare modules | fails (completion 0.0) | 44x cheaper |
+| task-wrapped modules | **works (completion 1.0)** | **39x cheaper** |
+
+Over task-wrapped modules the assembled, cross-model project runs and passes at
+about one thirty-ninth of the always-Opus cost. Over bare modules the assembly
+fails even though it cherry-picks the best module from each model: the router can
+find a conforming `parse`, `match` and `select` (Haiku's bare `parse` happened to
+return dicts), but no model produced a conforming `render` or a fully correct
+`summarize` without the contract, so the project cannot be completed at any price.
+This is decomposition, routing and specialists in one experiment: the task
+wrapper's interface contract is the precondition for a swarm to build software,
+and the agent wrapper then delivers that software at the cheapest model's cost.
+The sample is small (one agent per cell, five modules) and the prices are
+representative tiers, so the multiples illustrate the mechanism rather than
+benchmark it.
