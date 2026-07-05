@@ -525,6 +525,11 @@ def main(argv: list[str] | None = None) -> int:
     pil.add_argument("--agents", type=int, default=20, help="number of agents")
     pil.add_argument("--tasks", type=int, default=15, help="number of tasks")
     pil.add_argument("--seed", type=int, default=0, help="random seed")
+    conc = sub.add_parser(
+        "concurrency", help="race real OS processes to claim tasks over the SQLite store"
+    )
+    conc.add_argument("--tasks", type=int, default=50, help="number of tasks to advertise")
+    conc.add_argument("--workers", default="1,2,4,8", help="comma-separated worker counts")
     args = parser.parse_args(argv)
 
     if args.command == "autorun":
@@ -566,6 +571,24 @@ def main(argv: list[str] | None = None) -> int:
         for k, v in result.summary().items():
             print(f"  {k}: {v}")
         print("Swap MockClient for ClaudeAgentClient to run live (opt-in, budget-gated).")
+        return 0
+    if args.command == "concurrency":
+        import tempfile
+
+        from cta.concurrent import concurrency_sweep
+
+        workers = tuple(int(w) for w in args.workers.split(","))
+        with tempfile.TemporaryDirectory() as d:
+            rows = concurrency_sweep(workers, args.tasks, d)
+        print(f"Concurrent claiming over the SQLite store ({args.tasks} tasks):")
+        for r in rows:
+            print(
+                f"  workers={int(r['workers'])}: claimed={int(r['unique_claimed'])} "
+                f"double_claims={int(r['double_claims'])} "
+                f"throughput={r['throughput']:.0f}/s"
+            )
+        total_double = sum(int(r["double_claims"]) for r in rows)
+        print(f"Atomic-claim invariant holds: {total_double} double-claims across all runs.")
         return 0
     return 1
 
