@@ -18,10 +18,26 @@ P2.7 (heterogeneous specialist routing, H10), P2.2 (latency-quality Pareto), P2.
 MarketBench mixture). Also done: all non-budget Phase 3 items, P3.1 (concurrent multi-process claiming
 over the SQLite store, atomic claim validated under real contention), P3.2
 (strategic adversary demoted by the track record), and P3.3 (streaming task
-arrival, H5 under non-stationary load). Every remaining plan item now needs
-subagent budget: P2.5 (two-sided live pilot) and P3.4 (the real-agent,
-dependency-graph follow-up). The only non-code work left is the publication track
-(venue, format, related-work table).
+arrival, H5 under non-stationary load). P2.5 has been run (hard tier, two model
+families, 114 real attempts) with a negative-but-informative outcome, below. The
+remaining budget item is P3.4 (the real-agent, dependency-graph follow-up); the
+only non-code work left is the publication track (venue, format, related-work
+table).
+
+**P2.5 run (partial: one-sided, informative).** We extended the live suite to
+nineteen tasks (six harder overconfidence traps) and ran two model families over
+it, three Opus 4.8 and three Haiku 4.5 agents, closed-book, no tools (114
+attempts, `results/live_pilot/hard/`). All 114 passed at mean stated confidence
+0.93: both families are competent and uniformly underconfident (gap -0.074, ECE
+0.074), so the reliability curve is one-sided (`reliability_live_hard.svg`). The
+harder tier did not induce overconfidence and the small model was no more
+overconfident than the frontier one, so the target two-sided curve is not
+reachable from standard algorithmic tasks; the overconfident arm is
+out-of-distribution and needs tasks beyond model competence or an
+in-distribution-overconfident model family (for example a Gemini-class model).
+The honest directional finding (real agents are underconfident in-distribution,
+so a naive auction under-selects rather than over-selects) is now in the paper.
+The two-sided curve is folded into P3.4 as a task-design or model-choice step.
 
 **P2.7 landed (H10 supported).** The activation barrier holds specialist routing
 at 1.00 across observability (chance floor 0.25); without it routing collapses to

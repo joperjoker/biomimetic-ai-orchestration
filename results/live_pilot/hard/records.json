@@ -1,5 +1,404 @@
 [
  {
+  "agent": "haikuD",
+  "task": "run_length_encode",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "roman_to_int",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "is_balanced",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "merge_intervals",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "expand_ranges",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "chunk",
+  "confidence": 0.98,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "deep_get",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "caesar",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "int_to_roman",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "valid_ipv4",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "next_bigger",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "spreadsheet_column",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "format_duration",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "my_atoi",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "compare_version",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "simplify_path",
+  "confidence": 0.94,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "decode_string",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "calculate",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuD",
+  "task": "is_number",
+  "confidence": 0.87,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "run_length_encode",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "roman_to_int",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "is_balanced",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "merge_intervals",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "expand_ranges",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "chunk",
+  "confidence": 0.98,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "deep_get",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "caesar",
+  "confidence": 0.98,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "int_to_roman",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "valid_ipv4",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "next_bigger",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "spreadsheet_column",
+  "confidence": 0.98,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "format_duration",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "my_atoi",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "compare_version",
+  "confidence": 0.98,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "simplify_path",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "decode_string",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "calculate",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuE",
+  "task": "is_number",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "run_length_encode",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "roman_to_int",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "is_balanced",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "merge_intervals",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "expand_ranges",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "chunk",
+  "confidence": 0.99,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "deep_get",
+  "confidence": 0.98,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "caesar",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "int_to_roman",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "valid_ipv4",
+  "confidence": 0.93,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "next_bigger",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "spreadsheet_column",
+  "confidence": 0.98,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "format_duration",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "my_atoi",
+  "confidence": 0.92,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "compare_version",
+  "confidence": 0.96,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "simplify_path",
+  "confidence": 0.95,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "decode_string",
+  "confidence": 0.9,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "calculate",
+  "confidence": 0.85,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
+  "agent": "haikuF",
+  "task": "is_number",
+  "confidence": 0.88,
+  "pass_fraction": 1.0,
+  "passed": true
+ },
+ {
   "agent": "opusA",
   "task": "run_length_encode",
   "confidence": 0.97,

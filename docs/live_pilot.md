@@ -63,3 +63,52 @@ Two things this does and does not show.
   curve needs either harder tasks that induce failures or a more overconfident
   model (for example the Gemini-class behaviour MarketBench reports). That is the
   natural next spend: a larger, harder task suite and a mix of models.
+
+## Hard tier: two model families, 114 attempts
+
+We extended the suite to nineteen tasks by adding six harder
+overconfidence-trap tasks (`my_atoi`, `compare_version`, `simplify_path`,
+`decode_string`, `calculate`, `is_number`), each with subtle hidden edge cases
+(integer clamping, truncation toward zero, numeric-string grammar). We then ran
+two model families over the full nineteen tasks under the same closed-book,
+no-tools protocol: three Claude Opus 4.8 agents and three Claude Haiku 4.5
+agents.
+
+Reproduce the hard-tier scoring and figure:
+
+```
+python -c "from pilot_tasks.analyse import analyse; \
+analyse('results/live_pilot/hard', 'results/live_pilot/hard', \
+'results/figures/reliability_live_hard.svg')"
+```
+
+| Measure | Value |
+|---------|-------|
+| attempts | 114 (6 agents x 19 tasks) |
+| model families | 2 (Opus 4.8, Haiku 4.5) |
+| mean stated confidence | 0.93 |
+| mean realised pass rate | 1.00 |
+| overconfidence gap (stated minus realised) | -0.074 |
+| Brier score | 0.007 |
+| ECE | 0.074 |
+
+Every one of the 114 attempts passed, including all six trap tasks, at a mean
+stated confidence of 0.93. **Both families are competent and uniformly
+underconfident** on these solvable, in-distribution tasks: neither the frontier
+model nor the small model produced a single overconfident point
+(`results/figures/reliability_live_hard.svg`). The harder tier did not move the
+sign of the miscalibration.
+
+The honest reading is a directional result the simulation cannot assume away:
+on solvable in-distribution coding tasks, real-agent miscalibration is
+**underconfidence**, not overconfidence. That has a concrete allocation
+consequence. A naive self-report auction would then **under-select** capable
+agents (raising the stall rate and leaving tasks unclaimed), rather than
+over-selecting bad ones; the track-record correction helps because it
+recalibrates the bid regardless of the direction of the bias. Overconfidence,
+the failure mode the synthetic bias sweep spans, is an out-of-distribution
+phenomenon here: it needs tasks beyond a model's competence, or a model family
+that is overconfident in-distribution (the Gemini-class behaviour MarketBench
+reports). Populating the overconfident arm of the curve is therefore a deliberate
+task-design or model-choice exercise, not something a harder tier of standard
+algorithmic problems delivers.

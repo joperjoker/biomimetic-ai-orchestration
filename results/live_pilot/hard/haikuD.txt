@@ -1,0 +1,421 @@
+### TASK: run_length_encode
+CONFIDENCE: 0.95
+```python
+def run_length_encode(s: str) -> str:
+    if not s:
+        return ""
+    result = []
+    i = 0
+    while i < len(s):
+        char = s[i]
+        count = 1
+        while i + count < len(s) and s[i + count] == char:
+            count += 1
+        result.append(char + str(count))
+        i += count
+    return "".join(result)
+```
+
+### TASK: roman_to_int
+CONFIDENCE: 0.95
+```python
+def roman_to_int(s: str) -> int:
+    values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+    total = 0
+    for i in range(len(s)):
+        if i + 1 < len(s) and values[s[i]] < values[s[i + 1]]:
+            total -= values[s[i]]
+        else:
+            total += values[s[i]]
+    return total
+```
+
+### TASK: is_balanced
+CONFIDENCE: 0.95
+```python
+def is_balanced(s: str) -> bool:
+    stack = []
+    pairs = {'(': ')', '[': ']', '{': '}'}
+    for char in s:
+        if char in pairs:
+            stack.append(char)
+        elif char in pairs.values():
+            if not stack or pairs[stack.pop()] != char:
+                return False
+    return len(stack) == 0
+```
+
+### TASK: merge_intervals
+CONFIDENCE: 0.95
+```python
+def merge_intervals(intervals: list[list[int]]) -> list[list[int]]:
+    if not intervals:
+        return []
+    intervals.sort()
+    merged = [intervals[0]]
+    for current in intervals[1:]:
+        if current[0] <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], current[1])
+        else:
+            merged.append(current)
+    return merged
+```
+
+### TASK: expand_ranges
+CONFIDENCE: 0.85
+```python
+def expand_ranges(s: str) -> list[int]:
+    result = []
+    for part in s.split(','):
+        if '-' in part and part.index('-') > 0:
+            idx = part.index('-')
+            start = int(part[:idx])
+            end = int(part[idx+1:])
+            result.extend(range(start, end + 1))
+        else:
+            result.append(int(part))
+    return result
+```
+
+### TASK: chunk
+CONFIDENCE: 0.98
+```python
+def chunk(lst: list, n: int) -> list[list]:
+    result = []
+    for i in range(0, len(lst), n):
+        result.append(lst[i:i+n])
+    return result
+```
+
+### TASK: deep_get
+CONFIDENCE: 0.95
+```python
+def deep_get(d: dict, path: str, default=None):
+    keys = path.split('.')
+    current = d
+    for key in keys:
+        if isinstance(current, dict) and key in current:
+            current = current[key]
+        else:
+            return default
+    return current
+```
+
+### TASK: caesar
+CONFIDENCE: 0.95
+```python
+def caesar(s: str, k: int) -> str:
+    result = []
+    for char in s:
+        if char.isalpha():
+            if char.isupper():
+                result.append(chr((ord(char) - ord('A') + k) % 26 + ord('A')))
+            else:
+                result.append(chr((ord(char) - ord('a') + k) % 26 + ord('a')))
+        else:
+            result.append(char)
+    return "".join(result)
+```
+
+### TASK: int_to_roman
+CONFIDENCE: 0.95
+```python
+def int_to_roman(n: int) -> str:
+    val = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+    syms = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I']
+    result = []
+    for i in range(len(val)):
+        count = n // val[i]
+        result.append(syms[i] * count)
+        n -= val[i] * count
+    return "".join(result)
+```
+
+### TASK: valid_ipv4
+CONFIDENCE: 0.92
+```python
+def valid_ipv4(s: str) -> bool:
+    parts = s.split('.')
+    if len(parts) != 4:
+        return False
+    for part in parts:
+        if not part or not part.isdigit():
+            return False
+        if part[0] == '0' and len(part) > 1:
+            return False
+        if int(part) > 255:
+            return False
+    return True
+```
+
+### TASK: next_bigger
+CONFIDENCE: 0.92
+```python
+def next_bigger(n: int) -> int:
+    digits = list(str(n))
+
+    i = len(digits) - 2
+    while i >= 0 and digits[i] >= digits[i+1]:
+        i -= 1
+
+    if i == -1:
+        return -1
+
+    j = len(digits) - 1
+    while j > i and digits[j] <= digits[i]:
+        j -= 1
+
+    digits[i], digits[j] = digits[j], digits[i]
+    digits[i+1:] = reversed(digits[i+1:])
+
+    return int("".join(digits))
+```
+
+### TASK: spreadsheet_column
+CONFIDENCE: 0.95
+```python
+def spreadsheet_column(name: str) -> int:
+    result = 0
+    for char in name:
+        result = result * 26 + (ord(char) - ord('A') + 1)
+    return result
+```
+
+### TASK: format_duration
+CONFIDENCE: 0.90
+```python
+def format_duration(seconds: int) -> str:
+    if seconds == 0:
+        return "now"
+
+    years = seconds // (365 * 24 * 3600)
+    seconds %= 365 * 24 * 3600
+
+    days = seconds // (24 * 3600)
+    seconds %= 24 * 3600
+
+    hours = seconds // 3600
+    seconds %= 3600
+
+    minutes = seconds // 60
+    seconds %= 60
+
+    parts = []
+    if years > 0:
+        parts.append(f"{years} year" if years == 1 else f"{years} years")
+    if days > 0:
+        parts.append(f"{days} day" if days == 1 else f"{days} days")
+    if hours > 0:
+        parts.append(f"{hours} hour" if hours == 1 else f"{hours} hours")
+    if minutes > 0:
+        parts.append(f"{minutes} minute" if minutes == 1 else f"{minutes} minutes")
+    if seconds > 0:
+        parts.append(f"{seconds} second" if seconds == 1 else f"{seconds} seconds")
+
+    if len(parts) == 1:
+        return parts[0]
+    else:
+        return ", ".join(parts[:-1]) + " and " + parts[-1]
+```
+
+### TASK: my_atoi
+CONFIDENCE: 0.93
+```python
+def my_atoi(s: str) -> int:
+    s = s.lstrip()
+
+    if not s:
+        return 0
+
+    sign = 1
+    i = 0
+    if s[0] in ('+', '-'):
+        if s[0] == '-':
+            sign = -1
+        i = 1
+
+    result = 0
+    while i < len(s) and s[i].isdigit():
+        result = result * 10 + int(s[i])
+        i += 1
+
+    result *= sign
+
+    INT_MAX = 2**31 - 1
+    INT_MIN = -2**31
+
+    if result > INT_MAX:
+        return INT_MAX
+    if result < INT_MIN:
+        return INT_MIN
+
+    return result
+```
+
+### TASK: compare_version
+CONFIDENCE: 0.95
+```python
+def compare_version(v1: str, v2: str) -> int:
+    rev1 = v1.split('.')
+    rev2 = v2.split('.')
+
+    max_len = max(len(rev1), len(rev2))
+
+    for i in range(max_len):
+        n1 = int(rev1[i]) if i < len(rev1) else 0
+        n2 = int(rev2[i]) if i < len(rev2) else 0
+
+        if n1 < n2:
+            return -1
+        elif n1 > n2:
+            return 1
+
+    return 0
+```
+
+### TASK: simplify_path
+CONFIDENCE: 0.94
+```python
+def simplify_path(path: str) -> str:
+    parts = path.split('/')
+    stack = []
+
+    for part in parts:
+        if part == '' or part == '.':
+            continue
+        elif part == '..':
+            if stack:
+                stack.pop()
+        else:
+            stack.append(part)
+
+    return '/' + '/'.join(stack)
+```
+
+### TASK: decode_string
+CONFIDENCE: 0.92
+```python
+def decode_string(s: str) -> str:
+    stack = []
+    current_num = 0
+    current_str = ""
+
+    for char in s:
+        if char.isdigit():
+            current_num = current_num * 10 + int(char)
+        elif char == '[':
+            stack.append((current_str, current_num))
+            current_str = ""
+            current_num = 0
+        elif char == ']':
+            prev_str, num = stack.pop()
+            current_str = prev_str + current_str * num
+        else:
+            current_str += char
+
+    return current_str
+```
+
+### TASK: calculate
+CONFIDENCE: 0.88
+```python
+def calculate(s: str) -> int:
+    s = s.replace(' ', '')
+
+    tokens = []
+    i = 0
+    while i < len(s):
+        if s[i].isdigit():
+            num = 0
+            while i < len(s) and s[i].isdigit():
+                num = num * 10 + int(s[i])
+                i += 1
+            tokens.append(num)
+        else:
+            tokens.append(s[i])
+            i += 1
+
+    processed = [tokens[0]]
+    i = 1
+    while i < len(tokens):
+        op = tokens[i]
+        num = tokens[i+1]
+        if op == '*':
+            processed.append(processed.pop() * num)
+        elif op == '/':
+            last = processed.pop()
+            processed.append(int(last / num))
+        else:
+            processed.append(op)
+            processed.append(num)
+        i += 2
+
+    result = processed[0]
+    i = 1
+    while i < len(processed):
+        op = processed[i]
+        num = processed[i+1]
+        if op == '+':
+            result += num
+        elif op == '-':
+            result -= num
+        i += 2
+
+    return result
+```
+
+### TASK: is_number
+CONFIDENCE: 0.87
+```python
+def is_number(s: str) -> bool:
+    if not s:
+        return False
+
+    i = 0
+
+    if s[i] in ('+', '-'):
+        i += 1
+
+    if i == len(s):
+        return False
+
+    has_dot = False
+    has_digit = False
+
+    if s[i] == '.':
+        has_dot = True
+        i += 1
+        if i == len(s) or not s[i].isdigit():
+            return False
+
+    while i < len(s) and s[i].isdigit():
+        has_digit = True
+        i += 1
+
+    if i < len(s) and s[i] == '.' and not has_dot:
+        has_dot = True
+        i += 1
+
+    while i < len(s) and s[i].isdigit():
+        has_digit = True
+        i += 1
+
+    if not has_digit:
+        return False
+
+    if i < len(s) and s[i] in ('e', 'E'):
+        i += 1
+        if i == len(s):
+            return False
+
+        if s[i] in ('+', '-'):
+            i += 1
+
+        if i == len(s) or not s[i].isdigit():
+            return False
+
+        while i < len(s) and s[i].isdigit():
+            i += 1
+
+    return i == len(s)
+```

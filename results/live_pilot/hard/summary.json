@@ -1,12 +1,12 @@
 {
- "attempts": 57,
- "agents": 3,
+ "attempts": 114,
+ "agents": 6,
  "tasks": 19,
- "mean_confidence": 0.9201754385964912,
+ "mean_confidence": 0.9259649122807018,
  "mean_success": 1.0,
- "overconfidence_gap": -0.0798245614035088,
- "brier": 0.008668421052631584,
- "ece": 0.07982456140350887,
+ "overconfidence_gap": -0.07403508771929823,
+ "brier": 0.007366666666666677,
+ "ece": 0.07403508771929765,
  "per_task_pass_rate": {
   "run_length_encode": 1.0,
   "roman_to_int": 1.0,
@@ -35,14 +35,14 @@
    "count": 1
   },
   {
-   "mean_prediction": 0.852,
+   "mean_prediction": 0.8604761904761905,
    "accuracy": 1.0,
-   "count": 10
+   "count": 21
   },
   {
-   "mean_prediction": 0.9386956521739129,
+   "mean_prediction": 0.9428260869565225,
    "accuracy": 1.0,
-   "count": 46
+   "count": 92
   }
  ]
 }
