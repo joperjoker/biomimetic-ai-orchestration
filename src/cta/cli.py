@@ -400,6 +400,26 @@ def autorun(
         ),
         figures_dir / "pareto_latency_quality.svg",
     )
+    # Strategic-adversary figure: the adversary's share of won tasks per round
+    # under reliability versus raw selection (P3.2). Reliability demotes it as its
+    # record catches up; raw has no such feedback.
+    adv_series = {
+        "reliability selection": [
+            (float(i), float(s)) for i, s in enumerate(adversary["reliability_share"])
+        ],
+        "raw selection": [
+            (float(i), float(s)) for i, s in enumerate(adversary["raw_share"])
+        ],
+    }
+    save_svg(
+        line_chart(
+            adv_series,
+            title="Strategic adversary demoted by the track record over rounds",
+            xlabel="round",
+            ylabel="adversary share of won tasks",
+        ),
+        figures_dir / "strategic_adversary.svg",
+    )
     # Reliability diagram of the realistic fleet: mean predicted vs realised
     # success, with the diagonal of perfect calibration. Points below the diagonal
     # are overconfident. The correction pulls the retained winners toward it.
@@ -452,6 +472,7 @@ def autorun(
         "figures/cost_vs_n.svg",
         "figures/specialist_routing.svg",
         "figures/pareto_latency_quality.svg",
+        "figures/strategic_adversary.svg",
         "figures/reliability_diagram.svg",
         "figures/fleet_mix.svg",
     ]

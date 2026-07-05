@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
+<rect width="720" height="440" fill="white"/>
+<text x="360" y="22" text-anchor="middle" font-size="16">Strategic adversary demoted by the track record over rounds</text>
+<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
+<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
+<text x="315" y="422" text-anchor="middle">round</text>
+<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">adversary share of won tasks</text>
+<path d="M70.0 40.0 L140.0 211.6 L210.0 347.3 L280.0 327.0 L350.0 371.2 L420.0 380.0 L490.0 380.0 L560.0 380.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="70.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="140.0" cy="211.6" r="3" fill="#2f6f9f"/>
+<circle cx="210.0" cy="347.3" r="3" fill="#2f6f9f"/>
+<circle cx="280.0" cy="327.0" r="3" fill="#2f6f9f"/>
+<circle cx="350.0" cy="371.2" r="3" fill="#2f6f9f"/>
+<circle cx="420.0" cy="380.0" r="3" fill="#2f6f9f"/>
+<circle cx="490.0" cy="380.0" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="380.0" r="3" fill="#2f6f9f"/>
+<rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
+<text x="594" y="58">reliability selection</text>
+<path d="M70.0 197.1 L140.0 380.0 L210.0 380.0 L280.0 380.0 L350.0 380.0 L420.0 380.0 L490.0 380.0 L560.0 380.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="70.0" cy="197.1" r="3" fill="#c25a3d"/>
+<circle cx="140.0" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="210.0" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="280.0" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="350.0" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="420.0" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="490.0" cy="380.0" r="3" fill="#c25a3d"/>
+<circle cx="560.0" cy="380.0" r="3" fill="#c25a3d"/>
+<rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
+<text x="594" y="80">raw selection</text>
+<text x="70" y="398" text-anchor="middle">0</text>
+<text x="560" y="398" text-anchor="middle">7</text>
+<text x="62" y="380" text-anchor="end">0</text>
+<text x="62" y="50" text-anchor="end">0.22</text>
+</svg>

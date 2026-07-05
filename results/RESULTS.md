@@ -51,6 +51,8 @@ pending.
 
 ![pareto_latency_quality](figures/pareto_latency_quality.svg)
 
+![strategic_adversary](figures/strategic_adversary.svg)
+
 ![reliability_diagram](figures/reliability_diagram.svg)
 
 ![fleet_mix](figures/fleet_mix.svg)
