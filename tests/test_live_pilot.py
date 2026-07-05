@@ -9,7 +9,7 @@ from pilot_tasks.suite import TASK_NAMES, validate
 def test_every_reference_passes_its_own_hidden_cases():
     # If a reference fails its own cases, the scoring of real agents is invalid.
     assert all(s == 1.0 for s in validate().values())
-    assert len(TASK_NAMES) == 13
+    assert len(TASK_NAMES) == 19
 
 
 def test_parser_extracts_confidence_and_code():

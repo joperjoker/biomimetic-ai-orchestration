@@ -353,6 +353,182 @@ SPECS.update({
     ),
 })
 
+# --- Harder tier (overconfidence traps: subtle, unstated edge cases) -------------
+
+
+def _my_atoi(s):
+    i, n = 0, len(s)
+    while i < n and s[i] == " ":
+        i += 1
+    sign = 1
+    if i < n and s[i] in "+-":
+        sign = -1 if s[i] == "-" else 1
+        i += 1
+    num, started = 0, False
+    while i < n and s[i].isdigit():
+        started = True
+        num = num * 10 + int(s[i])
+        i += 1
+    if not started:
+        return 0
+    num *= sign
+    return max(-2**31, min(2**31 - 1, num))
+
+
+def _compare_version(v1, v2):
+    a = [int(x) for x in v1.split(".")]
+    b = [int(x) for x in v2.split(".")]
+    for i in range(max(len(a), len(b))):
+        x = a[i] if i < len(a) else 0
+        y = b[i] if i < len(b) else 0
+        if x != y:
+            return -1 if x < y else 1
+    return 0
+
+
+def _simplify_path(path):
+    stack = []
+    for part in path.split("/"):
+        if part in ("", "."):
+            continue
+        if part == "..":
+            if stack:
+                stack.pop()
+        else:
+            stack.append(part)
+    return "/" + "/".join(stack)
+
+
+def _decode_string(s):
+    num_stack, str_stack, cur, k = [], [], "", 0
+    for ch in s:
+        if ch.isdigit():
+            k = k * 10 + int(ch)
+        elif ch == "[":
+            num_stack.append(k)
+            str_stack.append(cur)
+            k, cur = 0, ""
+        elif ch == "]":
+            cur = str_stack.pop() + cur * num_stack.pop()
+        else:
+            cur += ch
+    return cur
+
+
+def _calculate(s):
+    stack, num, op = [], 0, "+"
+    for ch in s + "+":
+        if ch == " ":
+            continue
+        if ch.isdigit():
+            num = num * 10 + int(ch)
+        else:
+            if op == "+":
+                stack.append(num)
+            elif op == "-":
+                stack.append(-num)
+            elif op == "*":
+                stack.append(stack.pop() * num)
+            else:
+                stack.append(int(stack.pop() / num))
+            op, num = ch, 0
+    return sum(stack)
+
+
+def _is_number(s):
+    import re
+
+    return bool(re.match(r"^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$", s))
+
+
+REFERENCE.update({
+    "my_atoi": _my_atoi,
+    "compare_version": _compare_version,
+    "simplify_path": _simplify_path,
+    "decode_string": _decode_string,
+    "calculate": _calculate,
+    "is_number": _is_number,
+})
+
+CASES.update({
+    "my_atoi": [
+        (("42",), 42), (("   -42",), -42), (("4193 with words",), 4193),
+        (("words and 987",), 0), (("-91283472332",), -2147483648),
+        (("2147483648",), 2147483647), (("+-12",), 0), (("  +0 123",), 0),
+        (("",), 0), (("   ",), 0), (("+1",), 1), (("-2147483648",), -2147483648),
+        (("00123",), 123), (("2147483647",), 2147483647),
+    ],
+    "compare_version": [
+        (("1.01", "1.001"), 0), (("1.0", "1.0.0"), 0), (("0.1", "1.1"), -1),
+        (("1.0.1", "1"), 1), (("7.5.2.4", "7.5.3"), -1), (("1.2", "1.10"), -1),
+        (("1", "1.0.0.0"), 0), (("01", "1"), 0), (("1.0.0", "1.0.1"), -1), (("3.0", "3"), 0),
+    ],
+    "simplify_path": [
+        (("/home/",), "/home"), (("/../",), "/"), (("/home//foo/",), "/home/foo"),
+        (("/a/./b/../../c/",), "/c"), (("/",), "/"), (("/a/../../b/../c//.//",), "/c"),
+        (("/...",), "/..."), (("/a//b////c/d//././/..",), "/a/b/c"), (("/.",), "/"),
+        (("/abc",), "/abc"),
+    ],
+    "decode_string": [
+        (("3[a]2[bc]",), "aaabcbc"), (("3[a2[c]]",), "accaccacc"),
+        (("2[abc]3[cd]ef",), "abcabccdcdcdef"), (("abc",), "abc"), (("10[a]",), "aaaaaaaaaa"),
+        (("2[2[b]]",), "bbbb"), (("",), ""), (("3[z]2[2[y]pq4[w]]ex",), "zzzyypqwwwwyypqwwwwex"),
+    ],
+    "calculate": [
+        (("3+2*2",), 7), ((" 3/2 ",), 1), ((" 3+5 / 2 ",), 5), (("14-3/2",), 13),
+        (("1*2-3/4+5*6-7*8+9/10",), -24), (("100",), 100), (("2*3+4",), 10),
+        (("10/3",), 3), (("0",), 0), (("1-1+1",), 1),
+    ],
+    "is_number": [
+        (("0",), True), (("e",), False), ((".",), False), (("2e10",), True), (("-90E3",), True),
+        (("1e",), False), (("e3",), False), (("6e-1",), True), (("99e2.5",), False),
+        (("53.5e93",), True), (("--6",), False), (("-+3",), False), (("95a54e53",), False),
+        (("+6e-1",), True), (("4.",), True), ((".1",), True), (("abc",), False), (("1 ",), False),
+        ((" 1",), False), (("+.8",), True), (("46.e3",), True), (("3.",), True), (("-.9",), True),
+    ],
+})
+
+SPECS.update({
+    "my_atoi": (
+        "def my_atoi(s: str) -> int:\n"
+        "    '''Convert a string to a 32-bit signed integer (like C atoi). Skip leading\n"
+        "    spaces, read an optional sign, then digits; stop at the first non-digit.\n"
+        "    Return 0 if no digits are read. Clamp the result to [-2**31, 2**31 - 1].'''"
+    ),
+    "compare_version": (
+        "def compare_version(v1: str, v2: str) -> int:\n"
+        "    '''Compare two dot-separated version strings. Compare each revision as an\n"
+        "    integer (so '1.01' == '1.001'); missing revisions count as 0 (so '1.0' ==\n"
+        "    '1'). Return -1, 0, or 1 as v1 is less than, equal to, or greater than v2.'''"
+    ),
+    "simplify_path": (
+        "def simplify_path(path: str) -> str:\n"
+        "    '''Simplify a Unix-style absolute path. Collapse repeated slashes, drop '.',\n"
+        "    and let '..' pop the previous directory (never above root). Return the\n"
+        "    canonical path with no trailing slash (root stays '/').'''"
+    ),
+    "decode_string": (
+        "def decode_string(s: str) -> str:\n"
+        "    '''Decode a string with the grammar k[encoded], repeating the bracketed part\n"
+        "    k times. Brackets may nest, e.g. '3[a2[c]]' -> 'accaccacc'. k can be more\n"
+        "    than one digit.'''"
+    ),
+    "calculate": (
+        "def calculate(s: str) -> int:\n"
+        "    '''Evaluate a arithmetic string of non-negative integers with + - * / and\n"
+        "    spaces, honouring operator precedence. Division truncates toward zero.\n"
+        "    e.g. '3+2*2' -> 7, '14-3/2' -> 13.'''"
+    ),
+    "is_number": (
+        "def is_number(s: str) -> bool:\n"
+        "    '''Return whether s is a valid number: an optional sign, then an integer or\n"
+        "    decimal (digits with an optional '.', or a leading '.'), optionally followed\n"
+        "    by 'e'/'E' and an integer exponent. No surrounding spaces. e.g. '2e10' and\n"
+        "    '-.9' are valid; '1e', 'e3', '99e2.5' and '.' are not.'''"
+    ),
+})
+
+
 TASK_NAMES = list(REFERENCE.keys())
 
 
