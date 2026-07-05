@@ -4,17 +4,20 @@ A running log of what is complete and what comes next. Read this, then `claude.m
 
 ## Resume here (next session)
 
-**Where things stand.** Branch `claude/biomimetic-ai-orchestration-init-0nb5db`, PR #1 open against `main`. The framework is built and evaluated end to end: 117 tests pass, `ruff` clean, tree clean and pushed. Ten pre-registered hypotheses H1 to H10 are evaluated by `cta reproduce-all`; H1, H3, H4, H5, H7, H8, H9, H10 are supported and H2, H6 are honest negatives against the full-information optimum. Phases 0 to 2 of `docs/next_experiments.md` are done, plus P3.1, P3.2 and P3.3 (all non-budget Phase 3 items). The paper (`docs/paper.md`), the dataset (`results/dataset/runs.csv`), the cost and latency dials, the runnable PoC (`python -m examples.poc`), and `docs/product.md` are all in place and consistent.
+**Where things stand.** Branch `claude/biomimetic-ai-orchestration-init-0nb5db`, PR #1 open against `main`. 122 tests pass, `ruff` clean, tree clean and pushed. The empirical arc is complete end to end: (1) synthetic H1 to H10 via `cta reproduce-all` (H1, H3, H4, H5, H7, H8, H9, H10 supported; H2, H6 honest negatives); (2) the MarketBench-grounded realistic fleet; (3) the live pilot with real Claude subagents; (4) the capability ladder and (5) the dependency-graph project, both exercising the two wrappers. Phases 0 to 3 of `docs/next_experiments.md` are done including P2.5 and P3.4.
 
-**All cheap, no-budget code items are now done.** Since this note was first written: P3.3 streaming arrival (H5 under non-stationary load; `TemporalConfig.arrival_span`, `harness.streaming_arrival`) and P3.1 concurrent multi-process claiming (`src/cta/concurrent.py`, `cta concurrency`) which validates the atomic claim under real OS-level contention (zero double-claims across one to eight processes). Every remaining plan item needs subagent budget or is not code.
+**The real-agent wrapper track is closed (three tiers of real subagent data).**
+- **P2.5 hard tier** (`results/live_pilot/hard/`, `pilot_tasks/analyse.py`): 114 attempts, Opus 4.8 + Haiku 4.5 over 19 trap tasks. Both families competent and uniformly underconfident (gap -0.074). One-sided: the overconfident arm is out of distribution for these models on standard tasks. This is the one open scientific gap (see below).
+- **Capability ladder** (`results/live_pilot/ladder/`, `pilot_tasks/ladder.py`): Haiku/Sonnet/Opus x bare/task-wrapped over 8 expert tasks. Task wrapper lifts the weak model to the frontier; agent-wrapper routing holds frontier completion at ~47x lower cost with the wrapper, loses completion without it.
+- **Project** (`results/live_pilot/project/`, `pilot_tasks/project.py`): miniquery, 5 modules with a dependency graph. Bare spec: every model fails (divergent interfaces); the task wrapper's interface contract makes all three deliver a conforming project; the agent wrapper assembles a working cross-model project at ~39x lower cost. Bare assembly fails at any price.
 
-**Do when authorised (costs subagent budget):**
-- **P2.5 two-sided live pilot**: a harder, multi-model task suite run through real Claude Code subagents to populate the overconfident side of the reliability curve. Needs explicit budget approval before spending.
-- **P3.4 real complex job in the wild** (the follow-up paper): decomposition, a dependency graph, and live specialist subagents. Absorbs P2.5 and P2.6.
+**What is next (planned, not started).**
+1. **Coherence pass on `docs/paper.md`** (cheap, high value): §3 has grown to six result blocks. Restructure into one arc with a unified results table, foreground the wrapper/cost story in the abstract and contributions, and decide whether to elevate the wrapper findings to pre-registered hypotheses (H11 task-wrapper lift, H12 agent-wrapper routing) or keep them as external-validity contributions. Refresh `cta dashboard` to inline the ladder/project figures.
+2. **Publication track** (non-code, the main remaining bucket): choose a venue; convert the Markdown paper to LaTeX/PDF with print-safe figures; write the related-work table versus RouteLLM, EvoRoute, DiSRouter, MarketBench; polish the abstract.
+3. **Commercial doc** (`docs/product.md`): add the wrapper cost story (the ~39 to 47x saving from task wrapper + calibrated routing is the strongest commercial hook).
+4. **Optional deeper empirics (budget-gated):** more agents per cell for statistical power on the ladder/project; a genuinely overconfident model family or out-of-distribution tasks to finally populate the two-sided reliability curve (the open P2.5 gap); a larger project.
 
-**Publication track (not code):** decide a venue and format (the paper is Markdown; a submission needs LaTeX or PDF, print-safe figures, and a related-work table versus RouteLLM, EvoRoute, DiSRouter, MarketBench). See the "Further planning threads" in `docs/next_experiments.md`.
-
-**Operational notes.** An hourly self check-in cron (session-scoped) watches PR #1's CI and re-arms silently; it stops when the PR merges or closes. `claude.md` section 5 now encodes the four operating pillars (elite-team Consortium, autonomous loop, spinning up many subagent teams, and holding the North Star). Reproduce everything from seeds with `cta reproduce-all`.
+**Operational notes.** An hourly self check-in cron (session-scoped) watches PR #1's CI and re-arms silently; it stops when the PR merges or closes. `claude.md` section 5 encodes the four operating pillars. Reproduce the synthetic results from seeds with `cta reproduce-all`; reproduce the real-agent tiers with `python -m pilot_tasks.analyse`, `python -m pilot_tasks.ladder`, `python -m pilot_tasks.project`.
 
 
 ## In one line
