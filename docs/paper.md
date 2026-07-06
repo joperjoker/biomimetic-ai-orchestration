@@ -55,7 +55,7 @@ Research questions:
 - RQ11: Does wrapping a task in an explicit interface contract and acceptance criteria (the task wrapper) raise a weak model's completion toward the frontier and let independently built modules integrate?
 - RQ12: Does routing each task to the cheapest model whose reliability-corrected self-report clears the barrier (the agent wrapper) hold frontier-level completion at a fraction of the always-frontier cost, and does that saving depend on the task being wrapped?
 
-Scope and non-goals: this is a simulation study, not a live deployment. The atomic claim assumes a single logical coordination store providing compare-and-swap, so the framework reduces central work rather than removing it entirely (discussed in `docs/theory.md` section 6). The security model is limited to reliability scoring and scope integrity: it models agents that attempt out-of-scope actions and screens them at the gate, but it does not address a strategic adversary that games the compatibility score or the track record itself.
+Scope and non-goals: this is a simulation study, not a live deployment. The atomic claim assumes a single logical coordination store providing compare-and-swap, so the framework reduces central work rather than removing it entirely (discussed in `docs/theory.md` section 6). The security model covers reliability scoring and scope integrity, and it extends to one form of gaming: an adversary that inflates its self-reported compatibility to win bids is demoted by the track record as its realised failures accrue (the strategic-adversary result in section 3). It does not yet address a more sophisticated adversary that manipulates the reliability history itself, for example by sandbagging, doing genuine work to build a clean record before defecting on high-value tasks, or by colluding to launder reputation. That reputation-gaming threat is marked as a limitation and a next step (section 4).
 
 ## 2. Methodology
 
@@ -297,6 +297,19 @@ Three lines follow directly. First, power the real-agent results: raise every la
 ### Impact
 
 The scientific contribution is to name and fix the failure mode of self-selection. Decentralised self-selection is well studied, but this work shows that its load-bearing assumption, that an agent can assess its own fit, is exactly where language-model agents are known to be weak, and that a correction reweighting by an observable track record, agnostic to the direction of the miscalibration, recovers what that weakness costs without any privileged information. The engineering contribution is a decentralised allocation layer that removes the coordinator as both the scaling bottleneck and the largest line item, exposed as a tunable service with cost and latency dials. The most consequential contribution is practical: the two wrappers turn the mechanism into a cost result on real agents, and the interface-contract task wrapper is shown to be a precondition for decomposed multi-agent work to integrate at all, a result the project experiment makes vivid because even the frontier model fails the project without it. If that result holds at scale, it changes how agent systems are built, from one expensive generalist per task toward a swarm of cheap, wrapped specialists routed by calibrated confidence, which is the subject of the outlook below.
+
+### Limitations and how they are addressed
+
+The study's limits are stated plainly here, each with its current status, so a reader can see what is a deliberate design choice, what is already mitigated, and what remains open.
+
+| Limitation | Status | How it is handled or will be |
+|------------|--------|------------------------------|
+| Quality is about 94 per cent of the full-information optimum (H2 not supported) | By design, reported honestly | The decomposition shows about three quarters of the gap is quality deliberately traded for latency by the cost-aware bid; a quality-first configuration reaches the optimum's margin at the expense of speed, and the operating point is a tunable dial, not a ceiling. |
+| The real-agent results are a small sample (one to five agents per cell; one per cell on the project) | Open, marked throughout | The ladder's weakest cell is now five agents with a tight bootstrap interval; powering the remaining cells and a second project to confidence intervals is the first real-agent next step. |
+| No live validation against a naturally overconfident agent | Open, scoped | Both Claude families are underconfident in distribution, so the overconfident arm is out of distribution here; populating it needs tasks beyond a model's competence or a model family that is overconfident in distribution, which is a deliberate task-design or model-choice exercise. |
+| Bid gaming (an agent inflating its self-report) | Addressed | The track record demotes such an adversary as its realised failures accrue, with no anticipation of the gaming needed (strategic-adversary result, this section). |
+| Reputation gaming (manipulating the track record itself, for example sandbagging) | Open, next step | Not yet modelled; the reliability window and the gate are the levers, and a synthetic sandbagging adversary is the planned test. |
+| The atomic claim assumes a single logical coordination store | Design boundary | The framework reduces central work rather than removing it entirely; the claim is validated under real multi-process contention, and the store is self-contained (SQLite by default). |
 
 ## 5. Building the wrappers
 
