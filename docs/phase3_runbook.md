@@ -49,37 +49,40 @@ is variance. Map the variance before spending any usage:
   Three runs pin these down, so Opus does **not** need heavy replication to earn
   a CI.
 
-So both deliverables concentrate on Haiku, which is exactly what a subscription
-session limit can absorb; Opus stays a small, fixed tail.
+The variance is Haiku-concentrated. We nevertheless adopt a **balanced design**
+(equal n across the three models on the ladder and the OOD tier): it removes the
+"why is Opus under-powered?" question, and the extra runs on the saturated
+Sonnet/Opus cells genuinely tighten their intervals (rule-of-three lower bound
+rises from about 0.37 at n=3 to about 0.74 at n=10). This over-samples the
+low-variance cells, which is statistically inefficient but the point is a
+defensible, balanced table; the conclusions are unchanged (Haiku still carries
+the real variance, the two-sided curve still comes from the OOD tier). The Opus
+tail is therefore larger than a variance-weighted plan, and is paced across
+sessions accordingly.
 
-## Run budget for the two deliverables (additive over what exists)
+## Run budget for the two deliverables (balanced design, additive over what exists)
 
-Existing: ladder Haiku bare n=5, Haiku wrapped n=2, others n=1; project n=1.
+Existing: ladder Haiku bare n=5, Haiku wrapped n=2, others n=1; project n=1 per cell.
 
-**1. Real confidence intervals (reviewer #2)** -- replicate where the variance is.
+**1. Real confidence intervals (reviewer #2)** -- equal n across models.
 
-| Cell | Now to target | Add | Model |
-|------|---------------|-----|-------|
-| Ladder Haiku bare | 5 to 10 | +5 | Haiku |
-| Ladder Haiku wrapped | 2 to 10 | +8 | Haiku |
-| Ladder Sonnet bare/wrapped | 1 to 5 | +8 | Sonnet |
-| Ladder Opus bare/wrapped | 1 to 3 | +4 | Opus |
-| Project, all 6 cells | 1 to 3 each | +12 | 4 Haiku, 4 Sonnet, 4 Opus |
+| Cell group | Target n | Add | of which Opus |
+|------------|----------|-----|---------------|
+| Ladder, 6 cells (3 models x 2 conditions) | 10 | +49 | +18 |
+| Project, 6 cells | 5 (near-deterministic 0/1, converges fast) | +24 | +8 |
 
-**2. Two-sided calibration curve (reviewer #3)** -- overconfidence on a weak model.
+**2. Two-sided calibration curve (reviewer #3)** -- equal n across models so the
+three reliability diagrams overlay with comparable confidence.
 
-| Cell | Runs | Model |
-|------|------|-------|
-| OOD suite, Haiku (the overconfidence signal) | 10 | Haiku |
-| OOD suite, Sonnet (the gradient) | 4 | Sonnet |
+| Cell | Target n | Add | of which Opus |
+|------|----------|-----|---------------|
+| OOD suite, Haiku / Sonnet / Opus | 10 each | +30 | +10 |
 
-**Totals: ~27 Haiku, ~16 Sonnet, ~8 Opus.** Haiku-dominated. The only heavy
-item, the 8 Opus runs, sits on saturated cells and can drop to n=2 (6 runs) with
-an honest binomial-interval note if a week is tight.
+**Totals: ~31 Haiku, ~36 Sonnet, ~36 Opus (~103 runs).** Balanced. The Opus tail
+(~36 runs) is the pacing item; it is spread 2-3 per session across weekly resets.
 
 Optional stretch (not required by either reviewer, defer): a held-out second
-expert suite at Haiku/Sonnet n=3 to show the wrapper lift is not overfit to one
-8-task set.
+expert suite at n=10 to show the wrapper lift is not overfit to one 8-task set.
 
 ## Fitting the Pro session limit
 
@@ -92,16 +95,18 @@ solve draws on it. The design fits by construction:
 - **Value first.** The first session of reset-week builds the OOD suite
   (in-session, no solves) and runs the Haiku OOD batch, landing the two-sided
   curve. Then trickle the Haiku/Sonnet CI replicates over following sessions.
-- **Cluster the Opus tail.** Put the ~8 Opus runs, 2-3 at a time, into sessions
-  with clear weekly headroom.
+- **Cluster the Opus tail.** The ~36 Opus runs are the pacing item; put 2-3 into
+  each session that has clear weekly headroom.
 - **Resume across resets.** `python -m pilot_tasks.analyse` and
   `cta.cli reproduce-all` recompute everything from committed data, so the paper
   refreshes batch by batch and the run survives any number of resets.
 
-Exact fit depends on the absolute Pro limits, which the session cannot read; but
-because the plan is Haiku-dominated, micro-batched and fully resumable, it is
-achievable on subscription alone even if it spans several sessions or a couple of
-weekly resets. Nothing here needs an API key.
+At about 3-5 solves per session, the ~103-run balanced design spans roughly
+20-35 sessions across however many weekly resets the Opus tail requires. Exact
+fit depends on the absolute Pro limits, which the session cannot read; but
+because it is micro-batched and fully resumable, the total count only changes how
+many sessions it spans, never whether it completes. Nothing here needs an API
+key.
 
 ## What is prebuilt vs pending
 
