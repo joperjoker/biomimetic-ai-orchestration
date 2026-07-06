@@ -34,23 +34,74 @@ resets and sessions.
 5. **Commit after every batch.** So a mid-week cap or a session restart never
    loses a completed batch, and the next reset resumes where it stopped.
 
-## Staged batches, cheapest-and-most-valuable first
+## The statistical insight: real CIs live on the cheap models
 
-Order is chosen so the highest-value result lands first and the usage hog
-(Opus) is last and smallest. "Weight" is relative subscription-usage load.
+Reviewer #2 wants confidence intervals, but a CI is only informative where there
+is variance. Map the variance before spending any usage:
 
-| # | Batch | Suite | Runs | Weight | Delivers |
-|---|-------|-------|------|--------|----------|
-| 1 | Build OOD overconfidence suite (in-session, no subagents) | new `pilot_tasks/ood_suite.py` | 0 | none | the tasks needed for batch 2 |
-| 2 | Haiku OOD overconfidence tier | `ood_suite` | ~8-10 Haiku | low | **two-sided calibration curve** (reviewer #3): real overconfidence data on tasks beyond Haiku's competence |
-| 3 | Ladder CIs, cheap cells | `expert_suite` | Haiku to n=8, Sonnet to n=6 | low-mid | tight CIs on the cheap ladder cells (reviewer #2) |
-| 4 | Project CIs, cheap cells | `project_suite` | Haiku + Sonnet to n=3-5 | mid | CIs on project completion for the cheap cells |
-| 5 | Held-out generalization suite (in-session build + Haiku/Sonnet runs) | new second expert suite | Haiku + Sonnet n=3 | low-mid | wrapper lift (H11) is not overfit to one 8-task set |
-| 6 | Opus CIs (last, smallest) | `expert_suite` + `project_suite` | Opus to n=3 | high | frontier-cell CIs; keep n=3 to bound the Opus load |
+- **Variance-carrying cells (need replicates):** the Haiku ladder cells (Haiku
+  bare 0.925, and the Haiku wrapped lift) and every OOD calibration cell. These
+  are all Haiku, the lightest model on the allowance, so replication is cheap.
+- **Saturated cells (ceiling/floor, low variance):** Sonnet and Opus completion
+  sit at 1.00, and the bare project sits at 0. A bootstrap on all-identical
+  outcomes is degenerate; the honest interval is the binomial / rule-of-three
+  interval, which is a function of n, not of piling on runs beyond a modest n.
+  Three runs pin these down, so Opus does **not** need heavy replication to earn
+  a CI.
 
-Rule of thumb: batches 1-2 are the target for the **first** reset week (they
-carry the single most valuable new result at low usage). Batches 3-5 fill
-subsequent weeks. Batch 6 (Opus) is scheduled for a week with ample headroom.
+So both deliverables concentrate on Haiku, which is exactly what a subscription
+session limit can absorb; Opus stays a small, fixed tail.
+
+## Run budget for the two deliverables (additive over what exists)
+
+Existing: ladder Haiku bare n=5, Haiku wrapped n=2, others n=1; project n=1.
+
+**1. Real confidence intervals (reviewer #2)** -- replicate where the variance is.
+
+| Cell | Now to target | Add | Model |
+|------|---------------|-----|-------|
+| Ladder Haiku bare | 5 to 10 | +5 | Haiku |
+| Ladder Haiku wrapped | 2 to 10 | +8 | Haiku |
+| Ladder Sonnet bare/wrapped | 1 to 5 | +8 | Sonnet |
+| Ladder Opus bare/wrapped | 1 to 3 | +4 | Opus |
+| Project, all 6 cells | 1 to 3 each | +12 | 4 Haiku, 4 Sonnet, 4 Opus |
+
+**2. Two-sided calibration curve (reviewer #3)** -- overconfidence on a weak model.
+
+| Cell | Runs | Model |
+|------|------|-------|
+| OOD suite, Haiku (the overconfidence signal) | 10 | Haiku |
+| OOD suite, Sonnet (the gradient) | 4 | Sonnet |
+
+**Totals: ~27 Haiku, ~16 Sonnet, ~8 Opus.** Haiku-dominated. The only heavy
+item, the 8 Opus runs, sits on saturated cells and can drop to n=2 (6 runs) with
+an honest binomial-interval note if a week is tight.
+
+Optional stretch (not required by either reviewer, defer): a held-out second
+expert suite at Haiku/Sonnet n=3 to show the wrapper lift is not overfit to one
+8-task set.
+
+## Fitting the Pro session limit
+
+The Pro plan caps usage per rolling session and per week, and every subagent
+solve draws on it. The design fits by construction:
+
+- **Micro-batch per session.** Run about 3-5 subagent solves per session (mostly
+  Haiku/Sonnet), commit, let the session limit reset, continue. A capped-out
+  session never costs rework because the prior batch is committed.
+- **Value first.** The first session of reset-week builds the OOD suite
+  (in-session, no solves) and runs the Haiku OOD batch, landing the two-sided
+  curve. Then trickle the Haiku/Sonnet CI replicates over following sessions.
+- **Cluster the Opus tail.** Put the ~8 Opus runs, 2-3 at a time, into sessions
+  with clear weekly headroom.
+- **Resume across resets.** `python -m pilot_tasks.analyse` and
+  `cta.cli reproduce-all` recompute everything from committed data, so the paper
+  refreshes batch by batch and the run survives any number of resets.
+
+Exact fit depends on the absolute Pro limits, which the session cannot read; but
+because the plan is Haiku-dominated, micro-batched and fully resumable, it is
+achievable on subscription alone even if it spans several sessions or a couple of
+weekly resets. Nothing here needs an API key.
 
 ## What is prebuilt vs pending
 
