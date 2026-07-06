@@ -25,6 +25,7 @@ from cta.harness import (
     biomimicry_ablation,
     bounded_vs_cta,
     calibration_sweep,
+    exposure_cap_defense,
     feasibility_check,
     fitted_calibration_recovery,
     gate_ablation,
@@ -152,6 +153,8 @@ def autorun(
     adversary = strategic_adversary(protocol.base, protocol.seeds)
     # Reputation gaming: a sandbagging adversary builds a record then defects.
     sandbag = sandbagging_adversary(protocol.base, protocol.seeds)
+    # Exposure cap bounds the blast radius of the first, unpreventable defection.
+    exposure = exposure_cap_defense(protocol.base, protocol.seeds)
     # Annealing under streaming (non-stationary) task arrival (H5, P3.3).
     streaming = streaming_arrival(protocol.base, protocol.seeds)
     # Dollar cost of coordination against agent count (P2.3): central is N*M, the
@@ -442,6 +445,20 @@ def autorun(
         ),
         figures_dir / "sandbagging_adversary.svg",
     )
+    # Exposure cap bounds the first-defection blast radius (failed adversary wins
+    # in the defect round) versus the unthrottled baseline.
+    exp_caps = exposure["caps"]
+    save_svg(
+        bar_chart(
+            [("no cap" if c == "None" else f"cap {c}") for c in exp_caps],
+            {"first-defection blast radius": [
+                float(exposure["first_defect_damage"][c]) for c in exp_caps
+            ]},
+            title="Exposure cap bounds the first-defection blast radius",
+            ylabel="failed adversary wins in the defect round",
+        ),
+        figures_dir / "exposure_cap.svg",
+    )
     # Reliability diagram of the realistic fleet: mean predicted vs realised
     # success, with the diagonal of perfect calibration. Points below the diagonal
     # are overconfident. The correction pulls the retained winners toward it.
@@ -496,6 +513,7 @@ def autorun(
         "figures/pareto_latency_quality.svg",
         "figures/strategic_adversary.svg",
         "figures/sandbagging_adversary.svg",
+        "figures/exposure_cap.svg",
         "figures/reliability_diagram.svg",
         "figures/fleet_mix.svg",
     ]
@@ -537,6 +555,7 @@ def autorun(
         "fitted_calibration_recovery": fitted_recovery,
         "strategic_adversary": adversary,
         "sandbagging_adversary": sandbag,
+        "exposure_cap_defense": exposure,
         "streaming_arrival": streaming,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,

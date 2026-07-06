@@ -433,6 +433,74 @@ def sandbagging_adversary(
     }
 
 
+def exposure_cap_defense(
+    base: CellParams,
+    seeds: int,
+    honest_rounds: int = 3,
+    caps: tuple[int | None, ...] = (None, 1, 3),
+    adversary_fraction: float = 0.15,
+    honest_capability: float = 0.9,
+    defect_capability: float = 0.1,
+    defect_bias: float = 0.6,
+) -> dict[str, object]:
+    """Bound the blast radius of the first defection with an exposure cap.
+
+    No reactive track record can pre-empt a previously honest agent's first
+    defection, so the residual damage is what that agent does in the round it
+    defects, before its reliability updates. An exposure cap, a defence-in-depth
+    limit on how many tasks any single agent may win per round, bounds that blast
+    radius: even a fully trusted agent that turns can only damage a capped number
+    of tasks before the recency window and the gate react. This measures the failed
+    adversary wins in the first defect round under several caps (``None`` is the
+    unthrottled baseline), so the bound is shown rather than asserted.
+    """
+    n_adv = max(1, int(base.n_agents * adversary_fraction))
+    per_cap: dict[str, float] = {}
+    for cap in caps:
+        damages: list[float] = []
+        for seed in range(seeds):
+            agents0 = generate_agents(
+                base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
+            )
+            adversaries = {a.agent_id for a in agents0[:n_adv]}
+            hist: dict[str, list[int]] = {a.agent_id: [1, 1, 0] for a in agents0}
+            for r in range(honest_rounds + 1):
+                defect = r == honest_rounds
+                current = []
+                for a in agents0:
+                    h = hist[a.agent_id]
+                    if a.agent_id in adversaries:
+                        current.append(replace(
+                            a, successes=sum(h), attempts=len(h),
+                            capability=defect_capability if defect else honest_capability,
+                            calibration_bias=defect_bias if defect else 0.0,
+                        ))
+                    else:
+                        current.append(replace(a, successes=sum(h), attempts=len(h)))
+                tasks = generate_tasks(
+                    base.n_tasks, base.n_domains, random.Random(seed + 1000 * r),
+                    base.activation_energy, base.family,
+                )
+                res = run_batch(
+                    current, tasks, random.Random(seed + 40_000 + r),
+                    condition="cta", selection_mode="reliability", exposure_cap=cap,
+                )
+                won = [o for o in res.outcomes if o.winner is not None]
+                if defect:
+                    damages.append(
+                        sum(1 for o in won if o.winner in adversaries and o.status != "COMPLETED")
+                    )
+                for o in won:
+                    hist[o.winner].append(1 if o.status == "COMPLETED" else 0)
+        per_cap[str(cap)] = sum(damages) / len(damages) if damages else 0.0
+    return {
+        "honest_rounds": honest_rounds,
+        "n_adversaries": n_adv,
+        "caps": [str(c) for c in caps],
+        "first_defect_damage": per_cap,
+    }
+
+
 def fitted_calibration_recovery(
     base: CellParams, seeds: int, mix: dict[str, float] | None = None
 ) -> dict[str, float]:

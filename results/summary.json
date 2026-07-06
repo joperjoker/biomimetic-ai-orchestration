@@ -2550,6 +2550,20 @@
     "cumulative_damage": 48.699999999999996,
     "windowed_damage": 28.5
   },
+  "exposure_cap_defense": {
+    "honest_rounds": 3,
+    "n_adversaries": 15,
+    "caps": [
+      "None",
+      "1",
+      "3"
+    ],
+    "first_defect_damage": {
+      "None": 16.65,
+      "1": 4.0,
+      "3": 12.0
+    }
+  },
   "streaming_arrival": {
     "arrival_span": 20,
     "anneal_on": {

@@ -212,6 +212,7 @@ def run_batch(
     observability_k: int | None = None,
     selection_mode: str = "reliability",
     latency_weight: float = 1.0,
+    exposure_cap: int | None = None,
 ) -> BatchResult:
     """Allocate a batch of tasks under a decentralised condition.
 
@@ -238,6 +239,10 @@ def run_batch(
         raise ValueError(f"unknown selection_mode: {selection_mode}")
     gate_cfg = gate if gate is not None else GateConfig()
     outcomes: list[TaskOutcome] = []
+    # Exposure cap (defence in depth): no single agent wins more than this many
+    # tasks per batch, so a newly defecting agent's blast radius is bounded even
+    # before its track record updates. None keeps the unthrottled behaviour.
+    wins: dict[str, int] = {}
 
     m = len(tasks)
     observed: dict[str, set[int]] | None = None
@@ -279,8 +284,16 @@ def run_batch(
             outcomes.append(TaskOutcome(task.task_id, "STALLED", None, None, 0))
             continue
 
+        pool = firing
+        if exposure_cap is not None:
+            pool = [a for a in firing if wins.get(a.agent_id, 0) < exposure_cap]
+            if not pool:
+                # Every willing agent is at its exposure cap: defer the task.
+                outcomes.append(TaskOutcome(task.task_id, "STALLED", None, None, len(firing)))
+                continue
+
         winner = max(
-            firing,
+            pool,
             key=lambda a: (
                 _bid(selection_mode, self_c[a.agent_id], true_c[a.agent_id], a, latency_weight),
                 -a.latency,
@@ -305,6 +318,7 @@ def run_batch(
 
         q = realised_quality(true_c[winner.agent_id], winner.capability, rng)
         status = "COMPLETED" if is_success(q) else "FAILED"
+        wins[winner.agent_id] = wins.get(winner.agent_id, 0) + 1
         outcomes.append(
             TaskOutcome(
                 task.task_id,

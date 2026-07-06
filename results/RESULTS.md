@@ -55,6 +55,8 @@ pending.
 
 ![sandbagging_adversary](figures/sandbagging_adversary.svg)
 
+![exposure_cap](figures/exposure_cap.svg)
+
 ![reliability_diagram](figures/reliability_diagram.svg)
 
 ![fleet_mix](figures/fleet_mix.svg)
