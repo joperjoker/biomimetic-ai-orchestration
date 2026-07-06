@@ -351,6 +351,88 @@ def strategic_adversary(
     }
 
 
+def sandbagging_adversary(
+    base: CellParams,
+    seeds: int,
+    rounds: int = 10,
+    honest_rounds: int = 5,
+    adversary_fraction: float = 0.15,
+    honest_capability: float = 0.9,
+    defect_capability: float = 0.1,
+    defect_bias: float = 0.6,
+    window: int = 6,
+) -> dict[str, object]:
+    """Reputation gaming: an adversary builds a clean track record, then defects.
+
+    Unlike the naive self-report inflater (``strategic_adversary``), a sandbagging
+    adversary does genuine work for ``honest_rounds`` to earn a high reliability,
+    then defects, inflating its self-report while its realised work fails. The plain
+    cumulative track record is slow to react because the old honest successes
+    dilute the new failures, so the adversary exploits its reputation for a window
+    of rounds. We run the identical scenario under two reliability accountings,
+    ``cumulative`` (all history) and ``windowed`` (only the last ``window``
+    outcomes, a recency weighting), and report the adversary win share and the wins
+    it fails (the exploitation damage) per round, and the total damage after the
+    defect point. The recency window is the lever that shortens the exploitation.
+    """
+    n_adv = max(1, int(base.n_agents * adversary_fraction))
+
+    def series(accounting: str) -> tuple[list[float], list[float]]:
+        share: list[list[float]] = [[] for _ in range(rounds)]
+        fails: list[list[float]] = [[] for _ in range(rounds)]
+        for seed in range(seeds):
+            agents0 = generate_agents(
+                base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family
+            )
+            adversaries = {a.agent_id for a in agents0[:n_adv]}
+            hist: dict[str, list[int]] = {a.agent_id: [1, 1, 0] for a in agents0}
+            for r in range(rounds):
+                defect = r >= honest_rounds
+                current = []
+                for a in agents0:
+                    h = hist[a.agent_id]
+                    recent = h if accounting == "cumulative" else h[-window:]
+                    succ, att = sum(recent), len(recent)
+                    if a.agent_id in adversaries:
+                        current.append(replace(
+                            a, successes=succ, attempts=att,
+                            capability=defect_capability if defect else honest_capability,
+                            calibration_bias=defect_bias if defect else 0.0,
+                        ))
+                    else:
+                        current.append(replace(a, successes=succ, attempts=att))
+                tasks = generate_tasks(
+                    base.n_tasks, base.n_domains, random.Random(seed + 1000 * r),
+                    base.activation_energy, base.family,
+                )
+                res = run_batch(
+                    current, tasks, random.Random(seed + 30_000 + r),
+                    condition="cta", selection_mode="reliability",
+                )
+                won = [o for o in res.outcomes if o.winner is not None]
+                adv_won = [o for o in won if o.winner in adversaries]
+                share[r].append(len(adv_won) / len(won) if won else 0.0)
+                fails[r].append(sum(1 for o in adv_won if o.status != "COMPLETED"))
+                for o in won:
+                    hist[o.winner].append(1 if o.status == "COMPLETED" else 0)
+        mean = lambda xs: [sum(x) / len(x) for x in xs]  # noqa: E731
+        return mean(share), mean(fails)
+
+    cum_share, cum_fail = series("cumulative")
+    win_share, win_fail = series("windowed")
+    return {
+        "rounds": rounds,
+        "honest_rounds": honest_rounds,
+        "window": window,
+        "cumulative_share": cum_share,
+        "windowed_share": win_share,
+        "cumulative_fail": cum_fail,
+        "windowed_fail": win_fail,
+        "cumulative_damage": sum(cum_fail[honest_rounds:]),
+        "windowed_damage": sum(win_fail[honest_rounds:]),
+    }
+
+
 def fitted_calibration_recovery(
     base: CellParams, seeds: int, mix: dict[str, float] | None = None
 ) -> dict[str, float]:

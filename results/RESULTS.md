@@ -53,6 +53,8 @@ pending.
 
 ![strategic_adversary](figures/strategic_adversary.svg)
 
+![sandbagging_adversary](figures/sandbagging_adversary.svg)
+
 ![reliability_diagram](figures/reliability_diagram.svg)
 
 ![fleet_mix](figures/fleet_mix.svg)

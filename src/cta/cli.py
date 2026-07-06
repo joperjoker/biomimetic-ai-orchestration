@@ -37,6 +37,7 @@ from cta.harness import (
     routing_experiment,
     run_seeds,
     safety_ablation,
+    sandbagging_adversary,
     scaling_sweep,
     stability_grid,
     strategic_adversary,
@@ -149,6 +150,8 @@ def autorun(
     fitted_recovery = fitted_calibration_recovery(protocol.base, protocol.seeds)
     # Strategic adversary demoted by the track record over rounds (P3.2).
     adversary = strategic_adversary(protocol.base, protocol.seeds)
+    # Reputation gaming: a sandbagging adversary builds a record then defects.
+    sandbag = sandbagging_adversary(protocol.base, protocol.seeds)
     # Annealing under streaming (non-stationary) task arrival (H5, P3.3).
     streaming = streaming_arrival(protocol.base, protocol.seeds)
     # Dollar cost of coordination against agent count (P2.3): central is N*M, the
@@ -420,6 +423,25 @@ def autorun(
         ),
         figures_dir / "strategic_adversary.svg",
     )
+    # Reputation gaming: the sandbagger's share of won tasks over rounds, under a
+    # cumulative track record versus a recency-weighted window. It builds a record
+    # for the honest rounds, then defects; the window collapses its share sooner.
+    save_svg(
+        line_chart(
+            {
+                "cumulative record": [
+                    (float(i), float(s)) for i, s in enumerate(sandbag["cumulative_share"])
+                ],
+                "recency window": [
+                    (float(i), float(s)) for i, s in enumerate(sandbag["windowed_share"])
+                ],
+            },
+            title="Sandbagging adversary: reputation gaming and the recency window",
+            xlabel="round (defects after the honest rounds)",
+            ylabel="adversary share of won tasks",
+        ),
+        figures_dir / "sandbagging_adversary.svg",
+    )
     # Reliability diagram of the realistic fleet: mean predicted vs realised
     # success, with the diagonal of perfect calibration. Points below the diagonal
     # are overconfident. The correction pulls the retained winners toward it.
@@ -473,6 +495,7 @@ def autorun(
         "figures/specialist_routing.svg",
         "figures/pareto_latency_quality.svg",
         "figures/strategic_adversary.svg",
+        "figures/sandbagging_adversary.svg",
         "figures/reliability_diagram.svg",
         "figures/fleet_mix.svg",
     ]
@@ -513,6 +536,7 @@ def autorun(
         "pareto_latency_quality": pareto,
         "fitted_calibration_recovery": fitted_recovery,
         "strategic_adversary": adversary,
+        "sandbagging_adversary": sandbag,
         "streaming_arrival": streaming,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
