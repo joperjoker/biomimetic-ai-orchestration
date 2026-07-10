@@ -1,0 +1,320 @@
+### TASK: fraction_to_decimal
+CONFIDENCE: 0.75
+```python
+def fraction_to_decimal(numerator: int, denominator: int) -> str:
+    if numerator == 0:
+        return '0'
+
+    result = []
+
+    # Handle sign
+    if (numerator < 0) ^ (denominator < 0):
+        result.append('-')
+
+    numerator = abs(numerator)
+    denominator = abs(denominator)
+
+    # Integer part
+    result.append(str(numerator // denominator))
+
+    remainder = numerator % denominator
+    if remainder == 0:
+        return ''.join(result)
+
+    result.append('.')
+
+    # Decimal part with repeating detection
+    remainder_map = {}  # remainder -> position in decimal_part
+    decimal_part = []
+
+    while remainder != 0:
+        if remainder in remainder_map:
+            # Found repeating block
+            repeat_pos = remainder_map[remainder]
+            decimal_part.insert(repeat_pos, '(')
+            decimal_part.append(')')
+            result.extend(decimal_part)
+            return ''.join(result)
+
+        remainder_map[remainder] = len(decimal_part)
+        remainder *= 10
+        digit = remainder // denominator
+        decimal_part.append(str(digit))
+        remainder %= denominator
+
+    result.extend(decimal_part)
+    return ''.join(result)
+```
+
+### TASK: int_to_words
+CONFIDENCE: 0.8
+```python
+def int_to_words(n: int) -> str:
+    if n == 0:
+        return 'Zero'
+
+    ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
+    teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
+             'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen']
+    tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety']
+    thousands = ['', 'Thousand', 'Million', 'Billion']
+
+    def helper(num):
+        """Convert number < 1000 to words"""
+        if num == 0:
+            return []
+        elif num < 10:
+            return [ones[num]]
+        elif num < 20:
+            return [teens[num - 10]]
+        elif num < 100:
+            return [tens[num // 10]] + (helper(num % 10) if num % 10 != 0 else [])
+        else:
+            return [ones[num // 100], 'Hundred'] + (helper(num % 100) if num % 100 != 0 else [])
+
+    result = []
+    groupIndex = 0
+
+    while n > 0:
+        if n % 1000 != 0:
+            result = helper(n % 1000) + ([thousands[groupIndex]] if groupIndex > 0 else []) + result
+        n //= 1000
+        groupIndex += 1
+
+    return ' '.join(result)
+```
+
+### TASK: full_justify
+CONFIDENCE: 0.75
+```python
+def full_justify(words: list[str], max_width: int) -> list[str]:
+    def justify_line(line_words: list[str], max_width: int, is_last: bool) -> str:
+        if is_last:
+            # Left-justify: single spaces between words, pad right
+            line = ' '.join(line_words)
+            return line + ' ' * (max_width - len(line))
+
+        if len(line_words) == 1:
+            # Single word: left-justify
+            return line_words[0] + ' ' * (max_width - len(line_words[0]))
+
+        # Multiple words, full justify
+        total_chars = sum(len(word) for word in line_words)
+        total_spaces = max_width - total_chars
+        gaps = len(line_words) - 1
+        space_per_gap = total_spaces // gaps
+        extra_spaces = total_spaces % gaps
+
+        result = ''
+        for i, word in enumerate(line_words[:-1]):
+            result += word
+            spaces = space_per_gap + (1 if i < extra_spaces else 0)
+            result += ' ' * spaces
+
+        result += line_words[-1]
+        return result
+
+    result = []
+    current_line = []
+    current_length = 0
+
+    for word in words:
+        # Check if adding this word exceeds max_width
+        if current_length + len(word) + len(current_line) > max_width:
+            # Justify current line and add to result
+            result.append(justify_line(current_line, max_width, False))
+            current_line = []
+            current_length = 0
+
+        current_line.append(word)
+        current_length += len(word)
+
+    # Handle last line (left-justified)
+    if current_line:
+        result.append(justify_line(current_line, max_width, True))
+
+    return result
+```
+
+### TASK: calculate3
+CONFIDENCE: 0.8
+```python
+def calculate3(s: str) -> int:
+    s = s.replace(' ', '')
+
+    def parse_expr(s, idx):
+        """Parse an expression, returns (value, next_idx)"""
+        left, idx = parse_term(s, idx)
+
+        while idx < len(s) and s[idx] in '+-':
+            op = s[idx]
+            idx += 1
+            right, idx = parse_term(s, idx)
+            if op == '+':
+                left += right
+            else:
+                left -= right
+
+        return left, idx
+
+    def parse_term(s, idx):
+        """Parse a term (handles * and /)"""
+        left, idx = parse_factor(s, idx)
+
+        while idx < len(s) and s[idx] in '*/':
+            op = s[idx]
+            idx += 1
+            right, idx = parse_factor(s, idx)
+            if op == '*':
+                left *= right
+            else:
+                # Truncate toward zero
+                left = int(left / right)
+
+        return left, idx
+
+    def parse_factor(s, idx):
+        """Parse a factor (number or parenthesized expression)"""
+        if idx < len(s) and s[idx] == '(':
+            idx += 1  # skip '('
+            val, idx = parse_expr(s, idx)
+            idx += 1  # skip ')'
+            return val, idx
+        else:
+            # Parse number
+            start = idx
+            while idx < len(s) and s[idx].isdigit():
+                idx += 1
+            return int(s[start:idx]), idx
+
+    result, _ = parse_expr(s, 0)
+    return result
+```
+
+### TASK: multiply_strings
+CONFIDENCE: 0.85
+```python
+def multiply_strings(num1: str, num2: str) -> str:
+    if num1 == '0' or num2 == '0':
+        return '0'
+
+    # Result can be at most len(num1) + len(num2) digits
+    result = [0] * (len(num1) + len(num2))
+
+    # Multiply each digit pair
+    for i in range(len(num1) - 1, -1, -1):
+        for j in range(len(num2) - 1, -1, -1):
+            mul = int(num1[i]) * int(num2[j])
+            # Position where this product contributes
+            idx1 = i + j  # carries position
+            idx2 = i + j + 1  # product position
+
+            # Add product to current value at idx2
+            total = mul + result[idx2]
+            result[idx2] = total % 10
+            result[idx1] += total // 10
+
+    # Skip leading zeros
+    res_str = ''.join(str(x) for x in result).lstrip('0')
+    return res_str if res_str else '0'
+```
+
+### TASK: min_window
+CONFIDENCE: 0.8
+```python
+def min_window(s: str, t: str) -> str:
+    if not t or not s:
+        return ''
+
+    # Count characters in t
+    t_count = {}
+    for char in t:
+        t_count[char] = t_count.get(char, 0) + 1
+
+    # Sliding window
+    required = len(t_count)  # number of unique chars in t we need
+    formed = 0  # number of unique chars in t with desired frequency in current window
+
+    window_counts = {}
+
+    left = 0
+    min_len = float('inf')
+    min_start = 0
+
+    for right in range(len(s)):
+        char = s[right]
+        window_counts[char] = window_counts.get(char, 0) + 1
+
+        # If the frequency of the current character equals to the desired count in t, increment formed
+        if char in t_count and window_counts[char] == t_count[char]:
+            formed += 1
+
+        # Try to contract the window until it ceases to be 'desirable'
+        while left <= right and formed == required:
+            char = s[left]
+
+            # Save the smallest window
+            if right - left + 1 < min_len:
+                min_len = right - left + 1
+                min_start = left
+
+            # The character at the left is no longer part of the window
+            window_counts[char] -= 1
+            if char in t_count and window_counts[char] < t_count[char]:
+                formed -= 1
+
+            left += 1
+
+    # Return the smallest window or empty string
+    return s[min_start:min_start + min_len] if min_len != float('inf') else ''
+```
+
+### TASK: word_break
+CONFIDENCE: 0.85
+```python
+def word_break(s: str, words: list[str]) -> bool:
+    # Convert to set for O(1) lookup
+    word_set = set(words)
+
+    # DP array where dp[i] means s[0:i] can be segmented
+    dp = [False] * (len(s) + 1)
+    dp[0] = True  # Empty string
+
+    for i in range(1, len(s) + 1):
+        for j in range(i):
+            # Check if s[0:j] is segmentable and s[j:i] is a word
+            if dp[j] and s[j:i] in word_set:
+                dp[i] = True
+                break
+
+    return dp[len(s)]
+```
+
+### TASK: is_match
+CONFIDENCE: 0.75
+```python
+def is_match(s: str, p: str) -> bool:
+    m, n = len(s), len(p)
+    # dp[i][j] = whether s[0:i] matches p[0:j]
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+
+    dp[0][0] = True
+
+    # Handle patterns like a*, a*b*, a*b*c*, etc. for empty string
+    for j in range(2, n + 1):
+        if p[j - 1] == '*':
+            dp[0][j] = dp[0][j - 2]
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j - 1] == '*':
+                # '*' matches zero of previous char
+                dp[i][j] = dp[i][j - 2]
+                # Or matches one or more of previous char
+                if p[j - 2] == '?' or p[j - 2] == s[i - 1]:
+                    dp[i][j] = dp[i][j] or dp[i - 1][j]
+            elif p[j - 1] == '?' or p[j - 1] == s[i - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+
+    return dp[m][n]
+```
