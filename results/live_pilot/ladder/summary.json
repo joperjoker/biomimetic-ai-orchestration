@@ -12,104 +12,104 @@
  "cells": {
   "haiku": {
    "bare": {
-    "attempts": 40,
-    "fidelity": 0.9660714285714286,
-    "completion": 0.925,
+    "attempts": 80,
+    "fidelity": 0.9785714285714285,
+    "completion": 0.95,
     "completion_ci": [
-     0.85,
-     1.0
+     0.9,
+     0.9875
     ],
-    "mean_confidence": 0.8595,
-    "overconfidence_gap": -0.0655,
-    "brier": 0.07851499999999997,
-    "ece": 0.06700000000000014
+    "mean_confidence": 0.853875,
+    "overconfidence_gap": -0.0961249999999999,
+    "brier": 0.061181249999999986,
+    "ece": 0.09612499999999992
    },
    "wrapped": {
-    "attempts": 16,
-    "fidelity": 1.0,
-    "completion": 1.0,
+    "attempts": 72,
+    "fidelity": 0.9950396825396826,
+    "completion": 0.9861111111111112,
     "completion_ci": [
-     1.0,
+     0.9583333333333334,
      1.0
     ],
-    "mean_confidence": 0.8875,
-    "overconfidence_gap": -0.11250000000000004,
-    "brier": 0.013925,
-    "ece": 0.1125
+    "mean_confidence": 0.8516666666666667,
+    "overconfidence_gap": -0.13444444444444448,
+    "brier": 0.032511111111111116,
+    "ece": 0.13444444444444434
    }
   },
   "sonnet": {
    "bare": {
-    "attempts": 8,
-    "fidelity": 1.0,
-    "completion": 1.0,
+    "attempts": 80,
+    "fidelity": 0.9973214285714286,
+    "completion": 0.9875,
     "completion_ci": [
-     1.0,
+     0.9625,
      1.0
     ],
-    "mean_confidence": 0.89625,
-    "overconfidence_gap": -0.10375000000000001,
-    "brier": 0.011387499999999997,
-    "ece": 0.10374999999999991
+    "mean_confidence": 0.89225,
+    "overconfidence_gap": -0.09525000000000006,
+    "brier": 0.022092499999999987,
+    "ece": 0.09524999999999992
    },
    "wrapped": {
-    "attempts": 8,
+    "attempts": 80,
     "fidelity": 1.0,
     "completion": 1.0,
     "completion_ci": [
      1.0,
      1.0
     ],
-    "mean_confidence": 0.93875,
-    "overconfidence_gap": -0.06125000000000003,
-    "brier": 0.003862500000000001,
-    "ece": 0.06125000000000003
+    "mean_confidence": 0.914375,
+    "overconfidence_gap": -0.08562499999999995,
+    "brier": 0.008021250000000004,
+    "ece": 0.08562499999999994
    }
   },
   "opus": {
    "bare": {
-    "attempts": 8,
+    "attempts": 80,
     "fidelity": 1.0,
     "completion": 1.0,
     "completion_ci": [
      1.0,
      1.0
     ],
-    "mean_confidence": 0.88375,
-    "overconfidence_gap": -0.11624999999999996,
-    "brier": 0.0180875,
-    "ece": 0.11625000000000003
+    "mean_confidence": 0.902375,
+    "overconfidence_gap": -0.09762499999999996,
+    "brier": 0.011311250000000004,
+    "ece": 0.09762499999999966
    },
    "wrapped": {
-    "attempts": 8,
+    "attempts": 80,
     "fidelity": 1.0,
     "completion": 1.0,
     "completion_ci": [
      1.0,
      1.0
     ],
-    "mean_confidence": 0.9412499999999999,
-    "overconfidence_gap": -0.05875000000000008,
-    "brier": 0.004437500000000004,
-    "ece": 0.05875000000000001
+    "mean_confidence": 0.9496249999999999,
+    "overconfidence_gap": -0.05037500000000006,
+    "brier": 0.0030512500000000014,
+    "ece": 0.05037499999999997
    }
   }
  },
  "task_wrapper_lift": {
   "haiku": {
-   "completion_lift": 0.07499999999999996,
-   "fidelity_lift": 0.03392857142857142,
-   "ece_change": 0.04549999999999986
+   "completion_lift": 0.036111111111111205,
+   "fidelity_lift": 0.01646825396825402,
+   "ece_change": 0.03831944444444442
   },
   "sonnet": {
-   "completion_lift": 0.0,
-   "fidelity_lift": 0.0,
-   "ece_change": -0.042499999999999885
+   "completion_lift": 0.012499999999999956,
+   "fidelity_lift": 0.002678571428571419,
+   "ece_change": -0.00962499999999998
   },
   "opus": {
    "completion_lift": 0.0,
    "fidelity_lift": 0.0,
-   "ece_change": -0.05750000000000002
+   "ece_change": -0.04724999999999969
   }
  },
  "telemetry": {
@@ -163,7 +163,7 @@
    "word_break": "haiku",
    "is_match": "haiku"
   },
-  "routed_completion": 1.0,
+  "routed_completion": 0.9861111111111112,
   "always_top_completion": 1.0,
   "top_model": "opus",
   "routed_cost_usd": 0.023856749999999996,
@@ -196,7 +196,7 @@
    "word_break": "haiku",
    "is_match": "haiku"
   },
-  "routed_completion": 0.925,
+  "routed_completion": 0.95,
   "always_top_completion": 1.0,
   "top_model": "opus",
   "routed_cost_usd": 0.02169195,
@@ -229,7 +229,7 @@
    "word_break": "haiku",
    "is_match": "haiku"
   },
-  "routed_completion": 0.925,
+  "routed_completion": 0.95,
   "always_top_completion": 1.0,
   "top_model": "opus",
   "routed_cost_usd": 0.02169195,
