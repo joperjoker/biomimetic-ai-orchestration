@@ -1,0 +1,164 @@
+### TASK: my_atoi
+CONFIDENCE: 0.9
+```python
+def my_atoi(s: str) -> int:
+    i = 0
+    while i < len(s) and s[i] == ' ':
+        i += 1
+
+    sign = 1
+    if i < len(s) and s[i] in ['+', '-']:
+        if s[i] == '-':
+            sign = -1
+        i += 1
+
+    result = 0
+    while i < len(s) and s[i].isdigit():
+        result = result * 10 + int(s[i])
+        i += 1
+
+    result *= sign
+    INT_MIN = -2**31
+    INT_MAX = 2**31 - 1
+    return max(INT_MIN, min(INT_MAX, result))
+```
+
+### TASK: reverse_integer
+CONFIDENCE: 0.9
+```python
+def reverse_integer(x: int) -> int:
+    sign = -1 if x < 0 else 1
+    x = abs(x)
+
+    result = 0
+    while x > 0:
+        result = result * 10 + x % 10
+        x //= 10
+
+    result *= sign
+    INT_MIN = -2**31
+    INT_MAX = 2**31 - 1
+    if result < INT_MIN or result > INT_MAX:
+        return 0
+    return result
+```
+
+### TASK: simplify_path
+CONFIDENCE: 0.85
+```python
+def simplify_path(path: str) -> str:
+    parts = path.split('/')
+    stack = []
+
+    for part in parts:
+        if part == '' or part == '.':
+            continue
+        elif part == '..':
+            if stack:
+                stack.pop()
+        else:
+            stack.append(part)
+
+    return '/' + '/'.join(stack)
+```
+
+### TASK: compare_version
+CONFIDENCE: 0.9
+```python
+def compare_version(version1: str, version2: str) -> int:
+    v1 = list(map(int, version1.split('.')))
+    v2 = list(map(int, version2.split('.')))
+
+    max_len = max(len(v1), len(v2))
+    v1.extend([0] * (max_len - len(v1)))
+    v2.extend([0] * (max_len - len(v2)))
+
+    for i in range(max_len):
+        if v1[i] < v2[i]:
+            return -1
+        elif v1[i] > v2[i]:
+            return 1
+
+    return 0
+```
+
+### TASK: decode_ways
+CONFIDENCE: 0.85
+```python
+def decode_ways(s: str) -> int:
+    if not s or s[0] == '0':
+        return 0
+
+    dp = [0] * (len(s) + 1)
+    dp[0] = 1
+    dp[1] = 1
+
+    for i in range(2, len(s) + 1):
+        if s[i-1] != '0':
+            dp[i] += dp[i-1]
+
+        two_digit = int(s[i-2:i])
+        if 10 <= two_digit <= 26:
+            dp[i] += dp[i-2]
+
+    return dp[len(s)]
+```
+
+### TASK: title_to_number
+CONFIDENCE: 0.95
+```python
+def title_to_number(column: str) -> int:
+    result = 0
+    for char in column:
+        result = result * 26 + (ord(char) - ord('A') + 1)
+    return result
+```
+
+### TASK: count_and_say
+CONFIDENCE: 0.85
+```python
+def count_and_say(n: int) -> str:
+    result = "1"
+    for _ in range(n - 1):
+        next_result = ""
+        i = 0
+        while i < len(result):
+            char = result[i]
+            count = 1
+            while i + count < len(result) and result[i + count] == char:
+                count += 1
+            next_result += str(count) + char
+            i += count
+        result = next_result
+    return result
+```
+
+### TASK: int_to_roman
+CONFIDENCE: 0.9
+```python
+def int_to_roman(n: int) -> str:
+    values = [
+        (1000, 'M'),
+        (900, 'CM'),
+        (500, 'D'),
+        (400, 'CD'),
+        (100, 'C'),
+        (90, 'XC'),
+        (50, 'L'),
+        (40, 'XL'),
+        (10, 'X'),
+        (9, 'IX'),
+        (5, 'V'),
+        (4, 'IV'),
+        (1, 'I')
+    ]
+
+    result = ""
+    for value, numeral in values:
+        count = n // value
+        if count:
+            result += numeral * count
+            n -= value * count
+
+    return result
+```
