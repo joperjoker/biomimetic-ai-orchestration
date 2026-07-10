@@ -1,0 +1,211 @@
+### TASK: fraction_to_decimal
+CONFIDENCE: 0.9
+```python
+def fraction_to_decimal(numerator: int, denominator: int) -> str:
+    if numerator == 0:
+        return "0"
+    res = []
+    if (numerator < 0) ^ (denominator < 0):
+        res.append("-")
+    num = abs(numerator)
+    den = abs(denominator)
+    res.append(str(num // den))
+    rem = num % den
+    if rem == 0:
+        return "".join(res)
+    res.append(".")
+    seen = {}
+    while rem != 0:
+        if rem in seen:
+            idx = seen[rem]
+            res.insert(idx, "(")
+            res.append(")")
+            break
+        seen[rem] = len(res)
+        rem *= 10
+        res.append(str(rem // den))
+        rem %= den
+    return "".join(res)
+```
+
+### TASK: int_to_words
+CONFIDENCE: 0.9
+```python
+def int_to_words(n: int) -> str:
+    if n == 0:
+        return "Zero"
+    below_20 = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven",
+                "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen",
+                "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen",
+                "Nineteen"]
+    tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy",
+            "Eighty", "Ninety"]
+    thousands = ["", "Thousand", "Million", "Billion", "Trillion"]
+
+    def three(num):
+        parts = []
+        if num >= 100:
+            parts.append(below_20[num // 100])
+            parts.append("Hundred")
+            num %= 100
+        if num >= 20:
+            parts.append(tens[num // 10])
+            num %= 10
+        if num > 0:
+            parts.append(below_20[num])
+        return parts
+
+    groups = []
+    idx = 0
+    while n > 0:
+        if n % 1000 != 0:
+            groups.append((idx, n % 1000))
+        n //= 1000
+        idx += 1
+    result = []
+    for gidx, val in reversed(groups):
+        result.extend(three(val))
+        if thousands[gidx]:
+            result.append(thousands[gidx])
+    return " ".join(result)
+```
+
+### TASK: full_justify
+CONFIDENCE: 0.85
+```python
+def full_justify(words: list[str], max_width: int) -> list[str]:
+    res = []
+    line = []
+    length = 0
+    for word in words:
+        if length + len(line) + len(word) > max_width:
+            gaps = len(line) - 1
+            if gaps == 0:
+                res.append(line[0] + " " * (max_width - length))
+            else:
+                spaces = max_width - length
+                base, extra = divmod(spaces, gaps)
+                cur = ""
+                for i, w in enumerate(line):
+                    cur += w
+                    if i < gaps:
+                        cur += " " * (base + (1 if i < extra else 0))
+                res.append(cur)
+            line = []
+            length = 0
+        line.append(word)
+        length += len(word)
+    last = " ".join(line)
+    last += " " * (max_width - len(last))
+    res.append(last)
+    return res
+```
+
+### TASK: calculate3
+CONFIDENCE: 0.82
+```python
+def calculate3(s: str) -> int:
+    def calc(it):
+        stack = []
+        num = 0
+        sign = '+'
+        while True:
+            ch = next(it, None)
+            if ch is not None and ch.isdigit():
+                num = num * 10 + int(ch)
+            elif ch == '(':
+                num = calc(it)
+            elif ch is None or ch in '+-*/)':
+                if sign == '+':
+                    stack.append(num)
+                elif sign == '-':
+                    stack.append(-num)
+                elif sign == '*':
+                    stack.append(stack.pop() * num)
+                elif sign == '/':
+                    stack.append(int(stack.pop() / num))
+                num = 0
+                sign = ch
+                if ch == ')' or ch is None:
+                    return sum(stack)
+    return calc(iter(s))
+```
+
+### TASK: multiply_strings
+CONFIDENCE: 0.95
+```python
+def multiply_strings(num1: str, num2: str) -> str:
+    if num1 == "0" or num2 == "0":
+        return "0"
+    m, n = len(num1), len(num2)
+    res = [0] * (m + n)
+    for i in range(m - 1, -1, -1):
+        for j in range(n - 1, -1, -1):
+            mul = int(num1[i]) * int(num2[j])
+            p1, p2 = i + j, i + j + 1
+            total = mul + res[p2]
+            res[p2] = total % 10
+            res[p1] += total // 10
+    result = "".join(map(str, res)).lstrip("0")
+    return result if result else "0"
+```
+
+### TASK: min_window
+CONFIDENCE: 0.9
+```python
+def min_window(s: str, t: str) -> str:
+    if not s or not t or len(t) > len(s):
+        return ""
+    from collections import Counter
+    need = Counter(t)
+    missing = len(t)
+    left = 0
+    start, end = 0, 0
+    for right, ch in enumerate(s):
+        if need[ch] > 0:
+            missing -= 1
+        need[ch] -= 1
+        while missing == 0:
+            if end == 0 or right - left < end - start:
+                start, end = left, right + 1
+            need[s[left]] += 1
+            if need[s[left]] > 0:
+                missing += 1
+            left += 1
+    return s[start:end]
+```
+
+### TASK: word_break
+CONFIDENCE: 0.92
+```python
+def word_break(s: str, words: list[str]) -> bool:
+    word_set = set(words)
+    n = len(s)
+    dp = [False] * (n + 1)
+    dp[0] = True
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_set:
+                dp[i] = True
+                break
+    return dp[n]
+```
+
+### TASK: is_match
+CONFIDENCE: 0.9
+```python
+def is_match(s: str, p: str) -> bool:
+    m, n = len(s), len(p)
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+    for j in range(1, n + 1):
+        if p[j - 1] == '*':
+            dp[0][j] = dp[0][j - 1]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j - 1] == '*':
+                dp[i][j] = dp[i - 1][j] or dp[i][j - 1]
+            elif p[j - 1] == '?' or p[j - 1] == s[i - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+    return dp[m][n]
+```
