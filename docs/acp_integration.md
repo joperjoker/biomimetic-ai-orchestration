@@ -98,6 +98,29 @@ speaking ACP).
    track record -- closing the calibration loop for the next turn.
 7. `cancel` propagates to the active downstream.
 
+## Harness framing: the broker as a self-improving harness
+
+The broker is a *harness* in the sense of Weng (2026): the software around the
+base models that decides how they plan, what they remember, and how their work is
+judged. It exhibits the three patterns that literature names, and CTA already has
+the pieces:
+
+1. **The loop** (plan/route/observe/record): each ACP `prompt` turn elicits bids,
+   corrects them, routes, proxies the winner's stream, and records the outcome.
+2. **Persistent memory**: a first-class **track-record store** (`store.py`,
+   SQLite) that survives across sessions, so the deployed router *self-improves*
+   from its own experience rather than starting cold each session. This is the
+   product embodiment of H13: the synthetic result showed completion climbing
+   from 0.36 to 0.84 as the record accumulates; the store is what carries that
+   accumulation into a live deployment.
+3. **Sub-agent management**: the downstream fleet is the harness's worker pool.
+
+This is the differentiator over a plain router: not just a model picker, but a
+calibration-robust harness whose routing gets cheaper and more reliable the
+longer it runs. Weng's meta-level frameworks (context-evolution and meta-harness
+approaches that optimise the harness code or context playbook itself) are future
+inspiration, explicitly not built now.
+
 ## Next steps (Phase 4), tagged by usage cost
 
 Most of this is engineering with **no subagent solves**, so it can proceed during

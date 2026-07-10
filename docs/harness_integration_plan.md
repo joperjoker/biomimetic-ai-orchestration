@@ -1,7 +1,10 @@
 # Plan: fold harness-engineering elements into the CTA roadmap
 
-Status: **approved, awaiting execution** (paused for usage reset). Stored here so
-it survives container resets. To start: say "start harness plan".
+Status: **Parts A, B, C done** (the free work). Part A (paper positioning) and
+Part B (H13, SUPPORTED at full scale: completion 0.36 to 0.84 while raw stays
+flat) are committed; Part C (ACP broker framed as a self-improving harness) is
+folded into `docs/acp_integration.md`. Remaining is metered: the real-agent
+self-improvement result batches with Phase 3/4 subagent runs.
 
 ## Context
 
