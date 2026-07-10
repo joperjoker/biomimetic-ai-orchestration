@@ -64,6 +64,7 @@ def evaluate(
     annealing: list[dict[str, float]] | None = None,
     bounded: list[dict[str, object]] | None = None,
     routing: list[dict[str, float]] | None = None,
+    learning: dict[str, object] | None = None,
 ) -> dict[str, dict[str, object]]:
     """Return a verdict record per hypothesis.
 
@@ -307,6 +308,39 @@ def evaluate(
             "barrier_off_won": round(float(tight["barrier_off_won"]), 1),
             "verdict": _verdict(on > 0.9 and on > floor and on > off + 0.05),
         }
+
+    # H13 (self-improving allocation): with a persistent, accumulating track record,
+    # reliability-weighted selection lifts completion round over round toward the
+    # full-information oracle, while raw selection (no track-record term in the bid)
+    # stays flat. This is the harness-engineering reading of the mechanism: the
+    # allocation improves from its own experience with no privileged information.
+    if learning:
+        comp = learning.get("completion", {})
+        rel_series = [float(x) for x in comp.get("reliability", [])] if comp else []
+        oracle_series = [float(x) for x in comp.get("true", [])] if comp else []
+        if rel_series:
+            rel_lift = float(learning.get("reliability_lift", 0.0))
+            raw_lift = float(learning.get("raw_lift", 0.0))
+            # Rising: the late third of the curve beats the first third under
+            # reliability; and the reliability climb clears the raw arm by a margin.
+            third = max(1, len(rel_series) // 3)
+            early = sum(rel_series[:third]) / third
+            late = sum(rel_series[-third:]) / third
+            rising = late > early + 0.05
+            beats_raw = rel_lift > raw_lift + 0.1
+            verdicts["H13"] = {
+                "claim": "a persistent track record makes the allocation self-improve",
+                "rounds": learning.get("rounds"),
+                "completion_first": round(rel_series[0], 3),
+                "completion_last": round(rel_series[-1], 3),
+                "reliability_lift": round(rel_lift, 3),
+                "raw_lift": round(raw_lift, 3),
+                "oracle_completion": round(oracle_series[-1], 3) if oracle_series else None,
+                "gap_closed": round(float(learning.get("gap_closed", 0.0)), 3),
+                "verdict": _verdict(rising and beats_raw),
+            }
+        else:
+            verdicts["H13"] = {"claim": "self-improving allocation", "verdict": "PENDING"}
 
     # Multiple-comparison control across the family of hypotheses that rest on a
     # p-value (H2 against the pull-based baseline, H8 the calibration recovery).

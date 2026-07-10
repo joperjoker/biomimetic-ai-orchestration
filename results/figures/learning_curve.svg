@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
+<rect width="720" height="440" fill="white"/>
+<text x="360" y="22" text-anchor="middle" font-size="16">Self-improving allocation: completion climbs as the record accumulates</text>
+<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
+<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
+<text x="315" y="422" text-anchor="middle">round</text>
+<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">task completion rate</text>
+<path d="M70.0 235.8 L114.5 138.1 L159.1 98.6 L203.6 73.0 L248.2 59.1 L292.7 61.1 L337.3 52.3 L381.8 54.6 L426.4 42.0 L470.9 45.0 L515.5 45.5 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="70.0" cy="235.8" r="3" fill="#2f6f9f"/>
+<circle cx="114.5" cy="138.1" r="3" fill="#2f6f9f"/>
+<circle cx="159.1" cy="98.6" r="3" fill="#2f6f9f"/>
+<circle cx="203.6" cy="73.0" r="3" fill="#2f6f9f"/>
+<circle cx="248.2" cy="59.1" r="3" fill="#2f6f9f"/>
+<circle cx="292.7" cy="61.1" r="3" fill="#2f6f9f"/>
+<circle cx="337.3" cy="52.3" r="3" fill="#2f6f9f"/>
+<circle cx="381.8" cy="54.6" r="3" fill="#2f6f9f"/>
+<circle cx="426.4" cy="42.0" r="3" fill="#2f6f9f"/>
+<circle cx="470.9" cy="45.0" r="3" fill="#2f6f9f"/>
+<circle cx="515.5" cy="45.5" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
+<text x="594" y="58">reliability (persistent record)</text>
+<path d="M70.0 235.8 L114.5 241.1 L159.1 250.1 L203.6 248.4 L248.2 238.6 L292.7 242.1 L337.3 247.4 L381.8 245.9 L426.4 250.1 L470.9 244.9 L515.5 247.6 L560.0 240.8" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="70.0" cy="235.8" r="3" fill="#c25a3d"/>
+<circle cx="114.5" cy="241.1" r="3" fill="#c25a3d"/>
+<circle cx="159.1" cy="250.1" r="3" fill="#c25a3d"/>
+<circle cx="203.6" cy="248.4" r="3" fill="#c25a3d"/>
+<circle cx="248.2" cy="238.6" r="3" fill="#c25a3d"/>
+<circle cx="292.7" cy="242.1" r="3" fill="#c25a3d"/>
+<circle cx="337.3" cy="247.4" r="3" fill="#c25a3d"/>
+<circle cx="381.8" cy="245.9" r="3" fill="#c25a3d"/>
+<circle cx="426.4" cy="250.1" r="3" fill="#c25a3d"/>
+<circle cx="470.9" cy="244.9" r="3" fill="#c25a3d"/>
+<circle cx="515.5" cy="247.6" r="3" fill="#c25a3d"/>
+<circle cx="560.0" cy="240.8" r="3" fill="#c25a3d"/>
+<rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
+<text x="594" y="80">raw self-report (no memory)</text>
+<path d="M70.0 66.9 L114.5 76.7 L159.1 76.7 L203.6 71.7 L248.2 70.2 L292.7 84.0 L337.3 76.7 L381.8 78.0 L426.4 75.0 L470.9 75.2 L515.5 78.3 L560.0 71.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
+<circle cx="70.0" cy="66.9" r="3" fill="#4c9a6a"/>
+<circle cx="114.5" cy="76.7" r="3" fill="#4c9a6a"/>
+<circle cx="159.1" cy="76.7" r="3" fill="#4c9a6a"/>
+<circle cx="203.6" cy="71.7" r="3" fill="#4c9a6a"/>
+<circle cx="248.2" cy="70.2" r="3" fill="#4c9a6a"/>
+<circle cx="292.7" cy="84.0" r="3" fill="#4c9a6a"/>
+<circle cx="337.3" cy="76.7" r="3" fill="#4c9a6a"/>
+<circle cx="381.8" cy="78.0" r="3" fill="#4c9a6a"/>
+<circle cx="426.4" cy="75.0" r="3" fill="#4c9a6a"/>
+<circle cx="470.9" cy="75.2" r="3" fill="#4c9a6a"/>
+<circle cx="515.5" cy="78.3" r="3" fill="#4c9a6a"/>
+<circle cx="560.0" cy="71.0" r="3" fill="#4c9a6a"/>
+<rect x="576" y="90" width="14" height="14" fill="#4c9a6a"/>
+<text x="594" y="102">full-information oracle</text>
+<text x="70" y="398" text-anchor="middle">0</text>
+<text x="560" y="398" text-anchor="middle">11</text>
+<text x="62" y="380" text-anchor="end">0</text>
+<text x="62" y="50" text-anchor="end">0.84</text>
+</svg>

@@ -280,6 +280,97 @@ def calibration_sweep(
     return out
 
 
+def learning_curve(
+    base: CellParams,
+    seeds: int,
+    rounds: int = 12,
+    bias: float = 0.3,
+    noise: float = 0.05,
+    modes: tuple[str, ...] = ("reliability", "raw", "true"),
+    capability_low: float = 0.2,
+) -> dict[str, object]:
+    """H13: does a persistent, accumulating track record make the allocation self-improve?
+
+    Starting from an uninformative track record (no history, so reliability sits at
+    the 0.5 prior for every agent), a heterogeneous, miscalibrated population meets a
+    stream of comparable task batches. After each round the winners' realised
+    outcomes update the track record, so the next round's reliability-weighted
+    selection carries a sharper competence signal. Under ``reliability`` mean
+    realised quality should climb round over round toward the full-information oracle
+    (``true``); under ``raw``, whose bid has no track-record term, it should stay
+    flat, which isolates the improvement to the accumulating memory rather than to
+    the task stream. This reuses the batch engine round by round rather than changing
+    the engine, mirroring ``strategic_adversary``.
+    """
+
+    def series(mode: str) -> tuple[list[float], list[float]]:
+        comp_round: list[list[float]] = [[] for _ in range(rounds)]
+        qual_round: list[list[float]] = [[] for _ in range(rounds)]
+        for seed in range(seeds):
+            agents0 = generate_agents(
+                base.n_agents, base.n_domains, base.heterogeneity, random.Random(seed), base.family,
+            )
+            agents0 = with_capability_spread(agents0, capability_low)
+            agents0 = with_miscalibration(agents0, bias, noise, random.Random(seed + 60_000))
+            # Uninformative starting record: reliability begins at the 0.5 prior for all.
+            record = {a.agent_id: [0, 0] for a in agents0}
+            for r in range(rounds):
+                current = [
+                    replace(a, successes=record[a.agent_id][0], attempts=record[a.agent_id][1])
+                    for a in agents0
+                ]
+                tasks = generate_tasks(
+                    base.n_tasks, base.n_domains, random.Random(seed + 1000 * r),
+                    base.activation_energy, base.family,
+                )
+                res = run_batch(
+                    current, tasks, random.Random(seed + 50_000 + r), condition="cta",
+                    temperature=base.temperature, observability_k=base.observability_k,
+                    selection_mode=mode, gate_enabled=False,
+                )
+                s = res.summary()
+                comp_round[r].append(s["completion_rate"])
+                qual_round[r].append(s["mean_quality"])
+                # Update the track record from realised outcomes (the memory), applied
+                # under every mode so the record accumulates identically; only the bid
+                # differs, so any divergence is due to using the record, not building it.
+                for o in res.outcomes:
+                    if o.winner is not None:
+                        record[o.winner][1] += 1
+                        if o.status == "COMPLETED":
+                            record[o.winner][0] += 1
+        return (
+            [sum(x) / len(x) for x in comp_round],
+            [sum(x) / len(x) for x in qual_round],
+        )
+
+    completion: dict[str, list[float]] = {}
+    quality: dict[str, list[float]] = {}
+    for m in modes:
+        completion[m], quality[m] = series(m)
+
+    # Headline is the completion rate: with a persistent record the allocation
+    # routes more tasks to agents that actually complete them, so completion climbs.
+    rel = completion.get("reliability", [])
+    raw = completion.get("raw", [])
+    oracle = completion.get("true", [])
+    reliability_lift = (rel[-1] - rel[0]) if rel else 0.0
+    raw_lift = (raw[-1] - raw[0]) if raw else 0.0
+    gap0 = (oracle[0] - rel[0]) if (oracle and rel) else 0.0
+    gap_closed = (reliability_lift / gap0) if gap0 > 1e-9 else 0.0
+    return {
+        "rounds": rounds,
+        "bias": bias,
+        "modes": list(modes),
+        "completion": completion,
+        "quality": quality,
+        "reliability_lift": reliability_lift,
+        "raw_lift": raw_lift,
+        "final_gap_to_oracle": (oracle[-1] - rel[-1]) if (oracle and rel) else 0.0,
+        "gap_closed": gap_closed,
+    }
+
+
 def strategic_adversary(
     base: CellParams,
     seeds: int,

@@ -31,6 +31,7 @@ from cta.harness import (
     gate_ablation,
     h2_decomposition,
     heterogeneity_sweep,
+    learning_curve,
     pareto_sweep,
     recovery_surface,
     recovery_vs_spread,
@@ -155,6 +156,9 @@ def autorun(
     sandbag = sandbagging_adversary(protocol.base, protocol.seeds)
     # Exposure cap bounds the blast radius of the first, unpreventable defection.
     exposure = exposure_cap_defense(protocol.base, protocol.seeds)
+    # Self-improving allocation (H13): a persistent, accumulating track record lifts
+    # completion round over round toward the full-information oracle (harness memory).
+    learning = learning_curve(protocol.base, protocol.seeds)
     # Annealing under streaming (non-stationary) task arrival (H5, P3.3).
     streaming = streaming_arrival(protocol.base, protocol.seeds)
     # Dollar cost of coordination against agent count (P2.3): central is N*M, the
@@ -179,6 +183,7 @@ def autorun(
         annealing,
         bounded,
         routing,
+        learning=learning,
     )
 
     # Generalisability: re-run the population-dependent hypotheses under a second,
@@ -459,6 +464,29 @@ def autorun(
         ),
         figures_dir / "exposure_cap.svg",
     )
+    # Self-improving allocation (H13): completion per round under each selection
+    # mode, from an uninformative starting record. Reliability climbs toward the
+    # oracle as the track record accumulates; raw (no record in the bid) stays flat.
+    learning_labels = {
+        "reliability": "reliability (persistent record)",
+        "raw": "raw self-report (no memory)",
+        "true": "full-information oracle",
+    }
+    learning_series = {
+        learning_labels.get(mode, mode): [
+            (float(i), float(v)) for i, v in enumerate(learning["completion"][mode])
+        ]
+        for mode in learning["modes"]
+    }
+    save_svg(
+        line_chart(
+            learning_series,
+            title="Self-improving allocation: completion climbs as the record accumulates",
+            xlabel="round",
+            ylabel="task completion rate",
+        ),
+        figures_dir / "learning_curve.svg",
+    )
     # Reliability diagram of the realistic fleet: mean predicted vs realised
     # success, with the diagonal of perfect calibration. Points below the diagonal
     # are overconfident. The correction pulls the retained winners toward it.
@@ -514,6 +542,7 @@ def autorun(
         "figures/strategic_adversary.svg",
         "figures/sandbagging_adversary.svg",
         "figures/exposure_cap.svg",
+        "figures/learning_curve.svg",
         "figures/reliability_diagram.svg",
         "figures/fleet_mix.svg",
     ]
@@ -556,6 +585,7 @@ def autorun(
         "strategic_adversary": adversary,
         "sandbagging_adversary": sandbag,
         "exposure_cap_defense": exposure,
+        "learning_curve": learning,
         "streaming_arrival": streaming,
         "fleet": {"experiment": fleet, "mix_sweep": fleet_mix, "safety": fleet_safety},
         "robustness": robustness,
