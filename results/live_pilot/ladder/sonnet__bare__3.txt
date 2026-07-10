@@ -1,0 +1,236 @@
+### TASK: fraction_to_decimal
+CONFIDENCE: 0.93
+```python
+def fraction_to_decimal(numerator: int, denominator: int) -> str:
+    if numerator == 0:
+        return "0"
+    result = []
+    if (numerator < 0) != (denominator < 0):
+        result.append("-")
+    n = abs(numerator)
+    d = abs(denominator)
+    result.append(str(n // d))
+    remainder = n % d
+    if remainder == 0:
+        return "".join(result)
+    result.append(".")
+    seen = {}
+    digits = []
+    while remainder != 0:
+        if remainder in seen:
+            idx = seen[remainder]
+            digits.insert(idx, "(")
+            digits.append(")")
+            break
+        seen[remainder] = len(digits)
+        remainder *= 10
+        digits.append(str(remainder // d))
+        remainder %= d
+    result.extend(digits)
+    return "".join(result)
+```
+
+### TASK: int_to_words
+CONFIDENCE: 0.88
+```python
+def int_to_words(n: int) -> str:
+    if n == 0:
+        return "Zero"
+
+    below_20 = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven",
+                "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen",
+                "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen",
+                "Nineteen"]
+    tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy",
+            "Eighty", "Ninety"]
+    thousands = ["", "Thousand", "Million", "Billion", "Trillion"]
+
+    def helper(num):
+        if num == 0:
+            return ""
+        elif num < 20:
+            return below_20[num] + " "
+        elif num < 100:
+            return tens[num // 10] + " " + helper(num % 10)
+        else:
+            return below_20[num // 100] + " Hundred " + helper(num % 100)
+
+    negative = n < 0
+    n = abs(n)
+
+    res = ""
+    i = 0
+    while n > 0:
+        if n % 1000 != 0:
+            res = helper(n % 1000) + thousands[i] + " " + res
+        n //= 1000
+        i += 1
+
+    result = " ".join(res.split())
+    if negative:
+        result = "Negative " + result
+    return result
+```
+
+### TASK: full_justify
+CONFIDENCE: 0.87
+```python
+def full_justify(words: list[str], max_width: int) -> list[str]:
+    if not words:
+        return []
+
+    result = []
+    current_line = []
+    current_length = 0
+
+    for word in words:
+        if current_length + len(current_line) + len(word) > max_width:
+            num_spaces = max_width - current_length
+            if len(current_line) == 1:
+                result.append(current_line[0] + " " * num_spaces)
+            else:
+                num_gaps = len(current_line) - 1
+                space, extra = divmod(num_spaces, num_gaps)
+                line = ""
+                for i, w in enumerate(current_line):
+                    line += w
+                    if i < num_gaps:
+                        line += " " * (space + (1 if i < extra else 0))
+                result.append(line)
+            current_line = []
+            current_length = 0
+        current_line.append(word)
+        current_length += len(word)
+
+    last_line = " ".join(current_line)
+    last_line += " " * (max_width - len(last_line))
+    result.append(last_line)
+
+    return result
+```
+
+### TASK: calculate3
+CONFIDENCE: 0.82
+```python
+def calculate3(s: str) -> int:
+    def calc(idx):
+        stack = []
+        num = 0
+        sign = "+"
+
+        def update(op, v):
+            if op == "+":
+                stack.append(v)
+            elif op == "-":
+                stack.append(-v)
+            elif op == "*":
+                stack.append(stack.pop() * v)
+            elif op == "/":
+                stack.append(int(stack.pop() / v))
+
+        while idx < len(s):
+            ch = s[idx]
+            if ch.isdigit():
+                num = num * 10 + int(ch)
+            elif ch in "+-*/":
+                update(sign, num)
+                num, sign = 0, ch
+            elif ch == "(":
+                num, idx = calc(idx + 1)
+            elif ch == ")":
+                update(sign, num)
+                return sum(stack), idx
+            idx += 1
+        update(sign, num)
+        return sum(stack), idx
+
+    return calc(0)[0]
+```
+
+### TASK: multiply_strings
+CONFIDENCE: 0.93
+```python
+def multiply_strings(num1: str, num2: str) -> str:
+    if num1 == "0" or num2 == "0":
+        return "0"
+    n1, n2 = len(num1), len(num2)
+    result = [0] * (n1 + n2)
+    for i in range(n1 - 1, -1, -1):
+        for j in range(n2 - 1, -1, -1):
+            mul = (ord(num1[i]) - ord("0")) * (ord(num2[j]) - ord("0"))
+            p1, p2 = i + j, i + j + 1
+            total = mul + result[p2]
+            result[p2] = total % 10
+            result[p1] += total // 10
+    result_str = "".join(map(str, result)).lstrip("0")
+    return result_str if result_str else "0"
+```
+
+### TASK: min_window
+CONFIDENCE: 0.87
+```python
+def min_window(s: str, t: str) -> str:
+    if not t or not s:
+        return ""
+
+    need = {}
+    for c in t:
+        need[c] = need.get(c, 0) + 1
+    missing = len(t)
+    left = 0
+    best_left, best_right = 0, 0
+    found = False
+
+    for right, char in enumerate(s, 1):
+        if need.get(char, 0) > 0:
+            missing -= 1
+        need[char] = need.get(char, 0) - 1
+        while missing == 0:
+            if not found or right - left < best_right - best_left:
+                best_left, best_right = left, right
+                found = True
+            left_char = s[left]
+            need[left_char] = need.get(left_char, 0) + 1
+            if need[left_char] > 0:
+                missing += 1
+            left += 1
+
+    return s[best_left:best_right] if found else ""
+```
+
+### TASK: word_break
+CONFIDENCE: 0.93
+```python
+def word_break(s: str, words: list[str]) -> bool:
+    word_set = set(words)
+    n = len(s)
+    dp = [False] * (n + 1)
+    dp[0] = True
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_set:
+                dp[i] = True
+                break
+    return dp[n]
+```
+
+### TASK: is_match
+CONFIDENCE: 0.9
+```python
+def is_match(s: str, p: str) -> bool:
+    m, n = len(s), len(p)
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+    for j in range(1, n + 1):
+        if p[j - 1] == "*":
+            dp[0][j] = dp[0][j - 1]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j - 1] == "*":
+                dp[i][j] = dp[i - 1][j] or dp[i][j - 1]
+            elif p[j - 1] == "?" or p[j - 1] == s[i - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                dp[i][j] = False
+    return dp[m][n]
+```

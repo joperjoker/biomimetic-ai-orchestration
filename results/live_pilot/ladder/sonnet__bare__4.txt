@@ -1,0 +1,223 @@
+### TASK: fraction_to_decimal
+CONFIDENCE: 0.88
+```python
+def fraction_to_decimal(numerator: int, denominator: int) -> str:  # numerator/denominator as a decimal string, e.g. 1/2 -> '0.5'.
+    if numerator == 0:
+        return "0"
+    result = []
+    if (numerator < 0) != (denominator < 0):
+        result.append('-')
+    num = abs(numerator)
+    den = abs(denominator)
+    result.append(str(num // den))
+    remainder = num % den
+    if remainder == 0:
+        return ''.join(result)
+    result.append('.')
+    seen = {}
+    while remainder != 0:
+        if remainder in seen:
+            result.insert(seen[remainder], '(')
+            result.append(')')
+            break
+        seen[remainder] = len(result)
+        remainder *= 10
+        result.append(str(remainder // den))
+        remainder %= den
+    return ''.join(result)
+```
+
+### TASK: int_to_words
+CONFIDENCE: 0.78
+```python
+def int_to_words(n: int) -> str:  # a non-negative integer in English words, e.g. 123 -> 'One Hundred Twenty Three'.
+    if n == 0:
+        return "Zero"
+
+    below20 = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+               "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen",
+               "Eighteen", "Nineteen"]
+    tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
+    thousands = ["", "Thousand", "Million", "Billion", "Trillion"]
+
+    def helper(num):
+        if num == 0:
+            return ""
+        elif num < 20:
+            return below20[num] + " "
+        elif num < 100:
+            return tens[num // 10] + " " + helper(num % 10)
+        else:
+            return below20[num // 100] + " Hundred " + helper(num % 100)
+
+    res = ""
+    i = 0
+    while n > 0:
+        if n % 1000 != 0:
+            res = helper(n % 1000) + thousands[i] + " " + res
+        n //= 1000
+        i += 1
+    return " ".join(res.split())
+```
+
+### TASK: full_justify
+CONFIDENCE: 0.85
+```python
+def full_justify(words: list[str], max_width: int) -> list[str]:  # pack words into fully-justified lines of width max_width.
+    result = []
+    current_line = []
+    current_length = 0
+    for word in words:
+        if current_length + len(current_line) + len(word) > max_width:
+            spaces_needed = max_width - current_length
+            if len(current_line) == 1:
+                result.append(current_line[0] + ' ' * spaces_needed)
+            else:
+                gaps = len(current_line) - 1
+                space, extra = divmod(spaces_needed, gaps)
+                line = ''
+                for i, w in enumerate(current_line):
+                    line += w
+                    if i < gaps:
+                        line += ' ' * (space + (1 if i < extra else 0))
+                result.append(line)
+            current_line = []
+            current_length = 0
+        current_line.append(word)
+        current_length += len(word)
+
+    last_line = ' '.join(current_line)
+    last_line += ' ' * (max_width - len(last_line))
+    result.append(last_line)
+    return result
+```
+
+### TASK: calculate3
+CONFIDENCE: 0.8
+```python
+def calculate3(s: str) -> int:  # evaluate an arithmetic string with + - * / and parentheses, e.g. '2*(5+5)' -> 20.
+    s = s.replace(' ', '')
+    pos = [0]
+
+    def parse_expr():
+        val = parse_term()
+        while pos[0] < len(s) and s[pos[0]] in '+-':
+            op = s[pos[0]]
+            pos[0] += 1
+            rhs = parse_term()
+            val = val + rhs if op == '+' else val - rhs
+        return val
+
+    def parse_term():
+        val = parse_factor()
+        while pos[0] < len(s) and s[pos[0]] in '*/':
+            op = s[pos[0]]
+            pos[0] += 1
+            rhs = parse_factor()
+            if op == '*':
+                val = val * rhs
+            else:
+                val = int(val / rhs)
+        return val
+
+    def parse_factor():
+        if s[pos[0]] == '(':
+            pos[0] += 1
+            val = parse_expr()
+            pos[0] += 1  # skip ')'
+            return val
+        if s[pos[0]] == '-':
+            pos[0] += 1
+            return -parse_factor()
+        if s[pos[0]] == '+':
+            pos[0] += 1
+            return parse_factor()
+        start = pos[0]
+        while pos[0] < len(s) and s[pos[0]].isdigit():
+            pos[0] += 1
+        return int(s[start:pos[0]])
+
+    return parse_expr()
+```
+
+### TASK: multiply_strings
+CONFIDENCE: 0.92
+```python
+def multiply_strings(num1: str, num2: str) -> str:  # product of two non-negative integer strings, e.g. '123'*'456' -> '56088'.
+    if num1 == '0' or num2 == '0':
+        return '0'
+    n1, n2 = len(num1), len(num2)
+    result = [0] * (n1 + n2)
+    for i in range(n1 - 1, -1, -1):
+        for j in range(n2 - 1, -1, -1):
+            mul = (ord(num1[i]) - ord('0')) * (ord(num2[j]) - ord('0'))
+            p1, p2 = i + j, i + j + 1
+            total = mul + result[p2]
+            result[p2] = total % 10
+            result[p1] += total // 10
+    result_str = ''.join(map(str, result)).lstrip('0')
+    return result_str if result_str else '0'
+```
+
+### TASK: min_window
+CONFIDENCE: 0.85
+```python
+def min_window(s: str, t: str) -> str:  # shortest substring of s containing all characters of t, or ''.
+    from collections import Counter
+
+    if not t or not s or len(t) > len(s):
+        return ''
+
+    need = Counter(t)
+    missing = len(t)
+    left = 0
+    best_left, best_right = 0, 0
+
+    for right, ch in enumerate(s, 1):
+        if need[ch] > 0:
+            missing -= 1
+        need[ch] -= 1
+        if missing == 0:
+            while left < right and need[s[left]] < 0:
+                need[s[left]] += 1
+                left += 1
+            if best_right == 0 or right - left < best_right - best_left:
+                best_left, best_right = left, right
+
+    return s[best_left:best_right]
+```
+
+### TASK: word_break
+CONFIDENCE: 0.88
+```python
+def word_break(s: str, words: list[str]) -> bool:  # can s be segmented into words from the list?
+    word_set = set(words)
+    n = len(s)
+    dp = [False] * (n + 1)
+    dp[0] = True
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_set:
+                dp[i] = True
+                break
+    return dp[n]
+```
+
+### TASK: is_match
+CONFIDENCE: 0.87
+```python
+def is_match(s: str, p: str) -> bool:  # wildcard match where '?' is any char and '*' is any sequence.
+    m, n = len(s), len(p)
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+    for j in range(1, n + 1):
+        if p[j - 1] == '*':
+            dp[0][j] = dp[0][j - 1]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j - 1] == '*':
+                dp[i][j] = dp[i - 1][j] or dp[i][j - 1]
+            elif p[j - 1] == '?' or s[i - 1] == p[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+    return dp[m][n]
+```
