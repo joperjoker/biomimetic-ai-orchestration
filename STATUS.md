@@ -2,14 +2,35 @@
 
 A running log of what is complete and what comes next. Read this, then `claude.md`, `docs/next_experiments.md`, and `docs/measures.md` to resume in a fresh session.
 
+## Two-paper split (recorded 2026-07-11)
+
+**Paper 1 is being submitted now.** The arXiv package in `paper/` (author Teo Qing
+Cong Eugene, Independent) is the submission: `main.tex` + `refs.bib` + `main.bbl`
++ `figures/`, primary category cs.MA. This is Paper 1, the calibration-robust
+decentralised task-allocation result (CTA, H1-H13, the ladder/project/held-out/OOD
+real-agent tiers, the synthetic protocol). It is frozen for submission; do not
+add new results to `paper/main.tex`. Corrections/rebuttal edits only.
+
+**Paper 2 is the continuation.** Ongoing research (Path 2 below) is now explicitly
+scoped as a *second, separate paper*, not an update to Paper 1. Its thesis is the
+deployed self-improving CTA harness: the ACP broker as a calibration-robust router,
+the SOTA benchmark head-to-head (CTA's calibrated router vs a naive static-capability
+router vs single-frontier), and the real-agent self-improvement result (H13 over a
+persistent store across sessions). Start a fresh paper source (e.g. `paper2/`) when
+the results are in; keep `paper/` untouched. Read `docs/publication_plan.md` for the
+framing. Before continuing Path 2, note: Paper 1 = the mechanism + evidence it works;
+Paper 2 = the deployed harness + the competitive head-to-head.
+
 ## Resume here (next session)
 
 **Where things stand.** Branch `claude/biomimetic-ai-orchestration-init-0nb5db`.
 143 tests pass, `ruff` clean, tree clean and pushed. Phase 3 (real-agent
-hardening) is complete; Path 1 (the TMLR-ready pass) is done and the unified
-paper is submission-ready (`docs/paper.pdf` built); Path 2 (the ACP broker) is
-started, with the skeleton P4.0-P4.2 built and tested (`src/cta/acp.py`). Read
-`docs/publication_plan.md` first for the unified-vs-split decision.
+hardening) is complete; Path 1 (the TMLR-ready pass) is done and Paper 1 is
+submission-ready and being submitted now (`paper/` LaTeX package; `docs/paper.pdf`
+also built); Path 2 (the ACP broker, now scoped as Paper 2) is started, with the
+skeleton P4.0-P4.2 built and tested (`src/cta/acp.py`). Read
+`docs/publication_plan.md` first for the unified-vs-split decision (now resolved:
+split).
 
 **Paused here (resume next session).** The next action is the metered Path 2
 differentiator: P4.3 (wire the broker's `downstream` to a real subagent solver),
