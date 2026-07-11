@@ -128,9 +128,9 @@ low-usage windows; only the evaluation is metered.
 
 | Step | What | Usage |
 |------|------|-------|
-| P4.0 | This design doc; pin a spec version; choose stdlib JSON-RPC-over-stdio (keep the repo single-language Python) | free |
-| P4.1 | Minimal ACP **agent** skeleton: `initialize`/`session/new`/`prompt`/`cancel` + `agent_message_chunk` streaming; echo agent that handshakes with a real client (Zed) and a local conformance harness | free |
-| P4.2 | Wire `wrappers.route()` into the `prompt` handler with a **simulated** downstream; routing-decision update visible in the editor | free |
+| P4.0 | **Done.** This design doc; stdlib JSON-RPC-over-stdio chosen (single-language Python) | free |
+| P4.1 | **Done** (`src/cta/acp.py`, `tests/test_acp.py`). Minimal ACP agent: `initialize`/`session/new`/`session/prompt`/`session/cancel` over transport-free `AcpBroker.handle()`, `session/update` streaming, and a newline-delimited-JSON `serve()` stdio driver | free |
+| P4.2 | **Done.** `wrappers.route()` wired into the `session/prompt` handler with a simulated downstream; routing-decision and `agent_message_chunk` updates emitted; the persistent track record updates each turn so routing self-improves (a test shows a cold start escalate to the frontier, then drop to the cheapest model once an economy track record accrues) | free |
 | P4.3 | CTA as ACP **client** to **one** real downstream agent, end-to-end proxying of chunks/tool_call/diff | small smoke-test usage |
 | P4.4 | Confidence **elicitation** (probe + prior modes) + track-record correction + integrity gate, live on the turn | free plumbing |
 | P4.5 | **Multi-downstream** routing across the model-tier fleet (heterogeneous agent products deferred) | free plumbing |
