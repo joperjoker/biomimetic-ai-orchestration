@@ -5,13 +5,13 @@ preprint with 7 vector figures, four tables, and a bibliography.
 
 ## Contents
 
-- `main.tex` — the paper (single-column `article` preprint style).
-- `refs.bib` — bibliography (BibTeX).
-- `main.bbl` — the compiled bibliography; include it in the arXiv upload so the
+- `main.tex`: the paper (single-column `article` preprint style).
+- `refs.bib`: bibliography (BibTeX).
+- `main.bbl`: the compiled bibliography; include it in the arXiv upload so the
   references render even if arXiv's BibTeX pass differs.
-- `figures/*.pdf` — the seven figures as vector PDFs (rendered from the committed
+- `figures/*.pdf`: the seven figures as vector PDFs (rendered from the committed
   SVGs in `results/figures/` via cairosvg; regenerate with the snippet below).
-- `build.sh` — local build (`pdflatex` + `bibtex` + two more `pdflatex` passes).
+- `build.sh`: local build (`pdflatex` + `bibtex` + two more `pdflatex` passes).
 
 ## Build locally
 
@@ -43,7 +43,7 @@ Systems), cross-list **cs.DC** and **cs.LG**.
 
 ## Before submitting
 
-- Fill in the author block in `main.tex` (`[Author Name]`, `[Affiliation]`,
-  `[email]`) — it currently holds placeholders.
-- Optional: confirm the two forward-dated references (MarketBench, Zhang et al.
-  2026) resolve to their final venues at submission time.
+- The author block in `main.tex` is filled in (Teo Qing Cong Eugene, Independent).
+- The two forward-dated references are confirmed: MarketBench (Fradkin and
+  Krishnan, arXiv:2604.23897) and Zhang et al. (EACL 2026, arXiv:2603.03752).
+  Re-confirm their final venues at submission time if newer versions appear.
