@@ -1,0 +1,38 @@
+{
+  "condition": "bare",
+  "policies": {
+    "cta_corrected": {
+      "folds": 10,
+      "completion": 0.9875,
+      "completion_lo": 0.9625,
+      "completion_hi": 1.0,
+      "cost_usd": 0.057
+    },
+    "naive_self_report": {
+      "folds": 10,
+      "completion": 0.95,
+      "completion_lo": 0.9125,
+      "completion_hi": 0.9875,
+      "cost_usd": 0.024
+    },
+    "always_frontier": {
+      "folds": 10,
+      "completion": 1.0,
+      "completion_lo": 1.0,
+      "completion_hi": 1.0,
+      "cost_usd": 1.44
+    },
+    "single_cheapest": {
+      "folds": 10,
+      "completion": 0.95,
+      "completion_lo": 0.9125,
+      "completion_hi": 0.9875,
+      "cost_usd": 0.024
+    }
+  },
+  "comparison": {
+    "completion_gain_vs_naive": 0.0375,
+    "completion_retained_vs_frontier": -0.0125,
+    "cost_saving_vs_frontier": 25.26
+  }
+}

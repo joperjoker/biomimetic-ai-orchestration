@@ -33,16 +33,24 @@ Paper 2 = the deployed harness + the competitive head-to-head.
   (summary.json/RESULTS.md/headtohead.svg). `tests/test_headtohead.py` +7 (155
   pass, ruff clean). Sim sanity: cta 1.00 completion at 1.51x frontier cost saving,
   +0.50 over naive, probe overhead 23%. Real numbers come from 2C.
-- **Phase 2C (metered, batched): NEXT.** `pilot_tasks/headtohead.py` drives the
-  four policies on real subagents over the expert/project suites. Each cell is one
-  `(policy, task, replicate)` solve written to
-  `results/headtohead/{policy}__{task}__{k}.txt` (ladder submission format),
-  scored against hidden tests; skip any cell already on disk => resumable across
-  sessions. The warm-start track record for `cta_corrected` reuses the measured
-  per-(model,type) reliability from the Phase 3 ladder/project runs. Orchestrated
-  by spawning `Agent(model=...)` one-shot, no tools. Batch small; commit partials;
-  pause on usage; resume by re-running.
-- **Phase 2D (free):** Paper 2 draft (`docs/paper2.md` -> `paper2/`).
+- **Phase 2C (real agents): DONE, zero new metered cost.** The head-to-head is a
+  routing question over outcomes the Phase 3 ladder already collected, so
+  `pilot_tasks/headtohead.py` answers it as a **leave-one-replicate-out replay**:
+  reliability and self-reports estimated from the training replicates, each policy
+  scored on the held-out replicate it did not see. Real result on the expert
+  `bare` tier (10 folds): CTA-corrected **0.988 [0.963, 1.000]** completion at
+  **25.3x** cost saving vs always-frontier (1.000), beating naive self-report /
+  single-cheapest (both **0.950**) by **+0.037**. Finding: with uniformly
+  (over/under)confident Claude self-reports, naive routing *collapses to
+  always-cheapest* (raw bids always clear the barrier), so the track-record
+  correction is what creates the differentiation. `results/headtohead/`
+  (summary.json, RESULTS.md, headtohead.svg) + `results/figures/headtohead.svg`.
+  `tests/test_headtohead_replay.py` +4 (159 pass, ruff clean). The optional live
+  end-to-end broker demo over a real subagent solver remains available if we later
+  want a deployment vignette; the headline result is banked without it.
+- **Phase 2D (free): NEXT.** Paper 2 draft (`docs/paper2.md` -> `paper2/`): the
+  ACP-broker architecture, the head-to-head table + figure, probe-overhead cost
+  accounting, and the honest bounds (Claude underconfidence, protocol youth).
 
 ## Resume here (next session)
 

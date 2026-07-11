@@ -219,9 +219,9 @@ def completion_cost_figure(result: dict, path: str | Path) -> None:
     rel_cost = [round(pol[p]["total_cost_usd"] / frontier_cost, 4) for p in POLICIES]
     svg = bar_chart(
         cats,
-        {"completion": completion, "cost (fraction of frontier)": rel_cost},
+        {"completion": completion, "relative cost": rel_cost},
         title="Head-to-head: completion versus cost by routing policy",
-        ylabel="fraction",
+        ylabel="fraction (cost relative to always-frontier)",
         xlabel="routing policy",
     )
     save_svg(svg, path)
