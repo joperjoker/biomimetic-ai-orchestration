@@ -1,78 +1,94 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Peak per-node load vs agent count</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">agents (log scale)</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">peak per-node load</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 380.0 L282.9 380.0 L347.1 380.0 L411.2 380.0 L495.9 380.0 L560.0 380.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="198.2" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="282.9" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="347.1" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="411.2" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="495.9" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="380.0" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">2e+07</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">4e+07</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">6e+07</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">8e+07</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">50.00</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">188.03</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">707.11</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">2.7e+03</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1e+04</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">agents (log scale)</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">peak per-node load</text>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 376.0 L285.2 376.0 L348.8 376.0 L412.4 376.0 L496.4 376.0 L560.0 376.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="201.2" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="285.2" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="348.8" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="412.4" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="496.4" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="376.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">cta</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 380.0 L282.9 380.0 L347.1 380.0 L411.2 380.0 L495.9 380.0 L560.0 380.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="198.2" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="282.9" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="347.1" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="411.2" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="495.9" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="560.0" cy="380.0" r="3" fill="#c25a3d"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 376.0 L285.2 376.0 L348.8 376.0 L412.4 376.0 L496.4 376.0 L560.0 376.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="201.2" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="285.2" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="348.8" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="412.4" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="496.4" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="560.0" cy="376.0" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">pull_based</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#4c9a6a"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#4c9a6a"/>
-<circle cx="198.2" cy="379.9" r="3" fill="#4c9a6a"/>
-<circle cx="282.9" cy="379.1" r="3" fill="#4c9a6a"/>
-<circle cx="347.1" cy="376.6" r="3" fill="#4c9a6a"/>
-<circle cx="411.2" cy="366.4" r="3" fill="#4c9a6a"/>
-<circle cx="495.9" cy="295.0" r="3" fill="#4c9a6a"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 375.9 L285.2 375.2 L348.8 372.6 L412.4 362.6 L496.4 292.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#4c9a6a"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#4c9a6a"/>
+<circle cx="201.2" cy="375.9" r="3" fill="#4c9a6a"/>
+<circle cx="285.2" cy="375.2" r="3" fill="#4c9a6a"/>
+<circle cx="348.8" cy="372.6" r="3" fill="#4c9a6a"/>
+<circle cx="412.4" cy="362.6" r="3" fill="#4c9a6a"/>
+<circle cx="496.4" cy="292.0" r="3" fill="#4c9a6a"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#4c9a6a"/>
 <rect x="576" y="90" width="14" height="14" fill="#4c9a6a"/>
 <text x="594" y="102">central_greedy</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#8a6fb0" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#8a6fb0"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#8a6fb0"/>
-<circle cx="198.2" cy="379.9" r="3" fill="#8a6fb0"/>
-<circle cx="282.9" cy="379.1" r="3" fill="#8a6fb0"/>
-<circle cx="347.1" cy="376.6" r="3" fill="#8a6fb0"/>
-<circle cx="411.2" cy="366.4" r="3" fill="#8a6fb0"/>
-<circle cx="495.9" cy="295.0" r="3" fill="#8a6fb0"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 375.9 L285.2 375.2 L348.8 372.6 L412.4 362.6 L496.4 292.0 L560.0 40.0" fill="none" stroke="#8a6fb0" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#8a6fb0"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#8a6fb0"/>
+<circle cx="201.2" cy="375.9" r="3" fill="#8a6fb0"/>
+<circle cx="285.2" cy="375.2" r="3" fill="#8a6fb0"/>
+<circle cx="348.8" cy="372.6" r="3" fill="#8a6fb0"/>
+<circle cx="412.4" cy="362.6" r="3" fill="#8a6fb0"/>
+<circle cx="496.4" cy="292.0" r="3" fill="#8a6fb0"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#8a6fb0"/>
 <rect x="576" y="112" width="14" height="14" fill="#8a6fb0"/>
 <text x="594" y="124">central_optimal</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#b58b2c" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#b58b2c"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#b58b2c"/>
-<circle cx="198.2" cy="379.9" r="3" fill="#b58b2c"/>
-<circle cx="282.9" cy="379.1" r="3" fill="#b58b2c"/>
-<circle cx="347.1" cy="376.6" r="3" fill="#b58b2c"/>
-<circle cx="411.2" cy="366.4" r="3" fill="#b58b2c"/>
-<circle cx="495.9" cy="295.0" r="3" fill="#b58b2c"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 375.9 L285.2 375.2 L348.8 372.6 L412.4 362.6 L496.4 292.0 L560.0 40.0" fill="none" stroke="#b58b2c" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#b58b2c"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#b58b2c"/>
+<circle cx="201.2" cy="375.9" r="3" fill="#b58b2c"/>
+<circle cx="285.2" cy="375.2" r="3" fill="#b58b2c"/>
+<circle cx="348.8" cy="372.6" r="3" fill="#b58b2c"/>
+<circle cx="412.4" cy="362.6" r="3" fill="#b58b2c"/>
+<circle cx="496.4" cy="292.0" r="3" fill="#b58b2c"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#b58b2c"/>
 <rect x="576" y="134" width="14" height="14" fill="#b58b2c"/>
 <text x="594" y="146">central_best</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="198.2" cy="379.9" r="3" fill="#2f6f9f"/>
-<circle cx="282.9" cy="379.1" r="3" fill="#2f6f9f"/>
-<circle cx="347.1" cy="376.6" r="3" fill="#2f6f9f"/>
-<circle cx="411.2" cy="366.4" r="3" fill="#2f6f9f"/>
-<circle cx="495.9" cy="295.0" r="3" fill="#2f6f9f"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 375.9 L285.2 375.2 L348.8 372.6 L412.4 362.6 L496.4 292.0 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="201.2" cy="375.9" r="3" fill="#2f6f9f"/>
+<circle cx="285.2" cy="375.2" r="3" fill="#2f6f9f"/>
+<circle cx="348.8" cy="372.6" r="3" fill="#2f6f9f"/>
+<circle cx="412.4" cy="362.6" r="3" fill="#2f6f9f"/>
+<circle cx="496.4" cy="292.0" r="3" fill="#2f6f9f"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="156" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="168">central_bounded</text>
-<text x="70" y="398" text-anchor="middle">50</text>
-<text x="560" y="398" text-anchor="middle">1e+04</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">8e+07</text>
 </svg>

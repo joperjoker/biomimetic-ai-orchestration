@@ -68,161 +68,225 @@ footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line);
 </style></head><body><div class="wrap"><p class="eyebrow">Chemotactic Task Allocation — research results</p><h1>Decentralised task allocation, validated across generators</h1><p class="thesis">Agents self-select work by a compatibility bid and a track-record correction, screened by a safety gate. Every verdict below is reproduced by one command and, for the population-dependent hypotheses, under a second, structurally different generator.</p><div class="tally"><span class="chip"><b>9</b> of 11 hypotheses supported</span><span class="chip">20 seeds</span><span class="chip">agents to 10000</span><span class="chip">deterministic, no external service</span></div><h2>Hypotheses</h2><div class="grid"><div class="card"><div class="top"><span class="hid">H1</span><span class="pill ok">SUPPORTED</span></div><p class="claim">peak per-node load grows more slowly for CTA than central</p><div class="stats"><span><b>cta growth factor</b> 1</span> <span><b>central growth factor</b> 4e+04</span></div></div><div class="card"><div class="top"><span class="hid">H2</span><span class="pill no">NOT SUPPORTED</span></div><p class="claim">CTA quality is not worse than pull-based and within margin of the optimum</p><div class="stats"><span><b>cta mean quality</b> 0.879</span> <span><b>optimal mean quality</b> 0.942</span></div></div><div class="card"><div class="top"><span class="hid">H3</span><span class="pill ok">SUPPORTED</span></div><p class="claim">the engine labels infeasible and stalled tasks correctly</p><div class="stats"><span><b>infeasible recall</b> 1</span> <span><b>stalled recall</b> 1</span></div></div><div class="card"><div class="top"><span class="hid">H4</span><span class="pill ok">SUPPORTED</span></div><p class="claim">the integrity gate substantially reduces out-of-scope writes</p><div class="stats"><span><b>gate on violations</b> 2.15</span> <span><b>gate off violations</b> 22.4</span> <span><b>reduction</b> 0.904</span></div></div><div class="card"><div class="top"><span class="hid">H5</span><span class="pill ok">SUPPORTED</span></div><p class="claim">annealing bounds the stall time of feasible tasks</p><div class="stats"><span><b>max stall without annealing</b> 300</span> <span><b>max stall with annealing</b> 1</span></div></div><div class="card"><div class="top"><span class="hid">H6</span><span class="pill no">NOT SUPPORTED</span></div><p class="claim">CTA advantage over the optimum increases with heterogeneity</p><div class="stats"><span><b>advantage low h</b> -0.03</span> <span><b>advantage high h</b> -0.064</span></div></div><div class="card"><div class="top"><span class="hid">H7</span><span class="pill ok">SUPPORTED</span></div><p class="claim">self-reports over-predict realised success because they omit competence</p><div class="stats"><span><b>overconfidence gap</b> 0.206</span> <span><b>winner brier</b> 0.288</span> <span><b>winner ece</b> 0.284</span></div></div><div class="card"><div class="top"><span class="hid">H8</span><span class="pill ok">SUPPORTED</span></div><p class="claim">the track-record correction recovers completion under miscalibration</p><div class="stats"><span><b>raw completion</b> 0.341</span> <span><b>reliability completion</b> 0.73</span> <span><b>recovery</b> 0.389</span> <span><b>p holm</b> 0</span></div></div></div><h2>Generalisability — verdict by generator family</h2><table><thead><tr><th>Hypothesis</th><th>Domains family</th><th>Latent family</th></tr></thead><tbody><tr><td class="h">H2</td><td><span class="pill no">NOT SUPPORTED</span></td><td><span class="pill no">NOT SUPPORTED</span></td></tr><tr><td class="h">H4</td><td><span class="pill ok">SUPPORTED</span></td><td><span class="pill ok">SUPPORTED</span></td></tr><tr><td class="h">H7</td><td><span class="pill ok">SUPPORTED</span></td><td><span class="pill ok">SUPPORTED</span></td></tr><tr><td class="h">H8</td><td><span class="pill ok">SUPPORTED</span></td><td><span class="pill ok">SUPPORTED</span></td></tr></tbody></table><h2>Figures</h2><div class="figs"><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Peak per-node load vs agent count</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">agents (log scale)</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">peak per-node load</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 380.0 L282.9 380.0 L347.1 380.0 L411.2 380.0 L495.9 380.0 L560.0 380.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="198.2" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="282.9" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="347.1" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="411.2" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="495.9" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="380.0" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">2e+07</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">4e+07</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">6e+07</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">8e+07</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">50.00</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">188.03</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">707.11</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">2.7e+03</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1e+04</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">agents (log scale)</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">peak per-node load</text>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 376.0 L285.2 376.0 L348.8 376.0 L412.4 376.0 L496.4 376.0 L560.0 376.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="201.2" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="285.2" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="348.8" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="412.4" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="496.4" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="376.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">cta</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 380.0 L282.9 380.0 L347.1 380.0 L411.2 380.0 L495.9 380.0 L560.0 380.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="198.2" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="282.9" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="347.1" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="411.2" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="495.9" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="560.0" cy="380.0" r="3" fill="#c25a3d"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 376.0 L285.2 376.0 L348.8 376.0 L412.4 376.0 L496.4 376.0 L560.0 376.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="201.2" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="285.2" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="348.8" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="412.4" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="496.4" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="560.0" cy="376.0" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">pull_based</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#4c9a6a"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#4c9a6a"/>
-<circle cx="198.2" cy="379.9" r="3" fill="#4c9a6a"/>
-<circle cx="282.9" cy="379.1" r="3" fill="#4c9a6a"/>
-<circle cx="347.1" cy="376.6" r="3" fill="#4c9a6a"/>
-<circle cx="411.2" cy="366.4" r="3" fill="#4c9a6a"/>
-<circle cx="495.9" cy="295.0" r="3" fill="#4c9a6a"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 375.9 L285.2 375.2 L348.8 372.6 L412.4 362.6 L496.4 292.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#4c9a6a"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#4c9a6a"/>
+<circle cx="201.2" cy="375.9" r="3" fill="#4c9a6a"/>
+<circle cx="285.2" cy="375.2" r="3" fill="#4c9a6a"/>
+<circle cx="348.8" cy="372.6" r="3" fill="#4c9a6a"/>
+<circle cx="412.4" cy="362.6" r="3" fill="#4c9a6a"/>
+<circle cx="496.4" cy="292.0" r="3" fill="#4c9a6a"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#4c9a6a"/>
 <rect x="576" y="90" width="14" height="14" fill="#4c9a6a"/>
 <text x="594" y="102">central_greedy</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#8a6fb0" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#8a6fb0"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#8a6fb0"/>
-<circle cx="198.2" cy="379.9" r="3" fill="#8a6fb0"/>
-<circle cx="282.9" cy="379.1" r="3" fill="#8a6fb0"/>
-<circle cx="347.1" cy="376.6" r="3" fill="#8a6fb0"/>
-<circle cx="411.2" cy="366.4" r="3" fill="#8a6fb0"/>
-<circle cx="495.9" cy="295.0" r="3" fill="#8a6fb0"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 375.9 L285.2 375.2 L348.8 372.6 L412.4 362.6 L496.4 292.0 L560.0 40.0" fill="none" stroke="#8a6fb0" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#8a6fb0"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#8a6fb0"/>
+<circle cx="201.2" cy="375.9" r="3" fill="#8a6fb0"/>
+<circle cx="285.2" cy="375.2" r="3" fill="#8a6fb0"/>
+<circle cx="348.8" cy="372.6" r="3" fill="#8a6fb0"/>
+<circle cx="412.4" cy="362.6" r="3" fill="#8a6fb0"/>
+<circle cx="496.4" cy="292.0" r="3" fill="#8a6fb0"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#8a6fb0"/>
 <rect x="576" y="112" width="14" height="14" fill="#8a6fb0"/>
 <text x="594" y="124">central_optimal</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#b58b2c" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#b58b2c"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#b58b2c"/>
-<circle cx="198.2" cy="379.9" r="3" fill="#b58b2c"/>
-<circle cx="282.9" cy="379.1" r="3" fill="#b58b2c"/>
-<circle cx="347.1" cy="376.6" r="3" fill="#b58b2c"/>
-<circle cx="411.2" cy="366.4" r="3" fill="#b58b2c"/>
-<circle cx="495.9" cy="295.0" r="3" fill="#b58b2c"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 375.9 L285.2 375.2 L348.8 372.6 L412.4 362.6 L496.4 292.0 L560.0 40.0" fill="none" stroke="#b58b2c" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#b58b2c"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#b58b2c"/>
+<circle cx="201.2" cy="375.9" r="3" fill="#b58b2c"/>
+<circle cx="285.2" cy="375.2" r="3" fill="#b58b2c"/>
+<circle cx="348.8" cy="372.6" r="3" fill="#b58b2c"/>
+<circle cx="412.4" cy="362.6" r="3" fill="#b58b2c"/>
+<circle cx="496.4" cy="292.0" r="3" fill="#b58b2c"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#b58b2c"/>
 <rect x="576" y="134" width="14" height="14" fill="#b58b2c"/>
 <text x="594" y="146">central_best</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 379.9 L282.9 379.1 L347.1 376.6 L411.2 366.4 L495.9 295.0 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="198.2" cy="379.9" r="3" fill="#2f6f9f"/>
-<circle cx="282.9" cy="379.1" r="3" fill="#2f6f9f"/>
-<circle cx="347.1" cy="376.6" r="3" fill="#2f6f9f"/>
-<circle cx="411.2" cy="366.4" r="3" fill="#2f6f9f"/>
-<circle cx="495.9" cy="295.0" r="3" fill="#2f6f9f"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 375.9 L285.2 375.2 L348.8 372.6 L412.4 362.6 L496.4 292.0 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="201.2" cy="375.9" r="3" fill="#2f6f9f"/>
+<circle cx="285.2" cy="375.2" r="3" fill="#2f6f9f"/>
+<circle cx="348.8" cy="372.6" r="3" fill="#2f6f9f"/>
+<circle cx="412.4" cy="362.6" r="3" fill="#2f6f9f"/>
+<circle cx="496.4" cy="292.0" r="3" fill="#2f6f9f"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="156" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="168">central_bounded</text>
-<text x="70" y="398" text-anchor="middle">50</text>
-<text x="560" y="398" text-anchor="middle">1e+04</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">8e+07</text>
 </svg></div><figcaption><b>scaling_peak_per_node.svg</b> — Peak per-node load stays flat for CTA as the population grows, while the central scheduler grows as N times M.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Task completion vs self-assessment overconfidence</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">self-report bias (overconfidence)</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">task completion rate</text>
-<path d="M70.0 225.6 L192.5 230.0 L315.0 232.3 L437.5 230.0 L560.0 228.1" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="225.6" r="3" fill="#2f6f9f"/>
-<circle cx="192.5" cy="230.0" r="3" fill="#2f6f9f"/>
-<circle cx="315.0" cy="232.3" r="3" fill="#2f6f9f"/>
-<circle cx="437.5" cy="230.0" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="228.1" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.19</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.38</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.57</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.76</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.10</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.20</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.30</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">0.40</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">self-report bias (overconfidence)</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">task completion rate</text>
+<path d="M74.0 223.4 L195.5 227.8 L317.0 230.0 L438.5 227.8 L560.0 225.9" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="223.4" r="3" fill="#2f6f9f"/>
+<circle cx="195.5" cy="227.8" r="3" fill="#2f6f9f"/>
+<circle cx="317.0" cy="230.0" r="3" fill="#2f6f9f"/>
+<circle cx="438.5" cy="227.8" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="225.9" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">raw</text>
-<path d="M70.0 48.3 L192.5 52.5 L315.0 55.0 L437.5 55.3 L560.0 55.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="48.3" r="3" fill="#c25a3d"/>
-<circle cx="192.5" cy="52.5" r="3" fill="#c25a3d"/>
-<circle cx="315.0" cy="55.0" r="3" fill="#c25a3d"/>
-<circle cx="437.5" cy="55.3" r="3" fill="#c25a3d"/>
-<circle cx="560.0" cy="55.0" r="3" fill="#c25a3d"/>
+<path d="M74.0 48.2 L195.5 52.4 L317.0 54.8 L438.5 55.1 L560.0 54.8" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="48.2" r="3" fill="#c25a3d"/>
+<circle cx="195.5" cy="52.4" r="3" fill="#c25a3d"/>
+<circle cx="317.0" cy="54.8" r="3" fill="#c25a3d"/>
+<circle cx="438.5" cy="55.1" r="3" fill="#c25a3d"/>
+<circle cx="560.0" cy="54.8" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">reliability</text>
-<path d="M70.0 40.0 L192.5 40.0 L315.0 40.0 L437.5 40.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
-<circle cx="70.0" cy="40.0" r="3" fill="#4c9a6a"/>
-<circle cx="192.5" cy="40.0" r="3" fill="#4c9a6a"/>
-<circle cx="315.0" cy="40.0" r="3" fill="#4c9a6a"/>
-<circle cx="437.5" cy="40.0" r="3" fill="#4c9a6a"/>
+<path d="M74.0 40.0 L195.5 40.0 L317.0 40.0 L438.5 40.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
+<circle cx="74.0" cy="40.0" r="3" fill="#4c9a6a"/>
+<circle cx="195.5" cy="40.0" r="3" fill="#4c9a6a"/>
+<circle cx="317.0" cy="40.0" r="3" fill="#4c9a6a"/>
+<circle cx="438.5" cy="40.0" r="3" fill="#4c9a6a"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#4c9a6a"/>
 <rect x="576" y="90" width="14" height="14" fill="#4c9a6a"/>
 <text x="594" y="102">true</text>
-<text x="70" y="398" text-anchor="middle">0</text>
-<text x="560" y="398" text-anchor="middle">0.40</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">0.76</text>
 </svg></div><figcaption><b>calibration_quality.svg</b> — Task completion versus self-assessment overconfidence, for the raw, reliability, and full-information selection modes.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Completion recovery vs track-record length</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">track-record length (prior attempts)</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">task completion rate</text>
-<path d="M70.0 263.0 L108.7 251.2 L173.2 242.2 L302.1 223.7 L560.0 229.8" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="263.0" r="3" fill="#2f6f9f"/>
-<circle cx="108.7" cy="251.2" r="3" fill="#2f6f9f"/>
-<circle cx="173.2" cy="242.2" r="3" fill="#2f6f9f"/>
-<circle cx="302.1" cy="223.7" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="229.8" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.18</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.37</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.55</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.74</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">2</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">11.50</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">21</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">30.50</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">40</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">track-record length (prior attempts)</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">task completion rate</text>
+<path d="M74.0 260.4 L112.4 248.7 L176.3 239.8 L304.2 221.6 L560.0 227.6" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="260.4" r="3" fill="#2f6f9f"/>
+<circle cx="112.4" cy="248.7" r="3" fill="#2f6f9f"/>
+<circle cx="176.3" cy="239.8" r="3" fill="#2f6f9f"/>
+<circle cx="304.2" cy="221.6" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="227.6" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">raw self-report</text>
-<path d="M70.0 128.7 L108.7 101.2 L173.2 69.2 L302.1 49.8 L560.0 40.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="128.7" r="3" fill="#c25a3d"/>
-<circle cx="108.7" cy="101.2" r="3" fill="#c25a3d"/>
-<circle cx="173.2" cy="69.2" r="3" fill="#c25a3d"/>
-<circle cx="302.1" cy="49.8" r="3" fill="#c25a3d"/>
+<path d="M74.0 127.6 L112.4 100.5 L176.3 68.8 L304.2 49.7 L560.0 40.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="127.6" r="3" fill="#c25a3d"/>
+<circle cx="112.4" cy="100.5" r="3" fill="#c25a3d"/>
+<circle cx="176.3" cy="68.8" r="3" fill="#c25a3d"/>
+<circle cx="304.2" cy="49.7" r="3" fill="#c25a3d"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">reliability correction</text>
-<text x="70" y="398" text-anchor="middle">2</text>
-<text x="560" y="398" text-anchor="middle">40</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">0.74</text>
 </svg></div><figcaption><b>track_record_recovery.svg</b> — The track-record correction recovers completion; even a short history helps, and it improves with length.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Recovery vs competence spread</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">competence spread (1 - capability floor)</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">completion recovery</text>
-<path d="M560.0 40.0 L478.3 49.0 L355.8 73.0 L233.3 167.2 L70.0 331.6" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.10</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.20</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.30</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.40</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0.30</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.45</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.60</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.75</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">0.90</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">competence spread (1 - capability floor)</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">completion recovery</text>
+<path d="M560.0 40.0 L479.0 48.9 L357.5 72.6 L236.0 165.7 L74.0 328.2" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
-<circle cx="478.3" cy="49.0" r="3" fill="#2f6f9f"/>
-<circle cx="355.8" cy="73.0" r="3" fill="#2f6f9f"/>
-<circle cx="233.3" cy="167.2" r="3" fill="#2f6f9f"/>
-<circle cx="70.0" cy="331.6" r="3" fill="#2f6f9f"/>
+<circle cx="479.0" cy="48.9" r="3" fill="#2f6f9f"/>
+<circle cx="357.5" cy="72.6" r="3" fill="#2f6f9f"/>
+<circle cx="236.0" cy="165.7" r="3" fill="#2f6f9f"/>
+<circle cx="74.0" cy="328.2" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">recovery</text>
-<text x="70" y="398" text-anchor="middle">0.30</text>
-<text x="560" y="398" text-anchor="middle">0.90</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">0.40</text>
 </svg></div><figcaption><b>recovery_vs_spread.svg</b> — The correction&#x27;s recovery grows with competence spread: it matters most where agents genuinely differ.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="520" height="332" viewBox="0 0 520 332" font-family="sans-serif" font-size="13">
 <rect width="520" height="332" fill="white"/>
 <text x="260" y="26" text-anchor="middle" font-size="16">Recovery: overconfidence bias by competence spread</text>
@@ -271,55 +335,103 @@ footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line);
 </svg></div><figcaption><b>calibration_surface.svg</b> — Recovery over the overconfidence bias by competence spread. The bands are horizontal: spread drives the gap, not bias.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Violation reduction vs gate recall</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">gate detection recall</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">violation reduction</text>
-<path d="M70.0 205.1 L266.0 135.4 L462.0 72.6 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="205.1" r="3" fill="#2f6f9f"/>
-<circle cx="266.0" cy="135.4" r="3" fill="#2f6f9f"/>
-<circle cx="462.0" cy="72.6" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.25</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.50</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.75</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">1</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0.50</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.62</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.75</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.88</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">gate detection recall</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">violation reduction</text>
+<path d="M74.0 203.1 L268.4 134.3 L462.8 72.2 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="203.1" r="3" fill="#2f6f9f"/>
+<circle cx="268.4" cy="134.3" r="3" fill="#2f6f9f"/>
+<circle cx="462.8" cy="72.2" r="3" fill="#2f6f9f"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">reduction</text>
-<text x="70" y="398" text-anchor="middle">0.50</text>
-<text x="560" y="398" text-anchor="middle">1</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">1</text>
 </svg></div><figcaption><b>gate_recall.svg</b> — The safety result degrades gracefully with the gate&#x27;s detection recall, rather than depending on a perfect detector.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Stall time bounded by activation-energy annealing</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">annealing rate</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">maximum stall (rounds)</text>
-<path d="M70.0 40.0 L119.0 370.9 L192.5 376.6 L315.0 377.7 L560.0 378.9" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="40.0" r="3" fill="#2f6f9f"/>
-<circle cx="119.0" cy="370.9" r="3" fill="#2f6f9f"/>
-<circle cx="192.5" cy="376.6" r="3" fill="#2f6f9f"/>
-<circle cx="315.0" cy="377.7" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="378.9" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">75</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">150</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">225</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">300</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.05</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.10</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.15</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">0.20</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">annealing rate</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">maximum stall (rounds)</text>
+<path d="M74.0 40.0 L122.6 367.0 L195.5 372.6 L317.0 373.8 L560.0 374.9" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="122.6" cy="367.0" r="3" fill="#2f6f9f"/>
+<circle cx="195.5" cy="372.6" r="3" fill="#2f6f9f"/>
+<circle cx="317.0" cy="373.8" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="374.9" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">max stall (rounds)</text>
-<text x="70" y="398" text-anchor="middle">0</text>
-<text x="560" y="398" text-anchor="middle">0.20</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">300</text>
 </svg></div><figcaption><b>annealing_stall.svg</b> — Activation-energy annealing bounds the stall time of feasible tasks; without it they are never claimed.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Key outcomes across generator families</text>
-<line x1="70" y1="380.0" x2="560" y2="380.0" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">value</text>
-<rect x="86.3" y="50.9" width="58.8" height="329.1" fill="#2f6f9f"/>
-<rect x="151.7" y="56.9" width="58.8" height="323.1" fill="#c25a3d"/>
-<text x="152" y="398" text-anchor="middle">CTA quality</text>
-<rect x="249.7" y="234.3" width="58.8" height="145.7" fill="#2f6f9f"/>
-<rect x="315.0" y="232.8" width="58.8" height="147.2" fill="#c25a3d"/>
-<text x="315" y="398" text-anchor="middle">H8 recovery</text>
-<rect x="413.0" y="41.5" width="58.8" height="338.5" fill="#2f6f9f"/>
-<rect x="478.3" y="40.0" width="58.8" height="340.0" fill="#c25a3d"/>
-<text x="478" y="398" text-anchor="middle">H4 reduction</text>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.23</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.45</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.68</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.91</text>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">value</text>
+<rect x="90.2" y="50.7" width="58.3" height="325.3" fill="#2f6f9f"/>
+<text x="119.4" y="46.7" text-anchor="middle" font-size="11">0.88</text>
+<rect x="155.0" y="56.7" width="58.3" height="319.3" fill="#c25a3d"/>
+<text x="184.2" y="52.7" text-anchor="middle" font-size="11">0.86</text>
+<text x="155" y="394" text-anchor="middle">CTA quality</text>
+<rect x="252.2" y="232.1" width="58.3" height="143.9" fill="#2f6f9f"/>
+<text x="281.4" y="228.1" text-anchor="middle" font-size="11">0.39</text>
+<rect x="317.0" y="230.6" width="58.3" height="145.4" fill="#c25a3d"/>
+<text x="346.2" y="226.6" text-anchor="middle" font-size="11">0.39</text>
+<text x="317" y="394" text-anchor="middle">H8 recovery</text>
+<rect x="414.2" y="41.5" width="58.3" height="334.5" fill="#2f6f9f"/>
+<text x="443.4" y="37.5" text-anchor="middle" font-size="11">0.90</text>
+<rect x="479.0" y="40.0" width="58.3" height="336.0" fill="#c25a3d"/>
+<text x="508.2" y="36.0" text-anchor="middle" font-size="11">0.91</text>
+<text x="479" y="394" text-anchor="middle">H4 reduction</text>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">domains</text>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
@@ -327,62 +439,109 @@ footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line);
 </svg></div><figcaption><b>robustness_bars.svg</b> — Key outcomes under two structurally different generator families; the calibration and safety results hold in both.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">H2 gap: cost-awareness vs the competence proxy</text>
-<line x1="70" y1="380.0" x2="560" y2="380.0" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">mean realised quality</text>
-<rect x="86.3" y="62.7" width="117.6" height="317.3" fill="#2f6f9f"/>
-<text x="152" y="398" text-anchor="middle">deployed (cost-aware)</text>
-<rect x="249.7" y="51.2" width="117.6" height="328.8" fill="#2f6f9f"/>
-<text x="315" y="398" text-anchor="middle">quality-first</text>
-<rect x="413.0" y="40.0" width="117.6" height="340.0" fill="#2f6f9f"/>
-<text x="478" y="398" text-anchor="middle">optimum</text>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.24</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.47</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.71</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.94</text>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">mean realised quality</text>
+<rect x="90.2" y="62.5" width="116.6" height="313.5" fill="#2f6f9f"/>
+<text x="148.5" y="58.5" text-anchor="middle" font-size="11">0.88</text>
+<text x="155" y="394" text-anchor="middle">deployed (cost-aware)</text>
+<rect x="252.2" y="51.1" width="116.6" height="324.9" fill="#2f6f9f"/>
+<text x="310.5" y="47.1" text-anchor="middle" font-size="11">0.91</text>
+<text x="317" y="394" text-anchor="middle">quality-first</text>
+<rect x="414.2" y="40.0" width="116.6" height="336.0" fill="#2f6f9f"/>
+<text x="472.5" y="36.0" text-anchor="middle" font-size="11">0.94</text>
+<text x="479" y="394" text-anchor="middle">optimum</text>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">mean quality</text>
 </svg></div><figcaption><b>h2_decomposition.svg</b> — The H2 quality gap: a quality-first CTA reaches the optimum&#x27;s neighbourhood; the deployed cost-aware CTA gives up quality for lower latency by design.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">CTA vs a central scheduler with a stale reliability table</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">coordinator reliability staleness</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">mean realised quality</text>
-<path d="M70.0 53.7 L192.5 53.7 L315.0 53.7 L437.5 53.7 L560.0 53.7" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="53.7" r="3" fill="#2f6f9f"/>
-<circle cx="192.5" cy="53.7" r="3" fill="#2f6f9f"/>
-<circle cx="315.0" cy="53.7" r="3" fill="#2f6f9f"/>
-<circle cx="437.5" cy="53.7" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="53.7" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.23</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.46</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.69</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.92</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.25</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.50</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.75</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">coordinator reliability staleness</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">mean realised quality</text>
+<path d="M74.0 53.5 L195.5 53.5 L317.0 53.5 L438.5 53.5 L560.0 53.5" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="53.5" r="3" fill="#2f6f9f"/>
+<circle cx="195.5" cy="53.5" r="3" fill="#2f6f9f"/>
+<circle cx="317.0" cy="53.5" r="3" fill="#2f6f9f"/>
+<circle cx="438.5" cy="53.5" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="53.5" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">CTA (decentralised)</text>
-<path d="M70.0 40.0 L192.5 46.4 L315.0 66.1 L437.5 107.8 L560.0 164.1" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="40.0" r="3" fill="#c25a3d"/>
-<circle cx="192.5" cy="46.4" r="3" fill="#c25a3d"/>
-<circle cx="315.0" cy="66.1" r="3" fill="#c25a3d"/>
-<circle cx="437.5" cy="107.8" r="3" fill="#c25a3d"/>
-<circle cx="560.0" cy="164.1" r="3" fill="#c25a3d"/>
+<path d="M74.0 40.0 L195.5 46.4 L317.0 65.8 L438.5 107.0 L560.0 162.6" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="40.0" r="3" fill="#c25a3d"/>
+<circle cx="195.5" cy="46.4" r="3" fill="#c25a3d"/>
+<circle cx="317.0" cy="65.8" r="3" fill="#c25a3d"/>
+<circle cx="438.5" cy="107.0" r="3" fill="#c25a3d"/>
+<circle cx="560.0" cy="162.6" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">central (bounded info)</text>
-<text x="70" y="398" text-anchor="middle">0</text>
-<text x="560" y="398" text-anchor="middle">1</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">0.92</text>
 </svg></div><figcaption><b>bounded_central.svg</b> — H9: against an information-bounded central scheduler, CTA is level when the coordinator&#x27;s reliability table is fresh and overtakes it as the table goes stale, because a decentralised agent never pays the central synchronisation lag.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Biomimicry ablation: contribution of the barrier and the gate</text>
-<line x1="70" y1="380.0" x2="560" y2="380.0" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">value (violations count; quality in [0,1])</text>
-<rect x="82.2" y="346.1" width="44.1" height="33.9" fill="#2f6f9f"/>
-<rect x="131.2" y="365.0" width="44.1" height="15.0" fill="#c25a3d"/>
-<text x="131" y="398" text-anchor="middle">full</text>
-<rect x="204.8" y="346.1" width="44.1" height="33.9" fill="#2f6f9f"/>
-<rect x="253.8" y="365.0" width="44.1" height="15.0" fill="#c25a3d"/>
-<text x="254" y="398" text-anchor="middle">minus_barrier</text>
-<rect x="327.2" y="40.8" width="44.1" height="339.2" fill="#2f6f9f"/>
-<rect x="376.2" y="365.1" width="44.1" height="14.9" fill="#c25a3d"/>
-<text x="376" y="398" text-anchor="middle">minus_gate</text>
-<rect x="449.8" y="40.0" width="44.1" height="340.0" fill="#2f6f9f"/>
-<rect x="498.8" y="365.1" width="44.1" height="14.9" fill="#c25a3d"/>
-<text x="499" y="398" text-anchor="middle">plain_auction</text>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">5.01</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">10.03</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">15.04</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">20.05</text>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">value (violations count; quality in [0,1])</text>
+<rect x="86.2" y="342.5" width="43.7" height="33.5" fill="#2f6f9f"/>
+<text x="108.0" y="338.5" text-anchor="middle" font-size="11">2</text>
+<rect x="134.8" y="361.2" width="43.7" height="14.8" fill="#c25a3d"/>
+<text x="156.6" y="357.2" text-anchor="middle" font-size="11">0.88</text>
+<text x="135" y="394" text-anchor="middle">full</text>
+<rect x="207.7" y="342.5" width="43.7" height="33.5" fill="#2f6f9f"/>
+<text x="229.5" y="338.5" text-anchor="middle" font-size="11">2</text>
+<rect x="256.2" y="361.2" width="43.7" height="14.8" fill="#c25a3d"/>
+<text x="278.1" y="357.2" text-anchor="middle" font-size="11">0.88</text>
+<text x="256" y="394" text-anchor="middle">minus_barrier</text>
+<rect x="329.1" y="40.8" width="43.7" height="335.2" fill="#2f6f9f"/>
+<text x="351.0" y="36.8" text-anchor="middle" font-size="11">20</text>
+<rect x="377.8" y="361.3" width="43.7" height="14.7" fill="#c25a3d"/>
+<text x="399.6" y="357.3" text-anchor="middle" font-size="11">0.88</text>
+<text x="378" y="394" text-anchor="middle">minus_gate</text>
+<rect x="450.6" y="40.0" width="43.7" height="336.0" fill="#2f6f9f"/>
+<text x="472.5" y="36.0" text-anchor="middle" font-size="11">20.05</text>
+<rect x="499.2" y="361.3" width="43.7" height="14.7" fill="#c25a3d"/>
+<text x="521.1" y="357.3" text-anchor="middle" font-size="11">0.88</text>
+<text x="499" y="394" text-anchor="middle">plain_auction</text>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">integrity violations</text>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
@@ -390,268 +549,425 @@ footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line);
 </svg></div><figcaption><b>biomimicry_ablation.svg</b> — Biomimicry ablation: removing the integrity gate multiplies out-of-scope violations while the activation barrier is quality-neutral in the batch regime (its role is liveness and the infeasible and stalled semantics). It isolates what each biological mechanism contributes.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Coordination dollar cost vs agent count (standard tier)</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">agents (log scale)</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">USD per allocation round (log scale)</text>
-<path d="M70.0 284.6 L134.1 252.6 L198.2 220.6 L282.9 178.3 L347.1 146.3 L411.2 114.3 L495.9 72.0 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="284.6" r="3" fill="#2f6f9f"/>
-<circle cx="134.1" cy="252.6" r="3" fill="#2f6f9f"/>
-<circle cx="198.2" cy="220.6" r="3" fill="#2f6f9f"/>
-<circle cx="282.9" cy="178.3" r="3" fill="#2f6f9f"/>
-<circle cx="347.1" cy="146.3" r="3" fill="#2f6f9f"/>
-<circle cx="411.2" cy="114.3" r="3" fill="#2f6f9f"/>
-<circle cx="495.9" cy="72.0" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0.06</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">2.29</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">91.07</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">3.6e+03</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">1.4e+05</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">50.00</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">188.03</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">707.11</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">2.7e+03</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1e+04</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">agents (log scale)</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">USD per allocation round (log scale)</text>
+<path d="M74.0 281.7 L137.6 250.1 L201.2 218.4 L285.2 176.7 L348.8 145.0 L412.4 113.4 L496.4 71.6 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="281.7" r="3" fill="#2f6f9f"/>
+<circle cx="137.6" cy="250.1" r="3" fill="#2f6f9f"/>
+<circle cx="201.2" cy="218.4" r="3" fill="#2f6f9f"/>
+<circle cx="285.2" cy="176.7" r="3" fill="#2f6f9f"/>
+<circle cx="348.8" cy="145.0" r="3" fill="#2f6f9f"/>
+<circle cx="412.4" cy="113.4" r="3" fill="#2f6f9f"/>
+<circle cx="496.4" cy="71.6" r="3" fill="#2f6f9f"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">central (one node, N*M)</text>
-<path d="M70.0 380.0 L134.1 380.0 L198.2 380.0 L282.9 380.0 L347.1 380.0 L411.2 380.0 L495.9 380.0 L560.0 380.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="134.1" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="198.2" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="282.9" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="347.1" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="411.2" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="495.9" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="560.0" cy="380.0" r="3" fill="#c25a3d"/>
+<path d="M74.0 376.0 L137.6 376.0 L201.2 376.0 L285.2 376.0 L348.8 376.0 L412.4 376.0 L496.4 376.0 L560.0 376.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="137.6" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="201.2" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="285.2" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="348.8" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="412.4" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="496.4" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="560.0" cy="376.0" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">decentralised (busiest node)</text>
-<text x="70" y="398" text-anchor="middle">50</text>
-<text x="560" y="398" text-anchor="middle">1e+04</text>
-<text x="62" y="380" text-anchor="end">0.06</text>
-<text x="62" y="50" text-anchor="end">1.4e+05</text>
 </svg></div><figcaption><b>cost_vs_n.svg</b> — Coordination dollar cost against agent count: the central scheduler pays for all N times M pair evaluations at one node (quadratic), while the busiest decentralised node stays flat, so the bill diverges at scale. Prices are representative list tiers.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Latency-quality frontier (sweeping the bid's latency weight)</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">mean latency of winning agents</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">mean realised quality</text>
-<path d="M560.0 40.0 L176.7 48.2 L106.4 51.8 L80.8 53.2 L70.0 54.1" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.23</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.46</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.68</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.91</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0.65</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.74</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.83</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.91</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1.00</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">mean latency of winning agents</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">mean realised quality</text>
+<path d="M560.0 40.0 L179.8 48.1 L110.1 51.6 L84.7 53.0 L74.0 53.9" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
-<circle cx="176.7" cy="48.2" r="3" fill="#2f6f9f"/>
-<circle cx="106.4" cy="51.8" r="3" fill="#2f6f9f"/>
-<circle cx="80.8" cy="53.2" r="3" fill="#2f6f9f"/>
-<circle cx="70.0" cy="54.1" r="3" fill="#2f6f9f"/>
+<circle cx="179.8" cy="48.1" r="3" fill="#2f6f9f"/>
+<circle cx="110.1" cy="51.6" r="3" fill="#2f6f9f"/>
+<circle cx="84.7" cy="53.0" r="3" fill="#2f6f9f"/>
+<circle cx="74.0" cy="53.9" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">latency-quality frontier</text>
-<text x="70" y="398" text-anchor="middle">0.65</text>
-<text x="560" y="398" text-anchor="middle">1.00</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">0.91</text>
 </svg></div><figcaption><b>pareto_latency_quality.svg</b> — The latency-quality frontier: sweeping the bid&#x27;s latency weight trades realised quality for lower mean latency, the speed-quality dial a deployer tunes. Ignoring latency maximises quality at the highest latency; leaning on it lowers both.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Strategic adversary demoted by the track record over rounds</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">round</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">adversary share of won tasks</text>
-<path d="M70.0 40.0 L140.0 211.6 L210.0 347.3 L280.0 327.0 L350.0 371.2 L420.0 380.0 L490.0 380.0 L560.0 380.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="40.0" r="3" fill="#2f6f9f"/>
-<circle cx="140.0" cy="211.6" r="3" fill="#2f6f9f"/>
-<circle cx="210.0" cy="347.3" r="3" fill="#2f6f9f"/>
-<circle cx="280.0" cy="327.0" r="3" fill="#2f6f9f"/>
-<circle cx="350.0" cy="371.2" r="3" fill="#2f6f9f"/>
-<circle cx="420.0" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="490.0" cy="380.0" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="380.0" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.05</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.11</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.16</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.22</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">1.75</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">3.50</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">5.25</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">7</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">round</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">adversary share of won tasks</text>
+<path d="M74.0 40.0 L143.4 209.6 L212.9 343.6 L282.3 323.7 L351.7 367.3 L421.1 376.0 L490.6 376.0 L560.0 376.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="143.4" cy="209.6" r="3" fill="#2f6f9f"/>
+<circle cx="212.9" cy="343.6" r="3" fill="#2f6f9f"/>
+<circle cx="282.3" cy="323.7" r="3" fill="#2f6f9f"/>
+<circle cx="351.7" cy="367.3" r="3" fill="#2f6f9f"/>
+<circle cx="421.1" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="490.6" cy="376.0" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="376.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">reliability selection</text>
-<path d="M70.0 197.1 L140.0 380.0 L210.0 380.0 L280.0 380.0 L350.0 380.0 L420.0 380.0 L490.0 380.0 L560.0 380.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="197.1" r="3" fill="#c25a3d"/>
-<circle cx="140.0" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="210.0" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="280.0" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="350.0" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="420.0" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="490.0" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="560.0" cy="380.0" r="3" fill="#c25a3d"/>
+<path d="M74.0 195.2 L143.4 376.0 L212.9 376.0 L282.3 376.0 L351.7 376.0 L421.1 376.0 L490.6 376.0 L560.0 376.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="195.2" r="3" fill="#c25a3d"/>
+<circle cx="143.4" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="212.9" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="282.3" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="351.7" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="421.1" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="490.6" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="560.0" cy="376.0" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">raw selection</text>
-<text x="70" y="398" text-anchor="middle">0</text>
-<text x="560" y="398" text-anchor="middle">7</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">0.22</text>
 </svg></div><figcaption><b>strategic_adversary.svg</b> — A strategic adversary that inflates its self-report to win bids while being incompetent is demoted over rounds: under reliability-weighted selection its share of won tasks decays to near zero as its track record catches up with it, where raw selection has no such feedback (P3.2).</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Sandbagging adversary: reputation gaming and the recency window</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">round (defects after the honest rounds)</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">adversary share of won tasks</text>
-<path d="M70.0 264.8 L124.4 218.6 L178.9 166.3 L233.3 140.8 L287.8 128.9 L342.2 115.6 L396.7 130.3 L451.1 194.7 L505.6 299.7 L560.0 380.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="264.8" r="3" fill="#2f6f9f"/>
-<circle cx="124.4" cy="218.6" r="3" fill="#2f6f9f"/>
-<circle cx="178.9" cy="166.3" r="3" fill="#2f6f9f"/>
-<circle cx="233.3" cy="140.8" r="3" fill="#2f6f9f"/>
-<circle cx="287.8" cy="128.9" r="3" fill="#2f6f9f"/>
-<circle cx="342.2" cy="115.6" r="3" fill="#2f6f9f"/>
-<circle cx="396.7" cy="130.3" r="3" fill="#2f6f9f"/>
-<circle cx="451.1" cy="194.7" r="3" fill="#2f6f9f"/>
-<circle cx="505.6" cy="299.7" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="380.0" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.07</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.14</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.21</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.28</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">2.25</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">4.50</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">6.75</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">9</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">round (defects after the honest rounds)</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">adversary share of won tasks</text>
+<path d="M74.0 262.2 L128.0 216.5 L182.0 164.8 L236.0 139.6 L290.0 127.9 L344.0 114.7 L398.0 129.2 L452.0 192.9 L506.0 296.6 L560.0 376.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="262.2" r="3" fill="#2f6f9f"/>
+<circle cx="128.0" cy="216.5" r="3" fill="#2f6f9f"/>
+<circle cx="182.0" cy="164.8" r="3" fill="#2f6f9f"/>
+<circle cx="236.0" cy="139.6" r="3" fill="#2f6f9f"/>
+<circle cx="290.0" cy="127.9" r="3" fill="#2f6f9f"/>
+<circle cx="344.0" cy="114.7" r="3" fill="#2f6f9f"/>
+<circle cx="398.0" cy="129.2" r="3" fill="#2f6f9f"/>
+<circle cx="452.0" cy="192.9" r="3" fill="#2f6f9f"/>
+<circle cx="506.0" cy="296.6" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="376.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">cumulative record</text>
-<path d="M70.0 264.8 L124.4 230.0 L178.9 167.0 L233.3 108.8 L287.8 61.7 L342.2 40.0 L396.7 354.2 L451.1 323.2 L505.6 380.0 L560.0 364.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="264.8" r="3" fill="#c25a3d"/>
-<circle cx="124.4" cy="230.0" r="3" fill="#c25a3d"/>
-<circle cx="178.9" cy="167.0" r="3" fill="#c25a3d"/>
-<circle cx="233.3" cy="108.8" r="3" fill="#c25a3d"/>
-<circle cx="287.8" cy="61.7" r="3" fill="#c25a3d"/>
-<circle cx="342.2" cy="40.0" r="3" fill="#c25a3d"/>
-<circle cx="396.7" cy="354.2" r="3" fill="#c25a3d"/>
-<circle cx="451.1" cy="323.2" r="3" fill="#c25a3d"/>
-<circle cx="505.6" cy="380.0" r="3" fill="#c25a3d"/>
-<circle cx="560.0" cy="364.0" r="3" fill="#c25a3d"/>
+<path d="M74.0 262.2 L128.0 227.8 L182.0 165.6 L236.0 108.0 L290.0 61.4 L344.0 40.0 L398.0 350.5 L452.0 319.8 L506.0 376.0 L560.0 360.1" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="262.2" r="3" fill="#c25a3d"/>
+<circle cx="128.0" cy="227.8" r="3" fill="#c25a3d"/>
+<circle cx="182.0" cy="165.6" r="3" fill="#c25a3d"/>
+<circle cx="236.0" cy="108.0" r="3" fill="#c25a3d"/>
+<circle cx="290.0" cy="61.4" r="3" fill="#c25a3d"/>
+<circle cx="344.0" cy="40.0" r="3" fill="#c25a3d"/>
+<circle cx="398.0" cy="350.5" r="3" fill="#c25a3d"/>
+<circle cx="452.0" cy="319.8" r="3" fill="#c25a3d"/>
+<circle cx="506.0" cy="376.0" r="3" fill="#c25a3d"/>
+<circle cx="560.0" cy="360.1" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">recency window</text>
-<text x="70" y="398" text-anchor="middle">0</text>
-<text x="560" y="398" text-anchor="middle">9</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">0.28</text>
 </svg></div><figcaption><b>sandbagging_adversary.svg</b> — Reputation gaming: a sandbagging adversary does honest work to build a clean record, then defects. Under a cumulative track record its old successes dilute the new failures, so it exploits its reputation for several rounds; a recency-weighted reliability window ages out the honest record and collapses its share the round after it defects, cutting the exploitation damage. No reactive record can pre-empt the first defection, which is why the scope-based integrity gate is the complementary backstop.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Exposure cap bounds the first-defection blast radius</text>
-<line x1="70" y1="380.0" x2="560" y2="380.0" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">failed adversary wins in the defect round</text>
-<rect x="86.3" y="40.0" width="117.6" height="340.0" fill="#2f6f9f"/>
-<text x="152" y="398" text-anchor="middle">no cap</text>
-<rect x="249.7" y="298.3" width="117.6" height="81.7" fill="#2f6f9f"/>
-<text x="315" y="398" text-anchor="middle">cap 1</text>
-<rect x="413.0" y="135.0" width="117.6" height="245.0" fill="#2f6f9f"/>
-<text x="478" y="398" text-anchor="middle">cap 3</text>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">4.16</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">8.32</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">12.49</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">16.65</text>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">failed adversary wins in the defect round</text>
+<rect x="90.2" y="40.0" width="116.6" height="336.0" fill="#2f6f9f"/>
+<text x="148.5" y="36.0" text-anchor="middle" font-size="11">16.65</text>
+<text x="155" y="394" text-anchor="middle">no cap</text>
+<rect x="252.2" y="295.3" width="116.6" height="80.7" fill="#2f6f9f"/>
+<text x="310.5" y="291.3" text-anchor="middle" font-size="11">4</text>
+<text x="317" y="394" text-anchor="middle">cap 1</text>
+<rect x="414.2" y="133.8" width="116.6" height="242.2" fill="#2f6f9f"/>
+<text x="472.5" y="129.8" text-anchor="middle" font-size="11">12</text>
+<text x="479" y="394" text-anchor="middle">cap 3</text>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">first-defection blast radius</text>
 </svg></div><figcaption><b>exposure_cap.svg</b> — Defence in depth for the first defection, which no reactive record can pre-empt: an exposure cap limits how many tasks any single agent may win per round, so a newly defecting agent&#x27;s blast radius is bounded. The failed adversary wins in the defect round fall sharply as the cap tightens (about 17 unthrottled to about 4 at a cap of one), at a coverage cost since a tighter cap spreads work more thinly.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Specialist routing accuracy: the activation barrier keeps allocation on-target</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">observability (tasks each agent sees)</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">routing accuracy (won tasks to the right specialist)</text>
-<path d="M70.0 40.0 L140.0 40.0 L280.0 40.0 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="40.0" r="3" fill="#2f6f9f"/>
-<circle cx="140.0" cy="40.0" r="3" fill="#2f6f9f"/>
-<circle cx="280.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.25</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.50</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.75</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">1</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">2</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">5.50</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">9</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">12.50</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">16</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">observability (tasks each agent sees)</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">routing accuracy (won tasks to the right specialist)</text>
+<path d="M74.0 40.0 L143.4 40.0 L282.3 40.0 L560.0 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="143.4" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="282.3" cy="40.0" r="3" fill="#2f6f9f"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">barrier on</text>
-<path d="M70.0 218.7 L140.0 145.7 L280.0 68.3 L560.0 42.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="218.7" r="3" fill="#c25a3d"/>
-<circle cx="140.0" cy="145.7" r="3" fill="#c25a3d"/>
-<circle cx="280.0" cy="68.3" r="3" fill="#c25a3d"/>
+<path d="M74.0 216.6 L143.4 144.5 L282.3 68.0 L560.0 42.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="216.6" r="3" fill="#c25a3d"/>
+<circle cx="143.4" cy="144.5" r="3" fill="#c25a3d"/>
+<circle cx="282.3" cy="68.0" r="3" fill="#c25a3d"/>
 <circle cx="560.0" cy="42.0" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">barrier off</text>
-<path d="M70.0 295.0 L140.0 295.0 L280.0 295.0 L560.0 295.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
-<circle cx="70.0" cy="295.0" r="3" fill="#4c9a6a"/>
-<circle cx="140.0" cy="295.0" r="3" fill="#4c9a6a"/>
-<circle cx="280.0" cy="295.0" r="3" fill="#4c9a6a"/>
-<circle cx="560.0" cy="295.0" r="3" fill="#4c9a6a"/>
+<path d="M74.0 292.0 L143.4 292.0 L282.3 292.0 L560.0 292.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
+<circle cx="74.0" cy="292.0" r="3" fill="#4c9a6a"/>
+<circle cx="143.4" cy="292.0" r="3" fill="#4c9a6a"/>
+<circle cx="282.3" cy="292.0" r="3" fill="#4c9a6a"/>
+<circle cx="560.0" cy="292.0" r="3" fill="#4c9a6a"/>
 <rect x="576" y="90" width="14" height="14" fill="#4c9a6a"/>
 <text x="594" y="102">chance floor</text>
-<text x="70" y="398" text-anchor="middle">2</text>
-<text x="560" y="398" text-anchor="middle">16</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">1</text>
 </svg></div><figcaption><b>specialist_routing.svg</b> — Specialist routing (H10): with the activation barrier, ill-matched agents never fire, so won tasks go to the right specialist (accuracy near 1.0, far above the chance floor) at every observability level; without it, agents grab tasks they observe regardless of fit and routing falls. The barrier trades some coverage for correctness, which annealing (H5) recovers over time.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Fleet calibration: predicted vs realised success</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">mean predicted success</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">realised success rate</text>
-<path d="M344.5 167.5 L395.7 106.3 L445.1 124.2 L487.9 112.3 L541.5 97.6" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="344.5" cy="167.5" r="3" fill="#2f6f9f"/>
-<circle cx="395.7" cy="106.3" r="3" fill="#2f6f9f"/>
-<circle cx="445.1" cy="124.2" r="3" fill="#2f6f9f"/>
-<circle cx="487.9" cy="112.3" r="3" fill="#2f6f9f"/>
-<circle cx="541.5" cy="97.6" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.25</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.50</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.75</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">1</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.25</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.50</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.75</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">mean predicted success</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">realised success rate</text>
+<path d="M346.3 166.0 L397.0 105.6 L446.0 123.3 L488.5 111.4 L541.6 96.9" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="346.3" cy="166.0" r="3" fill="#2f6f9f"/>
+<circle cx="397.0" cy="105.6" r="3" fill="#2f6f9f"/>
+<circle cx="446.0" cy="123.3" r="3" fill="#2f6f9f"/>
+<circle cx="488.5" cy="111.4" r="3" fill="#2f6f9f"/>
+<circle cx="541.6" cy="96.9" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">raw self-report</text>
-<path d="M341.8 153.3 L397.0 71.6 L444.0 88.1 L486.6 104.4 L543.3 90.1" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="341.8" cy="153.3" r="3" fill="#c25a3d"/>
-<circle cx="397.0" cy="71.6" r="3" fill="#c25a3d"/>
-<circle cx="444.0" cy="88.1" r="3" fill="#c25a3d"/>
-<circle cx="486.6" cy="104.4" r="3" fill="#c25a3d"/>
-<circle cx="543.3" cy="90.1" r="3" fill="#c25a3d"/>
+<path d="M343.6 152.0 L398.3 71.3 L445.0 87.5 L487.2 103.6 L543.4 89.5" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="343.6" cy="152.0" r="3" fill="#c25a3d"/>
+<circle cx="398.3" cy="71.3" r="3" fill="#c25a3d"/>
+<circle cx="445.0" cy="87.5" r="3" fill="#c25a3d"/>
+<circle cx="487.2" cy="103.6" r="3" fill="#c25a3d"/>
+<circle cx="543.4" cy="89.5" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">reliability correction</text>
-<path d="M70.0 380.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#4c9a6a"/>
+<path d="M74.0 376.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#4c9a6a"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#4c9a6a"/>
 <rect x="576" y="90" width="14" height="14" fill="#4c9a6a"/>
 <text x="594" y="102">perfect calibration</text>
-<text x="70" y="398" text-anchor="middle">0</text>
-<text x="560" y="398" text-anchor="middle">1</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">1</text>
 </svg></div><figcaption><b>reliability_diagram.svg</b> — A realistic fleet grounded in measured LLM calibration (MarketBench archetypes): predicted vs realised success. Points below the diagonal are overconfident; the correction pulls the retained winners toward it.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Recovery across fleet composition</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">fraction of overconfident agents</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">completion recovery</text>
-<path d="M70.0 173.4 L192.5 40.0 L315.0 156.2 L437.5 139.0 L560.0 151.9" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="173.4" r="3" fill="#2f6f9f"/>
-<circle cx="192.5" cy="40.0" r="3" fill="#2f6f9f"/>
-<circle cx="315.0" cy="156.2" r="3" fill="#2f6f9f"/>
-<circle cx="437.5" cy="139.0" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="151.9" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.02</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.04</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.06</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.08</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.25</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.50</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.75</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">fraction of overconfident agents</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">completion recovery</text>
+<path d="M74.0 171.8 L195.5 40.0 L317.0 154.8 L438.5 137.8 L560.0 150.6" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="171.8" r="3" fill="#2f6f9f"/>
+<circle cx="195.5" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="317.0" cy="154.8" r="3" fill="#2f6f9f"/>
+<circle cx="438.5" cy="137.8" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="150.6" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">recovery</text>
-<text x="70" y="398" text-anchor="middle">0</text>
-<text x="560" y="398" text-anchor="middle">1</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">0.08</text>
 </svg></div><figcaption><b>fleet_mix.svg</b> — The track-record correction keeps recovering completion across every realistic fleet composition, from all-calibrated to all-overconfident.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Live pilot: real agent calibration (predicted vs realised)</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">stated confidence</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">realised pass rate</text>
-<path d="M483.7 40.0 L530.1 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="483.7" cy="40.0" r="3" fill="#2f6f9f"/>
-<circle cx="530.1" cy="40.0" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.25</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.50</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.75</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">1</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.25</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.50</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.75</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">stated confidence</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">realised pass rate</text>
+<path d="M484.3 40.0 L530.4 40.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="484.3" cy="40.0" r="3" fill="#2f6f9f"/>
+<circle cx="530.4" cy="40.0" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">real Claude agent</text>
-<path d="M70.0 380.0 L560.0 40.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#c25a3d"/>
+<path d="M74.0 376.0 L560.0 40.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#c25a3d"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">perfect calibration</text>
-<text x="70" y="398" text-anchor="middle">0</text>
-<text x="560" y="398" text-anchor="middle">1</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">1</text>
 </svg></div><figcaption><b>reliability_live.svg</b> — Live pilot: a real Claude coding agent over 13 tasks x 3 runs. Its points sit above the diagonal (stated ~0.92, delivered 1.0), so it is underconfident, consistent with the well-calibrated Claude models MarketBench reports.</figcaption></figure><figure><div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Match quality vs heterogeneity</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">agent heterogeneity</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">mean quality</text>
-<path d="M70.0 89.8 L192.5 83.7 L315.0 68.5 L437.5 63.7 L560.0 63.0" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="70.0" cy="89.8" r="3" fill="#2f6f9f"/>
-<circle cx="192.5" cy="83.7" r="3" fill="#2f6f9f"/>
-<circle cx="315.0" cy="68.5" r="3" fill="#2f6f9f"/>
-<circle cx="437.5" cy="63.7" r="3" fill="#2f6f9f"/>
-<circle cx="560.0" cy="63.0" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.24</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.47</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.71</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.94</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.25</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.50</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.75</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">agent heterogeneity</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">mean quality</text>
+<path d="M74.0 89.2 L195.5 83.2 L317.0 68.2 L438.5 63.4 L560.0 62.8" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="74.0" cy="89.2" r="3" fill="#2f6f9f"/>
+<circle cx="195.5" cy="83.2" r="3" fill="#2f6f9f"/>
+<circle cx="317.0" cy="68.2" r="3" fill="#2f6f9f"/>
+<circle cx="438.5" cy="63.4" r="3" fill="#2f6f9f"/>
+<circle cx="560.0" cy="62.8" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">cta</text>
-<path d="M70.0 79.2 L192.5 66.4 L315.0 47.4 L437.5 41.1 L560.0 40.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="70.0" cy="79.2" r="3" fill="#c25a3d"/>
-<circle cx="192.5" cy="66.4" r="3" fill="#c25a3d"/>
-<circle cx="315.0" cy="47.4" r="3" fill="#c25a3d"/>
-<circle cx="437.5" cy="41.1" r="3" fill="#c25a3d"/>
+<path d="M74.0 78.7 L195.5 66.1 L317.0 47.3 L438.5 41.1 L560.0 40.0" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="74.0" cy="78.7" r="3" fill="#c25a3d"/>
+<circle cx="195.5" cy="66.1" r="3" fill="#c25a3d"/>
+<circle cx="317.0" cy="47.3" r="3" fill="#c25a3d"/>
+<circle cx="438.5" cy="41.1" r="3" fill="#c25a3d"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">central_best</text>
-<text x="70" y="398" text-anchor="middle">0</text>
-<text x="560" y="398" text-anchor="middle">1</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">0.94</text>
 </svg></div><figcaption><b>heterogeneity_quality.svg</b> — Match quality across agent heterogeneity for CTA and the full-information optimum.</figcaption></figure></div><footer>Generated by <b>cta dashboard</b> from results/summary.json. Reproduce with <b>cta autorun --full</b>. Full protocol: 20 seeds, agent counts to 10000.</footer></div></body></html>

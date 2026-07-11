@@ -1,33 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">Fleet calibration: predicted vs realised success</text>
-<line x1="70" y1="380" x2="560" y2="380" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="315" y="422" text-anchor="middle">mean predicted success</text>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">realised success rate</text>
-<path d="M344.5 167.5 L395.7 106.3 L445.1 124.2 L487.9 112.3 L541.5 97.6" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
-<circle cx="344.5" cy="167.5" r="3" fill="#2f6f9f"/>
-<circle cx="395.7" cy="106.3" r="3" fill="#2f6f9f"/>
-<circle cx="445.1" cy="124.2" r="3" fill="#2f6f9f"/>
-<circle cx="487.9" cy="112.3" r="3" fill="#2f6f9f"/>
-<circle cx="541.5" cy="97.6" r="3" fill="#2f6f9f"/>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.25</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.50</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.75</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">1</text>
+<line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
+<text x="74.0" y="394" text-anchor="middle">0</text>
+<line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
+<text x="195.5" y="394" text-anchor="middle">0.25</text>
+<line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
+<text x="317.0" y="394" text-anchor="middle">0.50</text>
+<line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
+<text x="438.5" y="394" text-anchor="middle">0.75</text>
+<line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
+<text x="560.0" y="394" text-anchor="middle">1</text>
+<line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="317" y="424" text-anchor="middle">mean predicted success</text>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">realised success rate</text>
+<path d="M346.3 166.0 L397.0 105.6 L446.0 123.3 L488.5 111.4 L541.6 96.9" fill="none" stroke="#2f6f9f" stroke-width="2.5"/>
+<circle cx="346.3" cy="166.0" r="3" fill="#2f6f9f"/>
+<circle cx="397.0" cy="105.6" r="3" fill="#2f6f9f"/>
+<circle cx="446.0" cy="123.3" r="3" fill="#2f6f9f"/>
+<circle cx="488.5" cy="111.4" r="3" fill="#2f6f9f"/>
+<circle cx="541.6" cy="96.9" r="3" fill="#2f6f9f"/>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">raw self-report</text>
-<path d="M341.8 153.3 L397.0 71.6 L444.0 88.1 L486.6 104.4 L543.3 90.1" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
-<circle cx="341.8" cy="153.3" r="3" fill="#c25a3d"/>
-<circle cx="397.0" cy="71.6" r="3" fill="#c25a3d"/>
-<circle cx="444.0" cy="88.1" r="3" fill="#c25a3d"/>
-<circle cx="486.6" cy="104.4" r="3" fill="#c25a3d"/>
-<circle cx="543.3" cy="90.1" r="3" fill="#c25a3d"/>
+<path d="M343.6 152.0 L398.3 71.3 L445.0 87.5 L487.2 103.6 L543.4 89.5" fill="none" stroke="#c25a3d" stroke-width="2.5"/>
+<circle cx="343.6" cy="152.0" r="3" fill="#c25a3d"/>
+<circle cx="398.3" cy="71.3" r="3" fill="#c25a3d"/>
+<circle cx="445.0" cy="87.5" r="3" fill="#c25a3d"/>
+<circle cx="487.2" cy="103.6" r="3" fill="#c25a3d"/>
+<circle cx="543.4" cy="89.5" r="3" fill="#c25a3d"/>
 <rect x="576" y="68" width="14" height="14" fill="#c25a3d"/>
 <text x="594" y="80">reliability correction</text>
-<path d="M70.0 380.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
-<circle cx="70.0" cy="380.0" r="3" fill="#4c9a6a"/>
+<path d="M74.0 376.0 L560.0 40.0" fill="none" stroke="#4c9a6a" stroke-width="2.5"/>
+<circle cx="74.0" cy="376.0" r="3" fill="#4c9a6a"/>
 <circle cx="560.0" cy="40.0" r="3" fill="#4c9a6a"/>
 <rect x="576" y="90" width="14" height="14" fill="#4c9a6a"/>
 <text x="594" y="102">perfect calibration</text>
-<text x="70" y="398" text-anchor="middle">0</text>
-<text x="560" y="398" text-anchor="middle">1</text>
-<text x="62" y="380" text-anchor="end">0</text>
-<text x="62" y="50" text-anchor="end">1</text>
 </svg>

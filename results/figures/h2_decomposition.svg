@@ -1,15 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
 <rect width="720" height="440" fill="white"/>
 <text x="360" y="22" text-anchor="middle" font-size="16">H2 gap: cost-awareness vs the competence proxy</text>
-<line x1="70" y1="380.0" x2="560" y2="380.0" stroke="#333"/>
-<line x1="70" y1="380" x2="70" y2="40" stroke="#333"/>
-<text x="18" y="210" text-anchor="middle" transform="rotate(-90 18 210)">mean realised quality</text>
-<rect x="86.3" y="62.7" width="117.6" height="317.3" fill="#2f6f9f"/>
-<text x="152" y="398" text-anchor="middle">deployed (cost-aware)</text>
-<rect x="249.7" y="51.2" width="117.6" height="328.8" fill="#2f6f9f"/>
-<text x="315" y="398" text-anchor="middle">quality-first</text>
-<rect x="413.0" y="40.0" width="117.6" height="340.0" fill="#2f6f9f"/>
-<text x="478" y="398" text-anchor="middle">optimum</text>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
+<text x="66" y="380.0" text-anchor="end">0</text>
+<line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>
+<text x="66" y="296.0" text-anchor="end">0.24</text>
+<line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
+<text x="66" y="212.0" text-anchor="end">0.47</text>
+<line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
+<text x="66" y="128.0" text-anchor="end">0.71</text>
+<line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
+<text x="66" y="44.0" text-anchor="end">0.94</text>
+<line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#333"/>
+<line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
+<text x="18" y="208" text-anchor="middle" transform="rotate(-90 18 208)">mean realised quality</text>
+<rect x="90.2" y="62.5" width="116.6" height="313.5" fill="#2f6f9f"/>
+<text x="148.5" y="58.5" text-anchor="middle" font-size="11">0.88</text>
+<text x="155" y="394" text-anchor="middle">deployed (cost-aware)</text>
+<rect x="252.2" y="51.1" width="116.6" height="324.9" fill="#2f6f9f"/>
+<text x="310.5" y="47.1" text-anchor="middle" font-size="11">0.91</text>
+<text x="317" y="394" text-anchor="middle">quality-first</text>
+<rect x="414.2" y="40.0" width="116.6" height="336.0" fill="#2f6f9f"/>
+<text x="472.5" y="36.0" text-anchor="middle" font-size="11">0.94</text>
+<text x="479" y="394" text-anchor="middle">optimum</text>
 <rect x="576" y="46" width="14" height="14" fill="#2f6f9f"/>
 <text x="594" y="58">mean quality</text>
 </svg>
