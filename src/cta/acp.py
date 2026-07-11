@@ -29,6 +29,12 @@ from cta.wrappers import Fleet, route
 Downstream = Callable[[str, str, str], "tuple[str, bool]"]
 # A notification sink receives JSON-RPC notification dicts (session/update).
 Notify = Callable[[dict[str, Any]], None]
+# A bidder elicits raw self-report bids per model for a task type.
+Bidder = Callable[[str, Fleet], "dict[str, float]"]
+# A gate sanitises raw bids before the track-record correction (the integrity stage).
+Gate = Callable[["dict[str, float]", Fleet], "dict[str, float]"]
+# A probe elicits one model's self-report for a task (probe-mode elicitation).
+Probe = Callable[[str, str], float]
 
 # Per-tier self-report a model states before its track record is applied. These
 # are the raw bids; the router discounts them by reliability. Cheaper tiers are a
@@ -36,9 +42,59 @@ Notify = Callable[[dict[str, Any]], None]
 _TIER_SELF_REPORT = {"economy": 0.85, "standard": 0.92, "premium": 0.96}
 
 
+def _clamp(x: float) -> float:
+    """Clamp a bid into the valid confidence range [0, 1]."""
+    return 0.0 if x < 0.0 else 1.0 if x > 1.0 else x
+
+
 def _simulated_downstream(model: str, task_type: str, prompt_text: str) -> tuple[str, bool]:
     """Stand-in downstream: the chosen model 'solves' the task and passes."""
     return (f"[{model}] completed task '{task_type}'.", True)
+
+
+# --- Elicitation, gate, and multi-downstream seams -----------------------------
+
+
+def prior_bidder(tiers: dict[str, float] | None = None) -> Bidder:
+    """Prior-mode elicitation: each model's raw bid is a fixed per-tier prior; no
+    probe is sent. This is the broker's default and costs no extra turns."""
+    table = tiers or _TIER_SELF_REPORT
+
+    def _bid(task_type: str, fleet: Fleet) -> dict[str, float]:
+        return {m.name: table.get(m.tier, 0.9) for m in fleet.models}
+
+    return _bid
+
+
+def probe_bidder(probe: Probe) -> Bidder:
+    """Probe-mode elicitation: send each candidate a confidence probe and read a
+    bid in [0,1]. Costs one cheap extra turn per candidate; ``probe`` is the
+    caller-supplied turn (a real subagent probe live, or a stub in tests). ACP has
+    no native confidence field, so this elicitation is a deliberate CTA extension
+    whose overhead the head-to-head measures."""
+
+    def _bid(task_type: str, fleet: Fleet) -> dict[str, float]:
+        return {m.name: _clamp(probe(m.name, task_type)) for m in fleet.models}
+
+    return _bid
+
+
+def clamp_gate(bids: dict[str, float], fleet: Fleet) -> dict[str, float]:
+    """Integrity gate: clamp every raw self-report into [0,1] before correction."""
+    return {k: _clamp(v) for k, v in bids.items()}
+
+
+def make_fleet_downstream(
+    mapping: dict[str, Downstream], default: Downstream | None = None
+) -> Downstream:
+    """Route each model name to its own downstream solver (multi-downstream), so
+    the fleet can be heterogeneous agent products rather than one runtime."""
+    fallback = default or _simulated_downstream
+
+    def _solve(model: str, task_type: str, prompt_text: str) -> tuple[str, bool]:
+        return mapping.get(model, fallback)(model, task_type, prompt_text)
+
+    return _solve
 
 
 def _error(rid: Any, code: int, message: str) -> dict[str, Any]:
@@ -55,10 +111,14 @@ class AcpBroker:
         fleet: Fleet,
         notify: Notify | None = None,
         downstream: Downstream | None = None,
+        bidder: Bidder | None = None,
+        gate: Gate | None = None,
     ) -> None:
         self.fleet = fleet
         self._notify = notify or (lambda _n: None)
         self._downstream = downstream or _simulated_downstream
+        self._bidder = bidder or prior_bidder()
+        self._gate = gate or clamp_gate
         self._sessions: dict[str, dict[str, Any]] = {}
         self._next = 0
         self.turns: list[dict[str, Any]] = []  # a record of routed turns, for analysis
@@ -110,8 +170,8 @@ class AcpBroker:
             self._sessions[sid]["cancelled"] = True
 
     def _elicit_bids(self, task_type: str) -> dict[str, float]:
-        """Prior-mode elicitation: each model's raw self-report before correction."""
-        return {m.name: _TIER_SELF_REPORT.get(m.tier, 0.9) for m in self.fleet.models}
+        """Elicit raw self-reports via the configured bidder (prior or probe)."""
+        return self._bidder(task_type, self.fleet)
 
     def _prompt(self, params: dict[str, Any]) -> dict[str, Any]:
         sid = params.get("sessionId")
@@ -123,13 +183,15 @@ class AcpBroker:
         )
         task_type = params.get("taskType") or (text.split()[0] if text.split() else "task")
 
-        bids = self._elicit_bids(task_type)
+        raw = self._elicit_bids(task_type)
+        bids = self._gate(raw, self.fleet)  # integrity gate before correction
         decision = route(task_type, bids, self.fleet)
 
         # Stream the routing decision, then the chosen model's reply, as ACP updates.
         self._emit(sid, {
             "type": "routing_decision",
             "model": decision.model,
+            "rawBids": {k: round(v, 3) for k, v in bids.items()},
             "correctedBids": {k: round(v, 3) for k, v in decision.corrected_bids.items()},
             "eligible": decision.eligible,
             "reason": decision.reason,

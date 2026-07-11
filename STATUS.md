@@ -21,6 +21,20 @@ the results are in; keep `paper/` untouched. Read `docs/publication_plan.md` for
 framing. Before continuing Path 2, note: Paper 1 = the mechanism + evidence it works;
 Paper 2 = the deployed harness + the competitive head-to-head.
 
+**Paper 2 is phased for pause/resume (`docs/paper2_plan.md`).**
+- **Phase 2A (free): DONE.** Broker hardening in `src/cta/acp.py`: pluggable
+  elicitation (`prior_bidder` default, `probe_bidder(probe)` = one probe turn per
+  candidate), integrity `clamp_gate`, and `make_fleet_downstream` multi-downstream
+  dispatch. `tests/test_acp.py` +5 (148 pass, ruff clean).
+- **Phase 2B (free): NEXT.** `src/cta/headtohead.py`: four routing policies
+  (`cta_corrected` / `naive_self_report` / `always_frontier` / `single_cheapest`)
+  over a suite with a pluggable solver; completion + cost + probe-overhead metrics,
+  bootstrap CIs, figures; tests on a deterministic simulated solver.
+- **Phase 2C (metered, batched):** `pilot_tasks/headtohead.py` runs the four
+  policies on real subagents, idempotent on-disk cells in `results/headtohead/`,
+  resumable across sessions (skips completed cells).
+- **Phase 2D (free):** Paper 2 draft (`docs/paper2.md` -> `paper2/`).
+
 ## Resume here (next session)
 
 **Where things stand.** Branch `claude/biomimetic-ai-orchestration-init-0nb5db`.
