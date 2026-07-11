@@ -48,9 +48,18 @@ Paper 2 = the deployed harness + the competitive head-to-head.
   `tests/test_headtohead_replay.py` +4 (159 pass, ruff clean). The optional live
   end-to-end broker demo over a real subagent solver remains available if we later
   want a deployment vignette; the headline result is banked without it.
-- **Phase 2D (free): NEXT.** Paper 2 draft (`docs/paper2.md` -> `paper2/`): the
-  ACP-broker architecture, the head-to-head table + figure, probe-overhead cost
-  accounting, and the honest bounds (Claude underconfidence, protocol youth).
+- **Phase 2D (free): DRAFTED.** `docs/paper2.md` written: abstract, intro
+  (deployed-harness thesis, Weng 2026), related work (FrugalGPT/RouteLLM/ACP), the
+  broker architecture, the head-to-head method + result table + the
+  naive-collapses-to-cheapest finding, probe-overhead accounting, honest
+  limitations, conclusion. Next: verify citations online, then port to `paper2/`
+  LaTeX (reuse `paper/refs.bib` + the head-to-head figure). `paper/` stays frozen.
+
+**Path 2 status: 2A-2C complete and 2D drafted, all at zero metered subagent
+cost** (2C ran as a leave-one-out replay over Phase 3's banked outcomes). Optional
+remaining: a live end-to-end broker vignette over a real subagent solver (metered,
+deployment colour only), and the `paper2/` LaTeX build. To resume, say "finish
+Paper 2" (LaTeX) or "run the live broker demo" (metered).
 
 ## Resume here (next session)
 
