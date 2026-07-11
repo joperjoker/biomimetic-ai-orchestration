@@ -1,0 +1,120 @@
+### MODULE: parse
+CONFIDENCE: 0.55
+```python
+def parse(query):
+    import re
+    conditions = []
+    if query is None:
+        return conditions
+    text = query.strip()
+    if not text:
+        return conditions
+    parts = re.split(r'\s+AND\s+', text, flags=re.IGNORECASE)
+    op_re = re.compile(r'^(.*?)\s*(>=|<=|!=|==|=|>|<)\s*(.*)$')
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        m = op_re.match(part)
+        if not m:
+            continue
+        field = m.group(1).strip()
+        op = m.group(2)
+        if op == '==':
+            op = '='
+        raw = m.group(3).strip()
+        if len(raw) >= 2 and ((raw[0] == "'" and raw[-1] == "'") or (raw[0] == '"' and raw[-1] == '"')):
+            value = raw[1:-1]
+        else:
+            try:
+                value = int(raw)
+            except ValueError:
+                try:
+                    value = float(raw)
+                except ValueError:
+                    if raw.lower() == 'true':
+                        value = True
+                    elif raw.lower() == 'false':
+                        value = False
+                    else:
+                        value = raw
+        conditions.append((field, op, value))
+    return conditions
+```
+
+### MODULE: match
+CONFIDENCE: 0.6
+```python
+def match(row, predicates):
+    import operator
+    ops = {
+        '=': operator.eq,
+        '==': operator.eq,
+        '!=': operator.ne,
+        '>': operator.gt,
+        '>=': operator.ge,
+        '<': operator.lt,
+        '<=': operator.le,
+    }
+    for pred in predicates:
+        field, op, value = pred
+        fn = ops.get(op)
+        if fn is None:
+            return False
+        if field not in row:
+            return False
+        cell = row[field]
+        try:
+            result = fn(cell, value)
+        except TypeError:
+            result = fn(str(cell), str(value))
+        if not result:
+            return False
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.7
+```python
+def select(rows, query):
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.62
+```python
+def summarize(rows, field, op):
+    values = [row[field] for row in rows if isinstance(row, dict) and field in row]
+    if op == 'count':
+        return len(values)
+    numeric = [v for v in values if v is not None]
+    if op == 'sum':
+        return sum(numeric)
+    if op == 'min':
+        return min(numeric) if numeric else None
+    if op == 'max':
+        return max(numeric) if numeric else None
+    if op == 'avg':
+        return (sum(numeric) / len(numeric)) if numeric else None
+    raise ValueError("unknown op: %s" % op)
+```
+
+### MODULE: render
+CONFIDENCE: 0.4
+```python
+def render(rows, columns):
+    cols = list(columns)
+    cells = [[str(row.get(c, '')) for c in cols] for row in rows]
+    widths = [len(str(c)) for c in cols]
+    for r in cells:
+        for i, v in enumerate(r):
+            if len(v) > widths[i]:
+                widths[i] = len(v)
+    lines = []
+    lines.append(' | '.join(str(c).ljust(widths[i]) for i, c in enumerate(cols)))
+    lines.append('-+-'.join('-' * widths[i] for i in range(len(cols))))
+    for r in cells:
+        lines.append(' | '.join(v.ljust(widths[i]) for i, v in enumerate(r)))
+    return '\n'.join(lines)
+```

@@ -1,0 +1,133 @@
+### MODULE: parse
+CONFIDENCE: 0.5
+```python
+def parse(query):
+    import re
+
+    def parse_value(s):
+        s = s.strip()
+        if len(s) >= 2 and ((s[0] == "'" and s[-1] == "'") or (s[0] == '"' and s[-1] == '"')):
+            return s[1:-1]
+        low = s.lower()
+        if low == 'true':
+            return True
+        if low == 'false':
+            return False
+        try:
+            return int(s)
+        except ValueError:
+            pass
+        try:
+            return float(s)
+        except ValueError:
+            pass
+        return s
+
+    if not query or not str(query).strip():
+        return []
+    parts = re.split(r'\s+AND\s+', str(query).strip(), flags=re.IGNORECASE)
+    operators = ['>=', '<=', '!=', '=', '>', '<']
+    conditions = []
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        chosen = None
+        chosen_idx = None
+        for op in operators:
+            idx = part.find(op)
+            if idx != -1:
+                chosen = op
+                chosen_idx = idx
+                break
+        if chosen is None:
+            continue
+        field = part[:chosen_idx].strip()
+        value = parse_value(part[chosen_idx + len(chosen):])
+        conditions.append((field, chosen, value))
+    return conditions
+```
+
+### MODULE: match
+CONFIDENCE: 0.68
+```python
+def match(row, predicates):
+    import operator
+
+    ops = {
+        '=': operator.eq,
+        '==': operator.eq,
+        '!=': operator.ne,
+        '>': operator.gt,
+        '<': operator.lt,
+        '>=': operator.ge,
+        '<=': operator.le,
+    }
+    for pred in predicates:
+        if isinstance(pred, dict):
+            field = pred.get('field')
+            op = pred.get('op')
+            value = pred.get('value')
+        else:
+            field, op, value = pred
+        if not isinstance(row, dict) or field not in row:
+            return False
+        func = ops.get(op)
+        if func is None:
+            return False
+        try:
+            if not func(row[field], value):
+                return False
+        except TypeError:
+            return False
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.72
+```python
+def select(rows, query):
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.58
+```python
+def summarize(rows, field, op):
+    values = [row[field] for row in rows
+              if isinstance(row, dict) and field in row and row[field] is not None]
+    if op == 'count':
+        return len(values)
+    if op == 'sum':
+        return sum(values)
+    if op == 'min':
+        return min(values) if values else None
+    if op == 'max':
+        return max(values) if values else None
+    if op == 'avg':
+        return sum(values) / len(values) if values else None
+    raise ValueError("unknown op: %r" % (op,))
+```
+
+### MODULE: render
+CONFIDENCE: 0.4
+```python
+def render(rows, columns):
+    columns = list(columns)
+    widths = {col: len(str(col)) for col in columns}
+    for row in rows:
+        for col in columns:
+            val = row.get(col, '') if isinstance(row, dict) else ''
+            widths[col] = max(widths[col], len(str(val)))
+    header = ' | '.join(str(col).ljust(widths[col]) for col in columns)
+    separator = '-+-'.join('-' * widths[col] for col in columns)
+    lines = [header, separator]
+    for row in rows:
+        cells = []
+        for col in columns:
+            val = row.get(col, '') if isinstance(row, dict) else ''
+            cells.append(str(val).ljust(widths[col]))
+        lines.append(' | '.join(cells))
+    return '\n'.join(lines)
+```

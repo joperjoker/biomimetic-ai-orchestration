@@ -1,0 +1,131 @@
+### MODULE: parse
+CONFIDENCE: 0.6
+```python
+def parse(query):
+    import re
+
+    def coerce(raw):
+        raw = raw.strip()
+        if len(raw) >= 2 and raw[0] in "'\"" and raw[-1] == raw[0]:
+            return raw[1:-1]
+        try:
+            return int(raw)
+        except ValueError:
+            pass
+        try:
+            return float(raw)
+        except ValueError:
+            pass
+        low = raw.lower()
+        if low == "true":
+            return True
+        if low == "false":
+            return False
+        if low in ("none", "null"):
+            return None
+        return raw
+
+    conditions = []
+    if not query or not query.strip():
+        return conditions
+    parts = re.split(r"\s+AND\s+", query.strip())
+    ops = [">=", "<=", "!=", "==", "=", ">", "<"]
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        for op in ops:
+            idx = part.find(op)
+            if idx != -1:
+                field = part[:idx].strip()
+                value = coerce(part[idx + len(op):])
+                conditions.append((field, op, value))
+                break
+    return conditions
+```
+
+### MODULE: match
+CONFIDENCE: 0.7
+```python
+def match(row, predicates):
+    import operator
+
+    ops = {
+        "=": operator.eq,
+        "==": operator.eq,
+        "!=": operator.ne,
+        ">": operator.gt,
+        "<": operator.lt,
+        ">=": operator.ge,
+        "<=": operator.le,
+    }
+    for field, op, value in predicates:
+        if not isinstance(row, dict) or field not in row:
+            return False
+        fn = ops.get(op)
+        if fn is None:
+            return False
+        cell = row[field]
+        try:
+            if not fn(cell, value):
+                return False
+        except TypeError:
+            if not fn(str(cell), str(value)):
+                return False
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.85
+```python
+def select(rows, query):
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.6
+```python
+def summarize(rows, field, op):
+    values = [row[field] for row in rows
+              if isinstance(row, dict) and field in row]
+    if op == "count":
+        return len(values)
+    nums = [v for v in values if v is not None]
+    if op == "sum":
+        return sum(nums)
+    if op == "min":
+        return min(nums) if nums else None
+    if op == "max":
+        return max(nums) if nums else None
+    if op == "avg":
+        return sum(nums) / len(nums) if nums else None
+    raise ValueError("unknown op: %r" % (op,))
+```
+
+### MODULE: render
+CONFIDENCE: 0.45
+```python
+def render(rows, columns):
+    columns = list(columns)
+    header = [str(c) for c in columns]
+    table = [header]
+    for row in rows:
+        if isinstance(row, dict):
+            table.append([str(row.get(c, "")) for c in columns])
+        else:
+            table.append([str(v) for v in row])
+    widths = [0] * len(header)
+    for r in table:
+        for i, cell in enumerate(r):
+            if i < len(widths) and len(cell) > widths[i]:
+                widths[i] = len(cell)
+    lines = []
+    for idx, r in enumerate(table):
+        lines.append(" | ".join(
+            cell.ljust(widths[i]) for i, cell in enumerate(r)
+        ))
+        if idx == 0:
+            lines.append("-+-".join("-" * w for w in widths))
+    return "\n".join(lines)
+```

@@ -1,0 +1,108 @@
+### MODULE: parse
+CONFIDENCE: 0.7
+```python
+def parse(query):
+    """Parse a query string into conditions."""
+    conditions = []
+    parts = query.split(' AND ')
+    for part in parts:
+        part = part.strip()
+        for op in ['>=', '<=', '!=', '=', '>', '<']:
+            if op in part:
+                idx = part.find(op)
+                field = part[:idx].strip()
+                value_str = part[idx+len(op):].strip()
+                if (value_str.startswith("'") and value_str.endswith("'")) or \
+                   (value_str.startswith('"') and value_str.endswith('"')):
+                    value = value_str[1:-1]
+                else:
+                    try:
+                        value = float(value_str) if '.' in value_str else int(value_str)
+                    except ValueError:
+                        value = value_str
+                conditions.append((field, op, value))
+                break
+    return conditions
+```
+
+### MODULE: match
+CONFIDENCE: 0.85
+```python
+def match(row, predicates):
+    """Check if a row dict satisfies all predicates."""
+    for field, op, value in predicates:
+        if field not in row:
+            return False
+        row_value = row[field]
+        if op == '=':
+            if row_value != value:
+                return False
+        elif op == '!=':
+            if row_value == value:
+                return False
+        elif op == '>':
+            if not (row_value > value):
+                return False
+        elif op == '<':
+            if not (row_value < value):
+                return False
+        elif op == '>=':
+            if not (row_value >= value):
+                return False
+        elif op == '<=':
+            if not (row_value <= value):
+                return False
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.75
+```python
+def select(rows, query):
+    """Return rows matching the query."""
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.8
+```python
+def summarize(rows, field, op):
+    """Aggregate a field with the given operation."""
+    values = [row[field] for row in rows if field in row]
+    if not values:
+        return None
+    if op == 'count':
+        return len(values)
+    elif op == 'sum':
+        return sum(values)
+    elif op == 'min':
+        return min(values)
+    elif op == 'max':
+        return max(values)
+    elif op == 'avg':
+        return sum(values) / len(values)
+    return None
+```
+
+### MODULE: render
+CONFIDENCE: 0.75
+```python
+def render(rows, columns):
+    """Format rows as a simple text table."""
+    if not rows:
+        return ""
+    widths = {}
+    for col in columns:
+        widths[col] = len(str(col))
+        for row in rows:
+            if col in row:
+                widths[col] = max(widths[col], len(str(row[col])))
+    header = " | ".join(str(col).ljust(widths[col]) for col in columns)
+    separator = "-" * len(header)
+    lines = [header, separator]
+    for row in rows:
+        line = " | ".join(str(row.get(col, '')).ljust(widths[col]) for col in columns)
+        lines.append(line)
+    return "\n".join(lines)
+```

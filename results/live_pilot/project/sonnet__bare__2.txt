@@ -1,0 +1,167 @@
+### MODULE: parse
+CONFIDENCE: 0.55
+```python
+def parse(query):
+    import re
+
+    conditions = []
+    if not query or not query.strip():
+        return conditions
+
+    parts = re.split(r'\s+AND\s+', query.strip(), flags=re.IGNORECASE)
+    pattern = re.compile(r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*(>=|<=|!=|=|>|<)\s*(.+?)\s*$")
+
+    for part in parts:
+        if not part.strip():
+            continue
+        m = pattern.match(part)
+        if not m:
+            continue
+        field, op, raw_value = m.groups()
+        value = raw_value.strip()
+
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+            value = value[1:-1]
+        else:
+            try:
+                if re.match(r'^[+-]?\d+$', value):
+                    value = int(value)
+                elif re.match(r'^[+-]?\d*\.\d+$', value) or re.match(r'^[+-]?\d+\.\d*$', value):
+                    value = float(value)
+                elif value.lower() == 'true':
+                    value = True
+                elif value.lower() == 'false':
+                    value = False
+                elif value.lower() == 'none' or value.lower() == 'null':
+                    value = None
+            except ValueError:
+                pass
+
+        conditions.append((field, op, value))
+
+    return conditions
+```
+
+### MODULE: match
+CONFIDENCE: 0.6
+```python
+def match(row, predicates):
+    import operator
+
+    ops = {
+        '=': operator.eq,
+        '!=': operator.ne,
+        '>=': operator.ge,
+        '<=': operator.le,
+        '>': operator.gt,
+        '<': operator.lt,
+    }
+
+    if not predicates:
+        return True
+
+    for field, op, value in predicates:
+        if not isinstance(row, dict) or field not in row:
+            return False
+
+        row_value = row[field]
+        func = ops.get(op)
+        if func is None:
+            return False
+
+        compare_value = value
+        try:
+            if isinstance(value, (int, float)) and not isinstance(value, bool) \
+                    and isinstance(row_value, str):
+                row_value = type(value)(row_value)
+            elif isinstance(row_value, (int, float)) and not isinstance(row_value, bool) \
+                    and isinstance(value, str):
+                compare_value = type(row_value)(value)
+        except (TypeError, ValueError):
+            pass
+
+        try:
+            if not func(row_value, compare_value):
+                return False
+        except TypeError:
+            return False
+
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.7
+```python
+def select(rows, query):
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.5
+```python
+def summarize(rows, field, op):
+    if op is None:
+        raise ValueError("op is required")
+    op_normalized = op.strip().lower()
+
+    values = []
+    for row in rows:
+        if isinstance(row, dict) and field in row and row[field] is not None:
+            values.append(row[field])
+
+    if op_normalized == 'count':
+        return len(values)
+
+    numeric_values = []
+    for v in values:
+        if isinstance(v, bool):
+            continue
+        if isinstance(v, (int, float)):
+            numeric_values.append(v)
+        else:
+            try:
+                numeric_values.append(float(v))
+            except (TypeError, ValueError):
+                continue
+
+    if op_normalized == 'sum':
+        return sum(numeric_values) if numeric_values else 0
+    if op_normalized == 'min':
+        return min(numeric_values) if numeric_values else None
+    if op_normalized == 'max':
+        return max(numeric_values) if numeric_values else None
+    if op_normalized == 'avg':
+        return sum(numeric_values) / len(numeric_values) if numeric_values else None
+
+    raise ValueError(f"Unknown op: {op}")
+```
+
+### MODULE: render
+CONFIDENCE: 0.4
+```python
+def render(rows, columns):
+    headers = list(columns)
+    str_rows = []
+    for row in rows:
+        cells = []
+        for col in headers:
+            val = row.get(col, '') if isinstance(row, dict) else ''
+            cells.append('' if val is None else str(val))
+        str_rows.append(cells)
+
+    widths = [len(h) for h in headers]
+    for r in str_rows:
+        for i, cell in enumerate(r):
+            widths[i] = max(widths[i], len(cell))
+
+    def format_row(cells):
+        return ' | '.join(cell.ljust(widths[i]) for i, cell in enumerate(cells))
+
+    lines = [format_row(headers)]
+    lines.append('-+-'.join('-' * w for w in widths))
+    for r in str_rows:
+        lines.append(format_row(r))
+
+    return '\n'.join(lines)
+```

@@ -1,0 +1,123 @@
+### MODULE: parse
+CONFIDENCE: 0.85
+```python
+def parse(query: str) -> list[dict]:
+    q = query.strip()
+    if not q:
+        return []
+    two_char = (">=", "<=", "!=")
+    one_char = ("=", ">", "<")
+    result = []
+    for cond in q.split(" AND "):
+        s = cond
+        op = None
+        idx = -1
+        for i in range(len(s)):
+            if s[i:i + 2] in two_char:
+                op = s[i:i + 2]
+                idx = i
+                break
+            if s[i] in one_char:
+                op = s[i]
+                idx = i
+                break
+        field = s[:idx].strip()
+        raw = s[idx + len(op):].strip()
+        if len(raw) >= 2 and raw[0] == "'" and raw[-1] == "'":
+            value = raw[1:-1]
+        else:
+            try:
+                value = int(raw)
+            except (ValueError, TypeError):
+                value = raw
+        result.append({"field": field, "op": op, "value": value})
+    return result
+```
+
+### MODULE: match
+CONFIDENCE: 0.87
+```python
+def match(row: dict, predicates: list[dict]) -> bool:
+    for p in predicates:
+        f = p["field"]
+        op = p["op"]
+        val = p["value"]
+        if f not in row:
+            return False
+        rv = row[f]
+        if op == "=":
+            if not (rv == val):
+                return False
+        elif op == "!=":
+            if not (rv != val):
+                return False
+        else:
+            if type(rv) != type(val):
+                return False
+            if op == ">":
+                if not (rv > val):
+                    return False
+            elif op == "<":
+                if not (rv < val):
+                    return False
+            elif op == ">=":
+                if not (rv >= val):
+                    return False
+            elif op == "<=":
+                if not (rv <= val):
+                    return False
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.93
+```python
+def select(rows: list[dict], query: str) -> list[dict]:
+    predicates = parse(query)
+    return [r for r in rows if match(r, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.85
+```python
+def summarize(rows: list[dict], field: str, op: str) -> float:
+    if op == "count":
+        return float(len(rows))
+    vals = []
+    for r in rows:
+        if field in r:
+            v = r[field]
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
+                vals.append(v)
+    if not vals:
+        return 0.0
+    if op == "sum":
+        return float(sum(vals))
+    if op == "min":
+        return float(min(vals))
+    if op == "max":
+        return float(max(vals))
+    if op == "avg":
+        return float(sum(vals) / len(vals))
+    return 0.0
+```
+
+### MODULE: render
+CONFIDENCE: 0.89
+```python
+def render(rows: list[dict], columns: list[str]) -> str:
+    def cell(r, c):
+        return str(r[c]) if c in r else ''
+    widths = {}
+    for c in columns:
+        w = len(c)
+        for r in rows:
+            cw = len(cell(r, c))
+            if cw > w:
+                w = cw
+        widths[c] = w
+    lines = [" | ".join(c.ljust(widths[c]) for c in columns)]
+    for r in rows:
+        lines.append(" | ".join(cell(r, c).ljust(widths[c]) for c in columns))
+    return "\n".join(lines)
+```

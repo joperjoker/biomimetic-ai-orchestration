@@ -1,0 +1,155 @@
+### MODULE: parse
+CONFIDENCE: 0.55
+```python
+import re
+
+_OP_RE = re.compile(r'^(.*?)\s*(>=|<=|!=|=|>|<)\s*(.*)$')
+
+
+def parse(query):
+    """Turn a query string like "age >= 30 AND role = 'eng'" into a list
+    of (field, op, value) condition tuples."""
+    if not query or not query.strip():
+        return []
+
+    parts = re.split(r'\s+AND\s+', query.strip(), flags=re.IGNORECASE)
+    conditions = []
+
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        m = _OP_RE.match(part)
+        if not m:
+            continue
+        field, op, value = m.groups()
+        field = field.strip()
+        value = value.strip()
+
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
+            value = value[1:-1]
+        else:
+            converted = None
+            try:
+                converted = int(value)
+            except ValueError:
+                try:
+                    converted = float(value)
+                except ValueError:
+                    if value.lower() == 'true':
+                        converted = True
+                    elif value.lower() == 'false':
+                        converted = False
+                    elif value.lower() in ('none', 'null'):
+                        converted = None
+                    else:
+                        converted = value
+            value = converted
+
+        conditions.append((field, op, value))
+
+    return conditions
+```
+
+### MODULE: match
+CONFIDENCE: 0.6
+```python
+def match(row, predicates):
+    """Return True if row satisfies every condition in predicates.
+
+    predicates is a list of (field, op, value) tuples, as produced by
+    parse(). All conditions must hold (AND semantics).
+    """
+    for field, op, value in predicates:
+        if field not in row:
+            return False
+        row_value = row[field]
+        try:
+            if op == '=':
+                ok = row_value == value
+            elif op == '!=':
+                ok = row_value != value
+            elif op == '>':
+                ok = row_value > value
+            elif op == '<':
+                ok = row_value < value
+            elif op == '>=':
+                ok = row_value >= value
+            elif op == '<=':
+                ok = row_value <= value
+            else:
+                ok = False
+        except TypeError:
+            ok = False
+
+        if not ok:
+            return False
+
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.55
+```python
+def select(rows, query):
+    """Return the rows matching the query string."""
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.45
+```python
+def summarize(rows, field, op):
+    """Aggregate a field across rows. op is one of:
+    count, sum, min, max, avg.
+    """
+    op = op.lower()
+    values = [row[field] for row in rows if field in row and row[field] is not None]
+
+    if op == 'count':
+        return len(values)
+
+    if not values:
+        if op == 'sum':
+            return 0
+        if op in ('min', 'max', 'avg'):
+            return None
+        raise ValueError(f"Unknown op: {op}")
+
+    if op == 'sum':
+        return sum(values)
+    if op == 'min':
+        return min(values)
+    if op == 'max':
+        return max(values)
+    if op == 'avg':
+        return sum(values) / len(values)
+
+    raise ValueError(f"Unknown op: {op}")
+```
+
+### MODULE: render
+CONFIDENCE: 0.3
+```python
+def render(rows, columns):
+    """Format rows as a simple text table with the given columns."""
+    widths = []
+    for col in columns:
+        width = len(str(col))
+        for row in rows:
+            width = max(width, len(str(row.get(col, ''))))
+        widths.append(width)
+
+    def fmt_row(values):
+        return " | ".join(str(v).ljust(w) for v, w in zip(values, widths))
+
+    header = fmt_row(columns)
+    separator = "-+-".join("-" * w for w in widths)
+    lines = [header, separator]
+
+    for row in rows:
+        lines.append(fmt_row([row.get(col, '') for col in columns]))
+
+    return "\n".join(lines)
+```

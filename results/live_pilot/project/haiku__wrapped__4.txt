@@ -1,0 +1,161 @@
+### MODULE: parse
+CONFIDENCE: 0.8
+```python
+def parse(query: str) -> list[dict]:
+    if not query or not query.strip():
+        return []
+
+    conditions = query.strip().split(" AND ")
+    result = []
+
+    for condition in conditions:
+        condition = condition.strip()
+        if not condition:
+            continue
+
+        # Find the earliest operator, preferring longer operators at the same position
+        earliest_pos = len(condition)
+        op = None
+
+        for candidate_op in ['>=', '<=', '!=', '=', '>', '<']:
+            pos = condition.find(candidate_op)
+            if pos != -1:
+                if pos < earliest_pos or (pos == earliest_pos and (op is None or len(candidate_op) > len(op))):
+                    earliest_pos = pos
+                    op = candidate_op
+
+        if op is None:
+            continue
+
+        field = condition[:earliest_pos].strip()
+        value_str = condition[earliest_pos + len(op):].strip()
+
+        # Parse value
+        if value_str.startswith("'") and value_str.endswith("'"):
+            value = value_str[1:-1]
+        else:
+            try:
+                value = int(value_str)
+            except ValueError:
+                value = value_str
+
+        result.append({"field": field, "op": op, "value": value})
+
+    return result
+```
+
+### MODULE: match
+CONFIDENCE: 0.85
+```python
+def match(row: dict, predicates: list[dict]) -> bool:
+    for pred in predicates:
+        field = pred["field"]
+        op = pred["op"]
+        value = pred["value"]
+
+        # Field absent -> False
+        if field not in row:
+            return False
+
+        row_value = row[field]
+
+        # = and != are direct comparisons
+        if op == "=":
+            if row_value != value:
+                return False
+        elif op == "!=":
+            if row_value == value:
+                return False
+        else:
+            # >, <, >=, <= return False when types differ
+            if type(row_value) != type(value):
+                return False
+
+            if op == ">":
+                if not (row_value > value):
+                    return False
+            elif op == "<":
+                if not (row_value < value):
+                    return False
+            elif op == ">=":
+                if not (row_value >= value):
+                    return False
+            elif op == "<=":
+                if not (row_value <= value):
+                    return False
+
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.9
+```python
+def select(rows: list[dict], query: str) -> list[dict]:
+    predicates = parse(query)
+    return [r for r in rows if match(r, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.85
+```python
+def summarize(rows: list[dict], field: str, op: str) -> float:
+    if op == "count":
+        return float(len(rows))
+
+    # For other ops, collect numeric values
+    values = []
+    for row in rows:
+        if field in row:
+            val = row[field]
+            if isinstance(val, (int, float)):
+                values.append(val)
+
+    if not values:
+        return 0.0
+
+    if op == "sum":
+        return float(sum(values))
+    elif op == "min":
+        return float(min(values))
+    elif op == "max":
+        return float(max(values))
+    elif op == "avg":
+        return float(sum(values)) / len(values)
+
+    return 0.0
+```
+
+### MODULE: render
+CONFIDENCE: 0.8
+```python
+def render(rows: list[dict], columns: list[str]) -> str:
+    if not columns:
+        return ""
+
+    # Collect all values for width calculation
+    col_widths = {}
+    for col in columns:
+        col_widths[col] = len(str(col))
+
+    for row in rows:
+        for col in columns:
+            val = str(row.get(col, ""))
+            col_widths[col] = max(col_widths[col], len(val))
+
+    # Format header
+    header_cells = []
+    for col in columns:
+        header_cells.append(str(col).ljust(col_widths[col]))
+    header = " | ".join(header_cells)
+
+    # Format rows
+    result_lines = [header]
+    for row in rows:
+        row_cells = []
+        for col in columns:
+            val = str(row.get(col, ""))
+            row_cells.append(val.ljust(col_widths[col]))
+        result_lines.append(" | ".join(row_cells))
+
+    return "\n".join(result_lines)
+```

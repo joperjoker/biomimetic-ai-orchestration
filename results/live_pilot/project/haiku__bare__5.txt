@@ -1,0 +1,151 @@
+### MODULE: parse
+CONFIDENCE: 0.70
+```python
+def parse(query):
+    """Turn a query string into a list of conditions."""
+    if not query:
+        return []
+
+    parts = [p.strip() for p in query.split(' AND ')]
+    conditions = []
+
+    for part in parts:
+        # Find the earliest operator
+        op = None
+        op_idx = -1
+
+        operators = ['<=', '>=', '!=', '=', '<', '>']
+        for candidate_op in operators:
+            idx = part.find(candidate_op)
+            if idx != -1 and (op_idx == -1 or idx < op_idx):
+                op_idx = idx
+                op = candidate_op
+
+        if op is None:
+            continue
+
+        field = part[:op_idx].strip()
+        value_str = part[op_idx + len(op):].strip()
+
+        # Parse value - handle quoted strings and numbers
+        value = value_str
+        if value_str.startswith("'") and value_str.endswith("'"):
+            value = value_str[1:-1]
+        elif value_str.startswith('"') and value_str.endswith('"'):
+            value = value_str[1:-1]
+        else:
+            try:
+                if '.' in value_str:
+                    value = float(value_str)
+                else:
+                    value = int(value_str)
+            except ValueError:
+                pass
+
+        conditions.append((field, op, value))
+
+    return conditions
+```
+
+### MODULE: match
+CONFIDENCE: 0.80
+```python
+def match(row, predicates):
+    """Check if a row (dict) satisfies all predicates."""
+    for field, op, value in predicates:
+        if field not in row:
+            return False
+
+        row_value = row[field]
+
+        if op == '=':
+            if row_value != value:
+                return False
+        elif op == '!=':
+            if row_value == value:
+                return False
+        elif op == '<':
+            if not (row_value < value):
+                return False
+        elif op == '>':
+            if not (row_value > value):
+                return False
+        elif op == '<=':
+            if not (row_value <= value):
+                return False
+        elif op == '>=':
+            if not (row_value >= value):
+                return False
+
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.80
+```python
+def select(rows, query):
+    """Return the rows matching the query."""
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.70
+```python
+def summarize(rows, field, op):
+    """Aggregate a field with op in count/sum/min/max/avg."""
+    if not rows:
+        return None
+
+    values = [row[field] for row in rows if field in row and row[field] is not None]
+
+    if not values:
+        return None
+
+    if op == 'count':
+        return len(values)
+    elif op == 'sum':
+        return sum(values)
+    elif op == 'min':
+        return min(values)
+    elif op == 'max':
+        return max(values)
+    elif op == 'avg':
+        return sum(values) / len(values)
+
+    return None
+```
+
+### MODULE: render
+CONFIDENCE: 0.75
+```python
+def render(rows, columns):
+    """Format the rows as a simple text table."""
+    if not rows or not columns:
+        return ""
+
+    # Calculate column widths
+    widths = {}
+    for col in columns:
+        widths[col] = len(col)
+
+    for row in rows:
+        for col in columns:
+            if col in row:
+                widths[col] = max(widths[col], len(str(row[col])))
+
+    # Build the table
+    lines = []
+
+    # Header
+    header = " | ".join(col.ljust(widths[col]) for col in columns)
+    lines.append(header)
+    lines.append("-" * len(header))
+
+    # Rows
+    for row in rows:
+        row_str = " | ".join(str(row.get(col, "")).ljust(widths[col]) for col in columns)
+        lines.append(row_str)
+
+    return "\n".join(lines)
+```

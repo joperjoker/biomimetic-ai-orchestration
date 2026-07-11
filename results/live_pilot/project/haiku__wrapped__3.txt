@@ -1,0 +1,169 @@
+### MODULE: parse
+CONFIDENCE: 0.78
+```python
+def parse(query: str) -> list[dict]:
+    '''Parse a query into a list of {"field": str, "op": str, "value": int|str}.
+    Grammar: CONDITION (" AND " CONDITION)*, CONDITION is FIELD OP VALUE.
+    OP is one of =, !=, >, <, >=, <= (match >= and <= before > and <).
+    VALUE: a single-quoted string 'like this' (may contain spaces; strip the
+    quotes) OR an integer (optionally negative) OR a bareword string.
+    The empty/whitespace query returns []. e.g. parse("age > 20 AND role = 'eng'")
+    -> [{"field":"age","op":">","value":20},{"field":"role","op":"=","value":"eng"}].'''
+    query = query.strip()
+    if not query:
+        return []
+
+    conditions = query.split(" AND ")
+    predicates = []
+
+    for condition in conditions:
+        condition = condition.strip()
+        if not condition:
+            continue
+
+        op = None
+        op_pos = -1
+
+        for candidate_op in [">=", "<=", "!=", "=", ">", "<"]:
+            idx = condition.find(candidate_op)
+            if idx != -1:
+                op = candidate_op
+                op_pos = idx
+                break
+
+        if op is None:
+            continue
+
+        field = condition[:op_pos].strip()
+        value_str = condition[op_pos + len(op):].strip()
+
+        if value_str.startswith("'") and value_str.endswith("'"):
+            value = value_str[1:-1]
+        else:
+            try:
+                value = int(value_str)
+            except ValueError:
+                value = value_str
+
+        predicates.append({"field": field, "op": op, "value": value})
+
+    return predicates
+```
+
+### MODULE: match
+CONFIDENCE: 0.85
+```python
+def match(row: dict, predicates: list[dict]) -> bool:
+    '''True iff row satisfies every predicate. If a predicate's field is absent
+    from row, return False. For = and != compare directly. For >, <, >=, <= return
+    False when the row value and the predicate value are different types, else
+    apply the comparison.'''
+    for pred in predicates:
+        field = pred["field"]
+        op = pred["op"]
+        value = pred["value"]
+
+        if field not in row:
+            return False
+
+        row_value = row[field]
+
+        if op == "=":
+            if row_value != value:
+                return False
+        elif op == "!=":
+            if row_value == value:
+                return False
+        elif op in [">", "<", ">=", "<="]:
+            if type(row_value) != type(value):
+                return False
+
+            if op == ">":
+                if not (row_value > value):
+                    return False
+            elif op == "<":
+                if not (row_value < value):
+                    return False
+            elif op == ">=":
+                if not (row_value >= value):
+                    return False
+            elif op == "<=":
+                if not (row_value <= value):
+                    return False
+
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.95
+```python
+def select(rows: list[dict], query: str) -> list[dict]:
+    '''Return [r for r in rows if match(r, parse(query))]. Call parse and match by
+    name (they are defined in the same module).'''
+    predicates = parse(query)
+    return [r for r in rows if match(r, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.82
+```python
+def summarize(rows: list[dict], field: str, op: str) -> float:
+    '''op in {count,sum,min,max,avg}. count -> float(len(rows)). The others use the
+    numeric values of field over rows that have it (skip missing/non-numeric); an
+    empty selection returns 0.0; avg is the mean. Always return a float.'''
+    if op == "count":
+        return float(len(rows))
+
+    values = []
+    for row in rows:
+        if field in row:
+            val = row[field]
+            if isinstance(val, (int, float)):
+                values.append(val)
+            else:
+                try:
+                    values.append(float(val))
+                except (ValueError, TypeError):
+                    pass
+
+    if not values:
+        return 0.0
+
+    if op == "sum":
+        return float(sum(values))
+    elif op == "min":
+        return float(min(values))
+    elif op == "max":
+        return float(max(values))
+    elif op == "avg":
+        return float(sum(values) / len(values))
+
+    return 0.0
+```
+
+### MODULE: render
+CONFIDENCE: 0.80
+```python
+def render(rows: list[dict], columns: list[str]) -> str:
+    '''Return a text table. First line is the column names; then one line per row.
+    Cells are str(value) (missing -> ''), left-justified (ljust) to the widest
+    cell in that column including the header, columns joined by " | ". Rows joined
+    by "\n". With no rows, return just the header line.'''
+    widths = {}
+    for col in columns:
+        widths[col] = len(str(col))
+
+    for row in rows:
+        for col in columns:
+            val = str(row.get(col, ""))
+            widths[col] = max(widths[col], len(val))
+
+    header = " | ".join(str(col).ljust(widths[col]) for col in columns)
+    lines = [header]
+
+    for row in rows:
+        row_str = " | ".join(str(row.get(col, "")).ljust(widths[col]) for col in columns)
+        lines.append(row_str)
+
+    return "\n".join(lines)
+```

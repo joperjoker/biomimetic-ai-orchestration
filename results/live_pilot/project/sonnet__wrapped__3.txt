@@ -1,0 +1,144 @@
+### MODULE: parse
+CONFIDENCE: 0.75
+```python
+def parse(query: str) -> list[dict]:
+    import re
+
+    if query is None:
+        return []
+    query = query.strip()
+    if not query:
+        return []
+
+    parts = query.split(" AND ")
+    result = []
+    cond_re = re.compile(r"^(\S+)\s*(>=|<=|!=|=|>|<)\s*(.+)$")
+    int_re = re.compile(r"^-?\d+$")
+
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        m = cond_re.match(part)
+        if not m:
+            continue
+        field = m.group(1)
+        op = m.group(2)
+        value = m.group(3).strip()
+
+        if len(value) >= 2 and value[0] == "'" and value[-1] == "'":
+            value = value[1:-1]
+        elif int_re.match(value):
+            value = int(value)
+        # else: bareword string, keep as-is
+
+        result.append({"field": field, "op": op, "value": value})
+
+    return result
+```
+
+### MODULE: match
+CONFIDENCE: 0.82
+```python
+def match(row: dict, predicates: list[dict]) -> bool:
+    for p in predicates:
+        field = p["field"]
+        op = p["op"]
+        value = p["value"]
+
+        if field not in row:
+            return False
+        rv = row[field]
+
+        if op == "=":
+            if rv != value:
+                return False
+        elif op == "!=":
+            if rv == value:
+                return False
+        elif op in (">", "<", ">=", "<="):
+            if type(rv) != type(value):
+                return False
+            if op == ">":
+                ok = rv > value
+            elif op == "<":
+                ok = rv < value
+            elif op == ">=":
+                ok = rv >= value
+            else:
+                ok = rv <= value
+            if not ok:
+                return False
+        else:
+            return False
+
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.88
+```python
+def select(rows: list[dict], query: str) -> list[dict]:
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.8
+```python
+def summarize(rows: list[dict], field: str, op: str) -> float:
+    if op == "count":
+        return float(len(rows))
+
+    values = []
+    for r in rows:
+        if field in r:
+            v = r[field]
+            if isinstance(v, bool):
+                continue
+            if isinstance(v, (int, float)):
+                values.append(v)
+
+    if not values:
+        return 0.0
+
+    if op == "sum":
+        return float(sum(values))
+    elif op == "min":
+        return float(min(values))
+    elif op == "max":
+        return float(max(values))
+    elif op == "avg":
+        return float(sum(values) / len(values))
+
+    return 0.0
+```
+
+### MODULE: render
+CONFIDENCE: 0.85
+```python
+def render(rows: list[dict], columns: list[str]) -> str:
+    row_cells_list = []
+    for r in rows:
+        row_cells = []
+        for c in columns:
+            if c in r:
+                row_cells.append(str(r[c]))
+            else:
+                row_cells.append("")
+        row_cells_list.append(row_cells)
+
+    widths = []
+    for i, c in enumerate(columns):
+        w = len(c)
+        for row_cells in row_cells_list:
+            w = max(w, len(row_cells[i]))
+        widths.append(w)
+
+    header_line = " | ".join(c.ljust(widths[i]) for i, c in enumerate(columns))
+    lines = [header_line]
+    for row_cells in row_cells_list:
+        lines.append(" | ".join(row_cells[i].ljust(widths[i]) for i in range(len(columns))))
+
+    return "\n".join(lines)
+```

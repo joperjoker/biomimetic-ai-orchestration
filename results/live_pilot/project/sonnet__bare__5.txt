@@ -1,0 +1,143 @@
+### MODULE: parse
+CONFIDENCE: 0.5
+```python
+import re
+
+def parse(query):
+    """Turn a query string like "age >= 30 AND role = 'eng'" into a list
+    of (field, op, value) condition tuples."""
+    if query is None:
+        return []
+    query = query.strip()
+    if not query:
+        return []
+
+    parts = re.split(r'\s+AND\s+', query, flags=re.IGNORECASE)
+    pattern = re.compile(r'^\s*([A-Za-z_][A-Za-z0-9_]*)\s*(>=|<=|!=|=|>|<)\s*(.+?)\s*$')
+
+    conditions = []
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        m = pattern.match(part)
+        if not m:
+            raise ValueError(f"Could not parse condition: {part!r}")
+        field, op, raw_value = m.groups()
+        conditions.append((field, op, _parse_value(raw_value)))
+    return conditions
+
+
+def _parse_value(raw):
+    raw = raw.strip()
+    if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in ("'", '"'):
+        return raw[1:-1]
+    if raw.lower() == 'true':
+        return True
+    if raw.lower() == 'false':
+        return False
+    if re.match(r'^-?\d+$', raw):
+        return int(raw)
+    try:
+        return float(raw)
+    except ValueError:
+        return raw
+```
+
+### MODULE: match
+CONFIDENCE: 0.65
+```python
+def match(row, predicates):
+    """Return True if row satisfies every (field, op, value) predicate."""
+    if not predicates:
+        return True
+
+    for field, op, value in predicates:
+        if field not in row:
+            return False
+        row_value = row[field]
+
+        try:
+            if op == '=':
+                ok = row_value == value
+            elif op == '!=':
+                ok = row_value != value
+            elif op == '>':
+                ok = row_value > value
+            elif op == '<':
+                ok = row_value < value
+            elif op == '>=':
+                ok = row_value >= value
+            elif op == '<=':
+                ok = row_value <= value
+            else:
+                ok = False
+        except TypeError:
+            ok = False
+
+        if not ok:
+            return False
+
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.7
+```python
+def select(rows, query):
+    """Return the rows matching the given query string."""
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.5
+```python
+def summarize(rows, field, op):
+    """Aggregate a field across rows using op in count/sum/min/max/avg."""
+    op = (op or '').lower()
+
+    if op == 'count':
+        return sum(1 for row in rows if field in row and row[field] is not None)
+
+    values = [row[field] for row in rows if field in row and row[field] is not None]
+
+    if op == 'sum':
+        return sum(values) if values else 0
+    if op == 'avg':
+        return sum(values) / len(values) if values else 0
+    if op == 'min':
+        return min(values) if values else None
+    if op == 'max':
+        return max(values) if values else None
+
+    raise ValueError(f"Unknown op: {op!r}")
+```
+
+### MODULE: render
+CONFIDENCE: 0.3
+```python
+def render(rows, columns):
+    """Format rows as a simple text table with the given columns."""
+    if not columns:
+        return ""
+
+    str_rows = [[str(row.get(col, "")) for col in columns] for row in rows]
+
+    widths = [len(str(col)) for col in columns]
+    for str_row in str_rows:
+        for i, val in enumerate(str_row):
+            widths[i] = max(widths[i], len(val))
+
+    def fmt_row(values):
+        return " | ".join(val.ljust(widths[i]) for i, val in enumerate(values))
+
+    header = fmt_row([str(col) for col in columns])
+    separator = "-+-".join("-" * w for w in widths)
+
+    lines = [header, separator]
+    for str_row in str_rows:
+        lines.append(fmt_row(str_row))
+
+    return "\n".join(lines)
+```

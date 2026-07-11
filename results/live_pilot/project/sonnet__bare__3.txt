@@ -1,0 +1,151 @@
+### MODULE: parse
+CONFIDENCE: 0.45
+```python
+import re
+
+def parse(query):
+    """Turn a query string like "age >= 30 AND role = 'eng'" into a list
+    of (field, op, value) condition tuples. Conditions are combined with AND.
+    """
+    conditions = []
+    if not query or not query.strip():
+        return conditions
+
+    parts = re.split(r'\s+AND\s+', query.strip(), flags=re.IGNORECASE)
+    ops = ['>=', '<=', '!=', '=', '>', '<']
+
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        matched_op = None
+        for op in ops:
+            if op in part:
+                matched_op = op
+                break
+        if matched_op is None:
+            continue
+
+        field, value = part.split(matched_op, 1)
+        field = field.strip()
+        value = value.strip()
+
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+            value = value[1:-1]
+        else:
+            try:
+                if re.match(r'^[+-]?\d+$', value):
+                    value = int(value)
+                else:
+                    value = float(value)
+            except ValueError:
+                if value.lower() == 'true':
+                    value = True
+                elif value.lower() == 'false':
+                    value = False
+
+        conditions.append((field, matched_op, value))
+
+    return conditions
+```
+
+### MODULE: match
+CONFIDENCE: 0.5
+```python
+def match(row, predicates):
+    """Return True if row (a dict) satisfies every (field, op, value)
+    condition in predicates."""
+    for field, op, value in predicates:
+        if field not in row:
+            return False
+        row_val = row[field]
+
+        try:
+            if op == '=':
+                if row_val != value:
+                    return False
+            elif op == '!=':
+                if row_val == value:
+                    return False
+            elif op == '>':
+                if not (row_val > value):
+                    return False
+            elif op == '>=':
+                if not (row_val >= value):
+                    return False
+            elif op == '<':
+                if not (row_val < value):
+                    return False
+            elif op == '<=':
+                if not (row_val <= value):
+                    return False
+            else:
+                return False
+        except TypeError:
+            return False
+
+    return True
+```
+
+### MODULE: select
+CONFIDENCE: 0.5
+```python
+def select(rows, query):
+    """Return the rows matching the given query string."""
+    predicates = parse(query)
+    return [row for row in rows if match(row, predicates)]
+```
+
+### MODULE: summarize
+CONFIDENCE: 0.5
+```python
+def summarize(rows, field, op):
+    """Aggregate a field across rows. op is one of
+    count/sum/min/max/avg."""
+    op = op.lower()
+
+    if op == 'count':
+        return len(rows)
+
+    values = [row[field] for row in rows if field in row and row[field] is not None]
+
+    if not values:
+        if op in ('sum',):
+            return 0
+        return None
+
+    if op == 'sum':
+        return sum(values)
+    elif op == 'min':
+        return min(values)
+    elif op == 'max':
+        return max(values)
+    elif op == 'avg':
+        return sum(values) / len(values)
+    else:
+        raise ValueError(f"Unknown op: {op}")
+```
+
+### MODULE: render
+CONFIDENCE: 0.3
+```python
+def render(rows, columns):
+    """Format rows as a simple text table restricted to the given columns."""
+    widths = []
+    for col in columns:
+        w = len(str(col))
+        for row in rows:
+            val = row.get(col, "")
+            w = max(w, len(str(val)))
+        widths.append(w)
+
+    def fmt_row(values):
+        return " | ".join(str(v).ljust(widths[i]) for i, v in enumerate(values))
+
+    lines = [fmt_row(columns)]
+    lines.append("-+-".join("-" * w for w in widths))
+    for row in rows:
+        lines.append(fmt_row([row.get(col, "") for col in columns]))
+
+    return "\n".join(lines)
+```
