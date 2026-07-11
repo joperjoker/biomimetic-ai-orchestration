@@ -5,10 +5,17 @@ A running log of what is complete and what comes next. Read this, then `claude.m
 ## Resume here (next session)
 
 **Where things stand.** Branch `claude/biomimetic-ai-orchestration-init-0nb5db`.
-138 tests pass, `ruff` clean, tree clean and pushed. Phase 3 (real-agent
-hardening) is complete and the unified paper is effectively TMLR-submission-ready
-(`docs/paper.pdf` built). Read `docs/publication_plan.md` first for the
-unified-vs-split decision and the path forward.
+143 tests pass, `ruff` clean, tree clean and pushed. Phase 3 (real-agent
+hardening) is complete; Path 1 (the TMLR-ready pass) is done and the unified
+paper is submission-ready (`docs/paper.pdf` built); Path 2 (the ACP broker) is
+started, with the skeleton P4.0-P4.2 built and tested (`src/cta/acp.py`). Read
+`docs/publication_plan.md` first for the unified-vs-split decision.
+
+**Paused here (resume next session).** The next action is the metered Path 2
+differentiator: P4.3 (wire the broker's `downstream` to a real subagent solver),
+then P4.6 (the SOTA benchmark head-to-head -- CTA's calibrated router vs a naive
+static-capability router vs single-frontier). Nothing is in flight; no background
+work. To resume, say "continue Path 2".
 
 **Phase 3 done: the balanced-n real-agent CI plan is complete.**
 - **Capability ladder** (`results/live_pilot/ladder/`, `pilot_tasks/ladder.py`):
