@@ -4,38 +4,60 @@ A running log of what is complete and what comes next. Read this, then `claude.m
 
 ## Resume here (next session)
 
-**Where things stand.** Branch `claude/biomimetic-ai-orchestration-init-0nb5db`, PR #1 open against `main`. 127 tests pass, `ruff` clean, tree clean and pushed. The empirical arc is complete end to end: (1) synthetic H1 to H10 via `cta reproduce-all` (H1, H3, H4, H5, H7, H8, H9, H10 supported; H2, H6 honest negatives); (2) the MarketBench-grounded realistic fleet; (3) the live pilot with real Claude subagents; (4) the capability ladder and (5) the dependency-graph project, both exercising the two wrappers. Phases 0 to 3 of `docs/next_experiments.md` are done including P2.5 and P3.4.
+**Where things stand.** Branch `claude/biomimetic-ai-orchestration-init-0nb5db`.
+138 tests pass, `ruff` clean, tree clean and pushed. Phase 3 (real-agent
+hardening) is complete and the unified paper is effectively TMLR-submission-ready
+(`docs/paper.pdf` built). Read `docs/publication_plan.md` first for the
+unified-vs-split decision and the path forward.
 
-**The real-agent wrapper track is closed (three tiers of real subagent data).**
-- **P2.5 hard tier** (`results/live_pilot/hard/`, `pilot_tasks/analyse.py`): 114 attempts, Opus 4.8 + Haiku 4.5 over 19 trap tasks. Both families competent and uniformly underconfident (gap -0.074). One-sided: the overconfident arm is out of distribution for these models on standard tasks. This is the one open scientific gap (see below).
-- **Capability ladder** (`results/live_pilot/ladder/`, `pilot_tasks/ladder.py`): Haiku/Sonnet/Opus x bare/task-wrapped over 8 expert tasks. Task wrapper lifts the weak model to the frontier; agent-wrapper routing holds frontier completion at ~47x lower cost with the wrapper, loses completion without it.
-- **Project** (`results/live_pilot/project/`, `pilot_tasks/project.py`): miniquery, 5 modules with a dependency graph. Bare spec: every model fails (divergent interfaces); the task wrapper's interface contract makes all three deliver a conforming project; the agent wrapper assembles a working cross-model project at ~39x lower cost. Bare assembly fails at any price.
+**Phase 3 done: the balanced-n real-agent CI plan is complete.**
+- **Capability ladder** (`results/live_pilot/ladder/`, `pilot_tasks/ladder.py`):
+  all six cells at n~10 with bootstrap CIs. Haiku bare 0.950 [0.90, 0.988],
+  wrapped 0.986 [0.958, 1.00]; Sonnet 0.988 -> 1.00; Opus 1.00. Task-wrapper lift
+  +0.036 (Haiku); agent-wrapper routing ~47x cheaper (wrapped) / ~50x (bare).
+- **Project** (`results/live_pilot/project/`, `pilot_tasks/project.py`): all six
+  cells at n=5. Bare fails (completion 0) and wrapped delivers (1.00) for every
+  model in every replicate; cross-model wrapped assembly ~39x cheaper.
+- **Held-out generalisation** (`pilot_tasks/held_out_suite.py`, `held_out.py`): a
+  second independent 8-task tier; Haiku+Sonnet n=3 x bare/wrapped both saturate
+  (lift 0.00). Honest bound: the wrapper lift is failure-contingent, a no-op with
+  no regression where the model is already reliable.
+- **OOD calibration** (`pilot_tasks/ood_suite.py`, `ood.py`): Haiku is
+  underconfident even out of distribution (gap -0.105). The two-sided curve's
+  overconfident arm is not sourceable from Claude on standard tasks; not
+  manufactured with gotcha tasks. This is the one open scientific gap.
 
-**Sprints 1 to 5 done (this session).** Following `docs/strategy.md`: (1) paper
-coherence pass, a "results at a glance" headline table and arc framing in §3 and a
-wrapper/cost-centred abstract; (2) real-agent analysis hardened with bootstrap CIs
-and a per-task-reliability router; the wrapper results elevated to hypotheses H11
-(task-wrapper lift) and H12 (agent-wrapper cost-efficiency) with RQ11/RQ12; (3) a
-polished, theme-aware results dashboard (`results/showcase.html`, published as an
-Artifact); (4) the wrapper layer extracted as a product (`src/cta/wrappers.py`,
-`examples/wrapper_demo.py`, `docs/product.md`); (5) evidence-hardening: three more
-Haiku bare agents on the expert tier (now five agents, 40 attempts), which
-tightened Haiku bare completion to 0.925, CI [0.85, 1.00] and honestly corrected
-an over-clean two-agent escalation claim (the cheap model clears the barrier on
-every task at this size). 127 tests pass, ruff clean.
+**Also landed this session.**
+- **H13 self-improving allocation** (`cta.harness.learning_curve`, report H13
+  SUPPORTED): a persistent, accumulating track record lifts completion 0.36 ->
+  0.84 toward the oracle; memoryless raw stays flat.
+- **Harness-engineering positioning** (Weng 2026) folded into paper section 6 and
+  contributions; CTA framed as the calibration-robust signal layer of a
+  self-improving harness (component, not a full RSI system).
+- **ACP integration plan** (`docs/acp_integration.md`): CTA as an ACP broker;
+  mostly-free plumbing, the vehicle for the SOTA head-to-head.
 
-**What is next.**
-1. **Publication track** (non-code, the main remaining bucket): choose a venue;
-   convert the Markdown paper to LaTeX/PDF with print-safe figures; write the
-   related-work table versus RouteLLM, EvoRoute, DiSRouter, MarketBench.
-2. **Deeper empirics (budget-gated):** more agents per cell on the other ladder
-   and project cells (only Haiku bare is at five agents); a genuinely
-   overconfident model family or out-of-distribution tasks to populate the
-   two-sided reliability curve (the open P2.5 gap); a second project for H11/H12
-   generality; a split-routing task the cheap model cannot do even wrapped, to
-   exercise the router's escalation on real data.
+**What is next.** Decision pending: unified -> TMLR vs split-and-aim-top-tier
+(`docs/publication_plan.md`). Lowest-regret ordering:
+1. **Path 1 remainder (submission chores, small):** venue formatting; the named
+   related-work table vs RouteLLM / EvoRoute / DiSRouter / MarketBench (verify
+   every citation online before adding, per the reference rule); optional live
+   price quote to replace the representative tiers.
+2. **Path 2 (the top-tier lever, metered):** build the ACP broker (P4.1-P4.5 in
+   `docs/acp_integration.md`, mostly free stdlib plumbing), then the SOTA-benchmark
+   head-to-head -- CTA's calibrated router vs a named router vs single-frontier on
+   an established benchmark, run live through the broker. Then decide upgrade-in-
+   place vs split.
+3. **Optional science:** the live competing-swarm allocation over the concurrent
+   store; a harder OOD tier for the overconfident arm (treat cautiously to avoid
+   the gotcha critique).
 
-**Operational notes.** An hourly self check-in cron (session-scoped) watches PR #1's CI and re-arms silently; it stops when the PR merges or closes. `claude.md` section 5 encodes the four operating pillars. Reproduce the synthetic results from seeds with `cta reproduce-all`; reproduce the real-agent tiers with `python -m pilot_tasks.analyse`, `python -m pilot_tasks.ladder`, `python -m pilot_tasks.project`.
+**Operational notes.** Reproduce synthetic results with `cta reproduce-all`; the
+real-agent tiers with `python -m pilot_tasks.ladder`, `... project`, `... held_out`,
+`... ood`, `... analyse`. Rebuild the paper with `python docs/build_report.py`
+(add `--pdf /opt/pw-browsers/chromium-1194/chrome-linux/chrome` for the PDF).
+Roadmap docs: `docs/publication_plan.md`, `docs/phase3_runbook.md`,
+`docs/harness_integration_plan.md`, `docs/acp_integration.md`.
 
 
 ## In one line
