@@ -26,13 +26,22 @@ Paper 2 = the deployed harness + the competitive head-to-head.
   elicitation (`prior_bidder` default, `probe_bidder(probe)` = one probe turn per
   candidate), integrity `clamp_gate`, and `make_fleet_downstream` multi-downstream
   dispatch. `tests/test_acp.py` +5 (148 pass, ruff clean).
-- **Phase 2B (free): NEXT.** `src/cta/headtohead.py`: four routing policies
+- **Phase 2B (free): DONE.** `src/cta/headtohead.py`: four routing policies
   (`cta_corrected` / `naive_self_report` / `always_frontier` / `single_cheapest`)
-  over a suite with a pluggable solver; completion + cost + probe-overhead metrics,
-  bootstrap CIs, figures; tests on a deterministic simulated solver.
-- **Phase 2C (metered, batched):** `pilot_tasks/headtohead.py` runs the four
-  policies on real subagents, idempotent on-disk cells in `results/headtohead/`,
-  resumable across sessions (skips completed cells).
+  over a task stream with a pluggable `Solver`; completion (bootstrap CI) + cost +
+  probe-overhead metrics; `completion_cost_figure` + `write_report`
+  (summary.json/RESULTS.md/headtohead.svg). `tests/test_headtohead.py` +7 (155
+  pass, ruff clean). Sim sanity: cta 1.00 completion at 1.51x frontier cost saving,
+  +0.50 over naive, probe overhead 23%. Real numbers come from 2C.
+- **Phase 2C (metered, batched): NEXT.** `pilot_tasks/headtohead.py` drives the
+  four policies on real subagents over the expert/project suites. Each cell is one
+  `(policy, task, replicate)` solve written to
+  `results/headtohead/{policy}__{task}__{k}.txt` (ladder submission format),
+  scored against hidden tests; skip any cell already on disk => resumable across
+  sessions. The warm-start track record for `cta_corrected` reuses the measured
+  per-(model,type) reliability from the Phase 3 ladder/project runs. Orchestrated
+  by spawning `Agent(model=...)` one-shot, no tools. Batch small; commit partials;
+  pause on usage; resume by re-running.
 - **Phase 2D (free):** Paper 2 draft (`docs/paper2.md` -> `paper2/`).
 
 ## Resume here (next session)
