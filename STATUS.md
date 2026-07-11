@@ -38,19 +38,25 @@ unified-vs-split decision and the path forward.
   mostly-free plumbing, the vehicle for the SOTA head-to-head.
 
 **What is next.** Decision pending: unified -> TMLR vs split-and-aim-top-tier
-(`docs/publication_plan.md`). Lowest-regret ordering:
-1. **Path 1 remainder (submission chores, small):** venue formatting; the named
-   related-work table vs RouteLLM / EvoRoute / DiSRouter / MarketBench (verify
-   every citation online before adding, per the reference rule); optional live
-   price quote to replace the representative tiers.
-2. **Path 2 (the top-tier lever, metered):** build the ACP broker (P4.1-P4.5 in
-   `docs/acp_integration.md`, mostly free stdlib plumbing), then the SOTA-benchmark
-   head-to-head -- CTA's calibrated router vs a named router vs single-frontier on
-   an established benchmark, run live through the broker. Then decide upgrade-in-
-   place vs split.
-3. **Optional science:** the live competing-swarm allocation over the concurrent
-   store; a harder OOD tier for the overconfident arm (treat cautiously to avoid
-   the gotcha critique).
+(`docs/publication_plan.md`).
+
+- **Path 1 (TMLR-ready pass): DONE.** Held-out generalisation bound
+  (`held_out_suite.py`), powered CIs throughout, verified related-work vs
+  FrugalGPT (Chen, Zaharia, and Zou, 2023) and RouteLLM (Ong et al., 2024), and
+  `docs/paper.pdf` built. Only venue-specific LaTeX formatting remains (needs a
+  target template).
+- **Path 2 (top-tier lever): STARTED.** The ACP broker skeleton is built and
+  tested (`src/cta/acp.py`, `tests/test_acp.py`; P4.0-P4.2 done). Remaining:
+  1. **P4.3 real downstream** -- wire the broker's `downstream` callback to a real
+     solver (a subagent that solves a task and returns pass/fail).
+  2. **P4.6 the SOTA benchmark head-to-head (metered, the differentiator):** CTA's
+     calibrated router vs a naive static-capability router vs single-frontier, on
+     an established benchmark (HumanEval+/MBPP+ subset) or the three in-repo suites
+     as a controlled stand-in. Report completion, cost, and the confidence-probe
+     overhead. Then decide upgrade-in-place vs split.
+- **Optional science:** the live competing-swarm allocation over the concurrent
+  store; a harder OOD tier for the overconfident arm (treat cautiously to avoid
+  the gotcha critique).
 
 **Operational notes.** Reproduce synthetic results with `cta reproduce-all`; the
 real-agent tiers with `python -m pilot_tasks.ladder`, `... project`, `... held_out`,
