@@ -1,0 +1,7 @@
+*.aux
+*.log
+*.out
+*.blg
+*.toc
+build*.log
+bibtex.log
