@@ -61,6 +61,23 @@ remaining: a live end-to-end broker vignette over a real subagent solver (metere
 deployment colour only), and the `paper2/` LaTeX build. To resume, say "finish
 Paper 2" (LaTeX) or "run the live broker demo" (metered).
 
+## Paused 2026-07-11 (low usage)
+
+**Paper 1 has reviewer feedback: see `paper/REVISIONS.md`** (a full checklist of
+equation/prose fixes in Secs 2.2/2.4/4, figure fixes for Figs 1/6/7, a Table 3
+anchor in Sec 3.2, and optional style edits). Paper 1 stays frozen except for this
+revision pass. One open question logged there: the feedback's title
+("Calibration-Robust Decentralised Task Allocation for Multi-Agent LLM Systems")
+differs from `main.tex`'s current title; confirm which to use.
+
+**Path 2 / Paper 2 is paused mid-stream, all phases at a clean stop:** 2A-2C are
+DONE and committed (broker hardening, head-to-head harness, the real-agent
+leave-one-out replay: CTA 0.988 completion at 25.3x cost saving), and 2D is DRAFTED
+in `docs/paper2.md`. Nothing is in flight; 159 tests pass, ruff clean, tree pushed.
+To resume Paper 2: "finish Paper 2" (port `docs/paper2.md` to `paper2/` LaTeX) or
+"run the live broker demo" (the only metered piece, optional colour). To resume
+Paper 1: "apply the revisions" (work `paper/REVISIONS.md`).
+
 ## Resume here (next session)
 
 **Where things stand.** Branch `claude/biomimetic-ai-orchestration-init-0nb5db`.
