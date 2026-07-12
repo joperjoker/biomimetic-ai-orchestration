@@ -3,9 +3,26 @@
 LaTeX source for the paper, converted from `docs/paper.md`. Builds to a 14-page
 preprint with 7 vector figures, four tables, and a bibliography.
 
+## Two editions
+
+The paper ships in two editions that share identical results, figures, tables, and
+bibliography; only the prose register and the title differ. Pick whichever suits
+the audience; submit one.
+
+- `main.tex` (plain-language edition): "Track Records Beat Self-Ratings:
+  Calibration-Robust Task Allocation for Cheap Multi-Agent LLM Swarms". Short
+  sentences, active voice, every term defined in plain words on first use. The
+  insight-forward title states the core finding upfront.
+- `main_formal.tex` (technical edition): "Calibration-Robust Decentralised Task
+  Allocation for Multi-Agent LLM Systems". The denser, conventional register.
+
+Each carries a one-line note under its title pointing to the other. Keep the two in
+sync when results change: edit both, or edit one and re-diff.
+
 ## Contents
 
-- `main.tex`: the paper (single-column `article` preprint style).
+- `main.tex`: the plain-language edition (single-column `article` preprint style).
+- `main_formal.tex`: the technical edition (same content, formal register).
 - `refs.bib`: bibliography (BibTeX).
 - `main.bbl`: the compiled bibliography; include it in the arXiv upload so the
   references render even if arXiv's BibTeX pass differs.
