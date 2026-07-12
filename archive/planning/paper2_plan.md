@@ -1,6 +1,6 @@
 # Paper 2 plan: the deployed calibration-robust harness (Path 2)
 
-Paper 1 (`paper/`) is submitted and frozen: the mechanism (CTA) and the evidence
+Paper 1 (`paper1/`) is submitted and frozen: the mechanism (CTA) and the evidence
 it works. Paper 2 is the continuation, a separate paper: CTA **deployed** as an
 Agent Client Protocol (ACP) broker that self-improves in service, with a
 **head-to-head** against the routers a top-tier reviewer asks for.
@@ -64,7 +64,7 @@ Then analyse -> figures -> the head-to-head numbers with CIs.
 
 ### Phase 2D (free): Paper 2 draft
 
-New `paper2/` (leave `paper/` untouched): "ACP-native calibration-robust routing".
+New `paper2/` (leave `paper1/` untouched): "ACP-native calibration-robust routing".
 Intro (the deployed-harness thesis, Weng 2026 framing), the broker architecture,
 the head-to-head result table + figures, the probe-overhead cost accounting, and
 an honest limitations section (protocol youth, probe cost, Claude-underconfidence
@@ -73,7 +73,7 @@ bound carried from Paper 1). Draft first in `docs/paper2.md`, then LaTeX.
 ## Guardrails
 
 - British English; no clause-separating dash in `.md` (CI-checked); no puffery;
-  determinism preserved; `paper/` stays frozen.
+  determinism preserved; `paper1/` stays frozen.
 - Verify every new citation online before adding it.
 - Honest bound already known: Claude self-reports are *underconfident* on standard
   tasks, so the "overconfident-arm" head-to-head advantage is failure-contingent;

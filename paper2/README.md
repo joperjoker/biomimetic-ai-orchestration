@@ -4,7 +4,7 @@ LaTeX source for Paper 2, "Calibration-Robust Routing as a Self-Improving Agent
 Harness". Builds to a short preprint (currently 5 pages) with one figure, one
 results table, and a bibliography. Ported from `docs/paper2.md`.
 
-Paper 2 is the continuation of Paper 1 (`../paper/`): Paper 1 establishes the
+Paper 2 is the continuation of Paper 1 (`../paper1/`): Paper 1 establishes the
 mechanism (a track-record correction for miscalibrated self-reports); Paper 2
 deploys it as an Agent Client Protocol (ACP) broker and runs the head-to-head
 against the routers a routing paper is expected to beat. Paper 1 stays frozen; work

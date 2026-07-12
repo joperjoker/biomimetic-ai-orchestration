@@ -86,6 +86,14 @@ The framework is evaluated against a centralised baseline in two modes that shar
 
 ## Repository Layout
 
+Two papers come out of this work, each in its own self-contained folder:
+
+- **Paper 1** (`paper1/`): the mechanism. "From Self-Reports to Track Records:
+  Calibration-Robust Task Allocation for Decentralised Multi-Agent LLM Systems".
+  Ships in two editions (`main.tex` plain-language, `main_formal.tex` technical).
+- **Paper 2** (`paper2/`): the deployed harness. "Calibration-Robust Routing as a
+  Self-Improving Agent Harness", with the head-to-head and a live-broker vignette.
+
 ```
 .
 ├── README.md            Project overview (this file)
@@ -94,23 +102,29 @@ The framework is evaluated against a centralised baseline in two modes that shar
 ├── CHANGELOG.md         Notable changes
 ├── REPRODUCE.md         How to regenerate every result from seeds
 ├── pyproject.toml       Project manifest and tooling configuration
+├── paper1/              Paper 1 arXiv package: main.tex (plain-language) and
+│                        main_formal.tex (technical), refs.bib, figures, build.sh,
+│                        and the reviewer-revision checklist (REVISIONS.md)
+├── paper2/              Paper 2 arXiv package: main.tex, refs.bib, figures, build.sh
 ├── src/cta/             The framework: scoring, engine, temporal, baselines,
 │                        generators, realism, harness, stats, store, cost,
 │                        routing, concurrent, dataset, report, dashboard, viz,
-│                        cli, pilot, the wrapper product (wrappers), and the
-│                        autoresearch loop
+│                        cli, pilot, acp (the ACP broker), the wrapper product
+│                        (wrappers), headtohead, and the autoresearch loop
 ├── pilot_tasks/         Live-pilot task suites and analysers: the standard suite,
-│                        the expert-tier ladder, and the miniquery project
+│                        the expert-tier ladder, the miniquery project, the
+│                        head-to-head replay, and the live-broker vignette
 ├── examples/            Runnable demos: the product proof of concept (poc) and
 │                        the wrapper-layer demo (python -m examples.wrapper_demo)
 ├── results/             Committed run outputs: summary.json, RESULTS.md, figures,
-│                        the showcase dashboard (showcase.html), dataset/runs.csv,
-│                        and the real-agent runs under live_pilot/ (hard, ladder,
-│                        project)
+│                        the showcase dashboard, dataset/runs.csv, the real-agent
+│                        runs under live_pilot/, and headtohead/ and vignette/
 ├── tests/               Validation suites (including the foundation guard)
-├── docs/                Paper, executive summary and all sections; measures,
-│                        theory, glossary, architecture; the product and strategy
-│                        write-ups; live-pilot notes; and the next-experiments plan
+├── docs/                Markdown sources for both papers (paper.md, paper2.md) and
+│                        the reference docs: measures, theory, glossary,
+│                        architecture, product, live-pilot notes, acp_integration
+├── archive/             Process and planning material, not needed to build the
+│                        papers or reproduce results: STATUS.md, planning/, runbooks/
 └── .github/             Continuous integration and repository configuration
 ```
 
@@ -157,12 +171,12 @@ completion at roughly one fortieth of the always-frontier cost. These two are
 extracted as a small product library (`src/cta/wrappers.py`, demo
 `python -m examples.wrapper_demo`) and visualised in a results dashboard
 (`results/showcase.html`). The real-agent sample is small and the paper marks that
-limit throughout. Progress is tracked in `STATUS.md`; the strategy and forward
-plan are in `docs/strategy.md` and `docs/next_experiments.md`.
+limit throughout. Progress is tracked in `archive/STATUS.md`; the strategy and forward
+plan are in `archive/planning/strategy.md` and `archive/planning/next_experiments.md`.
 
 ## Considerations for Future Work
 
-The forward plan is in `docs/strategy.md` and `docs/next_experiments.md`. The open
+The forward plan is in `archive/planning/strategy.md` and `archive/planning/next_experiments.md`. The open
 items are the publication track (a formatted submission and a related-work table),
 powering the real-agent results to confidence intervals across every cell, a
 two-sided real-agent calibration curve (an out-of-distribution or

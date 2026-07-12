@@ -4,12 +4,12 @@ A running log of what is complete and what comes next. Read this, then `claude.m
 
 ## Two-paper split (recorded 2026-07-11)
 
-**Paper 1 is being submitted now.** The arXiv package in `paper/` (author Teo Qing
+**Paper 1 is being submitted now.** The arXiv package in `paper1/` (author Teo Qing
 Cong Eugene, Independent) is the submission: `main.tex` + `refs.bib` + `main.bbl`
 + `figures/`, primary category cs.MA. This is Paper 1, the calibration-robust
 decentralised task-allocation result (CTA, H1-H13, the ladder/project/held-out/OOD
 real-agent tiers, the synthetic protocol). It is frozen for submission; do not
-add new results to `paper/main.tex`. Corrections/rebuttal edits only.
+add new results to `paper1/main.tex`. Corrections/rebuttal edits only.
 
 **Paper 2 is the continuation.** Ongoing research (Path 2 below) is now explicitly
 scoped as a *second, separate paper*, not an update to Paper 1. Its thesis is the
@@ -17,7 +17,7 @@ deployed self-improving CTA harness: the ACP broker as a calibration-robust rout
 the SOTA benchmark head-to-head (CTA's calibrated router vs a naive static-capability
 router vs single-frontier), and the real-agent self-improvement result (H13 over a
 persistent store across sessions). Start a fresh paper source (e.g. `paper2/`) when
-the results are in; keep `paper/` untouched. Read `docs/publication_plan.md` for the
+the results are in; keep `paper1/` untouched. Read `docs/publication_plan.md` for the
 framing. Before continuing Path 2, note: Paper 1 = the mechanism + evidence it works;
 Paper 2 = the deployed harness + the competitive head-to-head.
 
@@ -54,14 +54,14 @@ Paper 2 = the deployed harness + the competitive head-to-head.
   companion entry), `figures/headtohead.pdf`, `build.sh`, `README.md`. Builds clean
   (5 pages, all citations resolved). Ported from `docs/paper2.md`; carries the real
   head-to-head table (CTA 0.988 [0.963, 1.000] at 25.3x saving) and figure. Paper 1
-  (`paper/`) stays frozen. Remaining before submission: a proofread and the optional
+  (`paper1/`) stays frozen. Remaining before submission: a proofread and the optional
   live-broker vignette.
 - **Phase 2D source draft (free): DONE.** `docs/paper2.md` written: abstract, intro
   (deployed-harness thesis, Weng 2026), related work (FrugalGPT/RouteLLM/ACP), the
   broker architecture, the head-to-head method + result table + the
   naive-collapses-to-cheapest finding, probe-overhead accounting, honest
   limitations, conclusion. Next: verify citations online, then port to `paper2/`
-  LaTeX (reuse `paper/refs.bib` + the head-to-head figure). `paper/` stays frozen.
+  LaTeX (reuse `paper1/refs.bib` + the head-to-head figure). `paper1/` stays frozen.
 
 **Path 2 status: all phases complete.** 2A-2C (broker, harness, replay) and 2D
 (`docs/paper2.md` + the `paper2/` LaTeX build) done, plus the optional **live
@@ -77,7 +77,7 @@ vignette; remaining before submission is a proofread only.
 
 ## Paused 2026-07-11 (low usage)
 
-**Paper 1 has reviewer feedback: see `paper/REVISIONS.md`** (a full checklist of
+**Paper 1 has reviewer feedback: see `paper1/REVISIONS.md`** (a full checklist of
 equation/prose fixes in Secs 2.2/2.4/4, figure fixes for Figs 1/6/7, a Table 3
 anchor in Sec 3.2, and optional style edits). Paper 1 stays frozen except for this
 revision pass. One open question logged there: the feedback's title
@@ -90,14 +90,14 @@ leave-one-out replay: CTA 0.988 completion at 25.3x cost saving), and 2D is DRAF
 in `docs/paper2.md`. Nothing is in flight; 159 tests pass, ruff clean, tree pushed.
 To resume Paper 2: "finish Paper 2" (port `docs/paper2.md` to `paper2/` LaTeX) or
 "run the live broker demo" (the only metered piece, optional colour). To resume
-Paper 1: "apply the revisions" (work `paper/REVISIONS.md`).
+Paper 1: "apply the revisions" (work `paper1/REVISIONS.md`).
 
 ## Resume here (next session)
 
 **Where things stand.** Branch `claude/biomimetic-ai-orchestration-init-0nb5db`.
 143 tests pass, `ruff` clean, tree clean and pushed. Phase 3 (real-agent
 hardening) is complete; Path 1 (the TMLR-ready pass) is done and Paper 1 is
-submission-ready and being submitted now (`paper/` LaTeX package; `docs/paper.pdf`
+submission-ready and being submitted now (`paper1/` LaTeX package; `docs/paper.pdf`
 also built); Path 2 (the ACP broker, now scoped as Paper 2) is started, with the
 skeleton P4.0-P4.2 built and tested (`src/cta/acp.py`). Read
 `docs/publication_plan.md` first for the unified-vs-split decision (now resolved:

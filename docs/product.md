@@ -120,5 +120,5 @@ its margin and is reported as such; the fair, beatable comparison is an
 information-bounded central scheduler, which CTA matches with fresh information
 and beats as that scheduler's reliability table goes stale (H9). A two-sided
 real-agent calibration curve and a real complex job with dependencies and live
-specialist subagents are the next steps (`docs/next_experiments.md`, P2.5 and
+specialist subagents are the next steps (`archive/planning/next_experiments.md`, P2.5 and
 P3.4).

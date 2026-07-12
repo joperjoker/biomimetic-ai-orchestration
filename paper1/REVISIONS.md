@@ -1,6 +1,6 @@
 # Paper 1 revision checklist (reviewer feedback)
 
-Feedback received 2026-07-11 on the arXiv manuscript. Paper 1 (`paper/`) is
+Feedback received 2026-07-11 on the arXiv manuscript. Paper 1 (`paper1/`) is
 otherwise frozen; these are the queued corrections to apply in a revision pass.
 Each item is unchecked until done and verified in the rebuilt PDF.
 
@@ -54,9 +54,9 @@ Each item is unchecked until done and verified in the rebuilt PDF.
 
 ## Where these live
 
-- Equations/prose/table anchor: `paper/main.tex` (and mirror in `docs/paper.md`).
+- Equations/prose/table anchor: `paper1/main.tex` (and mirror in `docs/paper.md`).
 - Figure axis formatting: `src/cta/viz.py` tick/label rendering; regenerate the
-  SVGs, then re-export the figure PDFs (`paper/README.md` cairosvg snippet).
-- After edits: rebuild via `paper/build.sh`, run `python -m pytest -q` and
+  SVGs, then re-export the figure PDFs (`paper1/README.md` cairosvg snippet).
+- After edits: rebuild via `paper1/build.sh`, run `python -m pytest -q` and
   `ruff check .`, confirm the forbidden-dash check passes on any `.md` changes,
   then commit. British English; no clause-separating dash in `.md`.
