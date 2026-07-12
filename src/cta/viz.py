@@ -261,7 +261,11 @@ def _flat(series: dict[str, Sequence[tuple[float, float]]]) -> list[tuple[float,
 
 
 def _fmt(v: float) -> str:
-    if abs(v) >= 1000 or (v != 0 and abs(v) < 0.01):
+    # Large magnitudes: comma-separated integers (140,000) rather than the
+    # programming-style scientific notation (1.4e+05) that :g would emit.
+    if abs(v) >= 1000:
+        return f"{round(v):,}"
+    if v != 0 and abs(v) < 0.01:
         return f"{v:.2g}"
     return f"{v:.2f}" if v != int(v) else str(int(v))
 

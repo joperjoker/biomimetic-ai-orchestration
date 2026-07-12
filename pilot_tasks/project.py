@@ -221,16 +221,22 @@ def _figure(cells: dict) -> None:
     from cta.viz import bar_chart, save_svg
     FIGS.mkdir(parents=True, exist_ok=True)
     cats = [m.capitalize() for m in MODELS]
+    n_mod = len(MODULE_NAMES)
+
+    def _frac(model: str, cond: str) -> float:
+        # Report as a module-completion fraction (0.0-1.0) to match the completion
+        # scale used by the other figures, not a raw count of modules.
+        return cells.get(model, {}).get(cond, {}).get("modules_passed", 0) / n_mod
+
     save_svg(
         bar_chart(
             cats,
             {
-                "bare": [cells.get(m, {}).get("bare", {}).get("modules_passed", 0) for m in MODELS],
-                "task-wrapped": [
-                    cells.get(m, {}).get("wrapped", {}).get("modules_passed", 0) for m in MODELS],
+                "bare": [_frac(m, "bare") for m in MODELS],
+                "task-wrapped": [_frac(m, "wrapped") for m in MODELS],
             },
-            title="miniquery project: modules passing (of 5) by model and wrapper",
-            ylabel="modules fully passing",
+            title="miniquery project: module completion fraction by model and wrapper",
+            ylabel="module completion fraction",
         ),
         FIGS / "project_modules.svg",
     )

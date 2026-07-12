@@ -10,31 +10,37 @@ Each item is unchecked until done and verified in the rebuilt PDF.
 > which title is intended before the revision (the feedback title foregrounds the
 > calibration thesis and may be the better one).
 
+> **Status note (checked against current `main.tex`, 2026-07-11).** The reviewer
+> appears to have read an earlier version (their cited title also differs): three
+> of the four prose items are already correct in the current LaTeX. Only the
+> phrasing fix and the two figure fixes needed a change. Details per item below.
+
 ## 1. Text and equation corrections
 
-- [ ] **Eligibility typo (Sec 2.2):** `$lig(a,t)=1...$` -> `$elig(a,t)=1...$` to
-  match the subsequent definition.
-- [ ] **Run-on after Activation/firing formula (Sec 2.2):** insert a semicolon or
-  period before "the deterministic threshold", separating the temperature
-  definition from the limit definition.
-- [ ] **Redundant tilde (Sec 4):** `to`≈` $\approx0.37$` -> `to $\approx0.37$`
-  (drop the plain-text tilde, keep the LaTeX approximation).
-- [ ] **Statistical phrasing (Sec 2.4):** "a percentile bootstrap" -> "a bootstrap
-  percentile interval" (or "bootstrap confidence intervals") to match the
-  terminology used elsewhere.
+- [x] **Eligibility typo (Sec 2.2):** ALREADY CORRECT. `main.tex` line 71 reads
+  `\mathrm{elig}(a,t)=...`; there is no `lig(a,t)` anywhere in the source.
+- [x] **Run-on after Activation/firing formula (Sec 2.2):** ALREADY CORRECT.
+  `main.tex` line 74 already reads "with temperature $T\geq 0$; the deterministic
+  threshold is the $T\to 0$ limit." (semicolon present).
+- [x] **Redundant tilde (Sec 4):** ALREADY CORRECT. `main.tex` line 224 reads
+  "completion falls to $\approx 0.37$" with no stray plain-text tilde; no
+  double-approx exists in the source.
+- [x] **Statistical phrasing (Sec 2.4):** FIXED. "a percentile bootstrap" ->
+  "a bootstrap percentile interval" in `main.tex` and mirrored in `docs/paper.md`.
 
 ## 2. Diagram and table adjustments
 
-- [ ] **Chart axes (Figures 1 and 6):** remove programming-style scientific
-  notation (e.g. `1.4e+05`); use comma-separated numbers (140,000) or
-  `$1.4 \times 10^5$`. Fix in the axis formatter in `src/cta/viz.py` (tick
-  labelling) and regenerate the figures.
-- [ ] **Unify metric (Figure 7):** plot the y-axis as a completion fraction
-  (0.0-1.0) rather than a raw count of modules, to align with Figures 2, 5, 6.
-  Update the project figure generation.
-- [ ] **Anchor orphaned table (Sec 3.2):** add a closing sentence referencing
-  Table 3, e.g. "The detailed verdicts comparing the outcomes under both the
-  domains family and the latent family are summarised in Table 3."
+- [x] **Chart axes (scaling figures):** FIXED. `src/cta/viz.py` `_fmt` now renders
+  magnitudes >= 1000 as comma-separated integers (140,000) instead of `1.4e+05`.
+  Affected figures (`cost_vs_n`, `scaling_peak_per_node`, `ladder_cost_fidelity`)
+  regenerated; verified no `e+` notation remains.
+- [x] **Unify metric (project figure, "Figure 7"):** FIXED. `pilot_tasks/project.py`
+  now plots a module-completion fraction (0.0-1.0) with ylabel "module completion
+  fraction", aligning with the completion-fraction figures.
+- [x] **Anchor table (Sec 3.2):** ALREADY REFERENCED. `main.tex` line 174 cites the
+  robustness table inline: "The verdicts are the same under both families
+  (Table~\ref{tab:robust})." If a stronger closing anchor is wanted in the
+  revision, append the reviewer's suggested sentence at the end of the subsection.
 
 ## 3. Writing style (optional, keep the rigour)
 
