@@ -1,8 +1,22 @@
 # Project Status
 
-A running log of what is complete and what comes next. Read this, then `claude.md`, `docs/next_experiments.md`, and `docs/measures.md` to resume in a fresh session.
+A running log of what is complete and what comes next. Read this, then `claude.md`, `archive/planning/next_experiments.md`, and `docs/measures.md` to resume in a fresh session.
 
-## Two-paper split (recorded 2026-07-11)
+## RESUME NEXT SESSION: combine Paper 1 + Paper 2 (decided 2026-07-12)
+
+Both papers are complete, proofread, and pushed (`paper1/` two editions, `paper2/`).
+A literature search then found close prior work: **MARGIN** (arXiv:2605.22949) scoops
+Paper 2's standalone core, plus **UCCI** (2605.18796) and **SwarmSys** (2510.10047).
+Decision: **merge Paper 2's strong parts (head-to-head, live ACP vignette, harness
+framing) into Paper 1 as deployment evidence, retire standalone Paper 2, and add a
+full related-work section citing MARGIN/UCCI/SwarmSys and the routing landscape.**
+
+**The step-by-step plan is in `archive/planning/combine_plan.md`.** To resume, say
+"combine the papers" (or read that file). Nothing is in flight; 161 tests pass, tree
+clean and pushed at the tidy-reorg commit. Paper 1 remains the spine; keep both
+editions (accessible `main.tex` + technical `main_formal.tex`) in sync.
+
+## Two-paper split (recorded 2026-07-11, SUPERSEDED by the combine decision above)
 
 **Paper 1 is being submitted now.** The arXiv package in `paper1/` (author Teo Qing
 Cong Eugene, Independent) is the submission: `main.tex` + `refs.bib` + `main.bbl`
