@@ -48,7 +48,15 @@ Paper 2 = the deployed harness + the competitive head-to-head.
   `tests/test_headtohead_replay.py` +4 (159 pass, ruff clean). The optional live
   end-to-end broker demo over a real subagent solver remains available if we later
   want a deployment vignette; the headline result is banked without it.
-- **Phase 2D (free): DRAFTED.** `docs/paper2.md` written: abstract, intro
+- **Phase 2D (free): LaTeX package built.** `paper2/` created: `main.tex`
+  (title "Calibration-Robust Routing as a Self-Improving Agent Harness"), `refs.bib`
+  (Paper 1's entries + verified ACP spec citation, Zed Industries 2025, + a Paper 1
+  companion entry), `figures/headtohead.pdf`, `build.sh`, `README.md`. Builds clean
+  (5 pages, all citations resolved). Ported from `docs/paper2.md`; carries the real
+  head-to-head table (CTA 0.988 [0.963, 1.000] at 25.3x saving) and figure. Paper 1
+  (`paper/`) stays frozen. Remaining before submission: a proofread and the optional
+  live-broker vignette.
+- **Phase 2D source draft (free): DONE.** `docs/paper2.md` written: abstract, intro
   (deployed-harness thesis, Weng 2026), related work (FrugalGPT/RouteLLM/ACP), the
   broker architecture, the head-to-head method + result table + the
   naive-collapses-to-cheapest finding, probe-overhead accounting, honest
