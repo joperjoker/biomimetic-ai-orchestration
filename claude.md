@@ -289,7 +289,7 @@ Quantitative metrics for the implementation phase (measured against a centralise
 - Create the store schema (tasks, agents, events, attempts; SQLite by default) and the atomic-claim statement.
 - Build the real-swarm pilot: Claude Code subagents that self-assess, claim, pass the gate, and execute scoped software micro-tasks in isolated git worktrees.
 - Build the analysis layer that computes the metric-to-measurement map in `docs/architecture.md` from the event log.
-- Follow the phased build in `archive/planning/roadmap.md`: the agent harnesses, the Auto-Researcher loop (a Karpathy-style propose, run, evaluate, keep-or-revert loop kept on a leash by the Rejection Gate), and the repository shaped as the public report. Not yet started.
+- Follow the phased build described in the paper and docs: the agent harnesses, the Auto-Researcher loop (a Karpathy-style propose, run, evaluate, keep-or-revert loop kept on a leash by the Rejection Gate), and the repository shaped as the public report. Not yet started.
 - Build the context and memory layer (`context/`) so the Auto-Researcher queries and recursively summarises the event log and ledger instead of loading full history, following the Recursive Language Models principle.
 - Implement the decentralised pull-based baseline and the agent-heterogeneity sweep alongside the central baselines.
 

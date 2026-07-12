@@ -6,7 +6,7 @@ the integrity gate screens each winner before it acts, and the coordinator cost 
 central scheduler would have paid is reported against the decentralised cost. It
 runs offline and deterministically on the simulation engine, so it needs no model
 calls or budget. Pointing the same flow at real Claude Code subagents is the
-follow-up (see ``archive/planning/next_experiments.md`` P3.4).
+follow-up (future work, P3.4).
 """
 
 from __future__ import annotations

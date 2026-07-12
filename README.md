@@ -94,8 +94,7 @@ One paper comes out of this work, in its own self-contained folder:
   mechanism through synthetic and real-agent evidence to the deployed router (an
   Agent Client Protocol broker) with a head-to-head and a live vignette. Ships in
   two editions (`main.tex` plain-language, `main_formal.tex` technical). An earlier
-  standalone second paper on the deployment was merged in and now lives in
-  `archive/paper2/`.
+  standalone second paper on the deployment was merged into it.
 
 ```
 .
@@ -125,8 +124,6 @@ One paper comes out of this work, in its own self-contained folder:
 ├── docs/                Markdown sources for both papers (paper.md, paper2.md) and
 │                        the reference docs: measures, theory, glossary,
 │                        architecture, product, live-pilot notes, acp_integration
-├── archive/             Process and planning material, not needed to build the
-│                        papers or reproduce results: STATUS.md, planning/, runbooks/
 └── .github/             Continuous integration and repository configuration
 ```
 
@@ -173,12 +170,11 @@ completion at roughly one fortieth of the always-frontier cost. These two are
 extracted as a small product library (`src/cta/wrappers.py`, demo
 `python -m examples.wrapper_demo`) and visualised in a results dashboard
 (`results/showcase.html`). The real-agent sample is small and the paper marks that
-limit throughout. Progress is tracked in `archive/STATUS.md`; the strategy and forward
-plan are in `archive/planning/strategy.md` and `archive/planning/next_experiments.md`.
+limit throughout.
 
 ## Considerations for Future Work
 
-The forward plan is in `archive/planning/strategy.md` and `archive/planning/next_experiments.md`. The open
+The open
 items are the publication track (a formatted submission and a related-work table),
 powering the real-agent results to confidence intervals across every cell, a
 two-sided real-agent calibration curve (an out-of-distribution or
