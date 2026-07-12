@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="sans-serif" font-size="13">
-<rect width="720" height="440" fill="white"/>
-<text x="360" y="22" text-anchor="middle" font-size="16">miniquery project: module completion fraction by model and wrapper</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="440" viewBox="0 0 820 440" font-family="sans-serif" font-size="13">
+<rect width="820" height="440" fill="white"/>
+<text x="410" y="22" text-anchor="middle" font-size="16">miniquery project: module completion fraction by model and wrapper</text>
 <line x1="74" y1="376.0" x2="560" y2="376.0" stroke="#e8e8e8"/>
 <text x="66" y="380.0" text-anchor="end">0</text>
 <line x1="74" y1="292.0" x2="560" y2="292.0" stroke="#e8e8e8"/>

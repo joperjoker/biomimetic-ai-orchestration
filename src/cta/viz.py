@@ -17,8 +17,11 @@ from pathlib import Path
 
 PALETTE = ["#2f6f9f", "#c25a3d", "#4c9a6a", "#8a6fb0", "#b58b2c"]
 
-_W, _H = 720, 440
-_ML, _MR, _MT, _MB = 74, 160, 40, 64  # margins (right margin holds the legend)
+_W, _H = 820, 440
+# Right margin holds the legend. It is wide enough for long series names (e.g.
+# "decentralised (busiest node)") so legend text never clips at the canvas edge;
+# _W grew with _MR so the plot area (_ML to _W-_MR) is unchanged.
+_ML, _MR, _MT, _MB = 74, 260, 40, 64
 _GRID = "#e8e8e8"
 
 

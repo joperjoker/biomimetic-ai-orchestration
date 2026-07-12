@@ -218,7 +218,7 @@ def _write(turns: list[dict]) -> None:
     save_svg(
         bar_chart(
             cats,
-            {"cheapest model (haiku) corrected bid": [
+            {"haiku corrected bid": [
                 x["corrected_bids"].get("haiku", 0.0) for x in turns]},
             title="Live broker routing: cheap model's corrected bid vs the 0.70 barrier",
             ylabel="corrected confidence (barrier = 0.70)",
