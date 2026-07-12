@@ -109,6 +109,46 @@ Table~\ref{tab:h2h} and Figure~\ref{fig:h2h} give the result. The corrected rout
 
 \paragraph{An effect only real self-reports reveal.} Naive-self-report routing scores identically to single-cheapest. Claude's stated confidence is uniformly high (around $0.9$) and always clears the barrier, so routing on the raw bid always picks the cheapest model. Without the track-record correction, self-report routing carries no information that distinguishes hard turns from easy ones; the correction is what restores that information. This is a sharper statement of the companion paper's calibration thesis, and it only appears when the self-reports are real rather than synthetic.
 
+\subsection{A live end-to-end vignette}
+To show the broker running as a deployed system rather than a replay, we ran it
+live over four real Claude subagent turns, with the track record warm-started from
+the ladder calibration (Table~\ref{tab:vignette}, Figure~\ref{fig:vignette}). Each
+turn, the broker elicited a bid, corrected it, routed to the chosen model, and had
+that real model solve the task against hidden tests. Three tasks routed to the cheap
+model (Haiku) and passed. The fourth, \code{is\_match}, is the one task Haiku is
+unreliable on (ladder reliability $0.70$): its corrected bid falls to $0.595$, below
+the $0.70$ barrier, so the broker escalated to Sonnet, which passed. The routed
+spend was $\$0.045$ against $\$0.72$ for always-frontier, a $16\times$ saving on
+this short run, and every turn passed. The broker protected completion exactly where
+the cheap model was weak and paid the cheap price everywhere else.
+
+\begin{table}[t]
+\centering\small
+\caption{Live ACP-broker vignette over four real Claude subagent turns. Corrected
+bids are Haiku/Sonnet/Opus; the cheapest model clearing the $0.70$ barrier wins.}
+\label{tab:vignette}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\textbf{Turn} & \textbf{Task} & \textbf{Routed to} & \textbf{Corrected bids (h/s/o)} & \textbf{Outcome} \\
+\midrule
+1 & \code{fraction\_to\_decimal} & Haiku & $0.85 / 0.92 / 0.96$ & pass \\
+2 & \code{multiply\_strings} & Haiku & $0.85 / 0.92 / 0.96$ & pass \\
+3 & \code{word\_break} & Haiku & $0.85 / 0.92 / 0.96$ & pass \\
+4 & \code{is\_match} & Sonnet & $0.595 / 0.92 / 0.96$ & pass \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.80\linewidth]{vignette_routing.pdf}
+\caption{The cheap model's (Haiku) reliability-corrected bid across the four live
+turns. It clears the $0.70$ barrier on the first three tasks, which route to Haiku,
+and dips to $0.595$ on \code{is\_match}, which escalates to Sonnet. The dip below the
+barrier is the escalation.}
+\label{fig:vignette}
+\end{figure}
+
 \subsection{Probe overhead}
 Eliciting a live confidence bid costs one short probe turn per candidate; the static policies (always-frontier, single-cheapest) pay none. In the harness we account this separately and report it as a fraction of the total cost. On a three-model fleet with short probes it stays a small fraction of the solve cost. The track-record correction needs no probe once a record exists, so a deployment can fall back to prior mode as the record accrues.
 

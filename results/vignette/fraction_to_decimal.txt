@@ -1,0 +1,32 @@
+def fraction_to_decimal(numerator: int, denominator: int) -> str:
+    if numerator == 0:
+        return "0"
+    result = []
+    if (numerator < 0) ^ (denominator < 0):
+        result.append("-")
+    numerator = abs(numerator)
+    denominator = abs(denominator)
+    result.append(str(numerator // denominator))
+    remainder = numerator % denominator
+    if remainder == 0:
+        return "".join(result)
+    result.append(".")
+    remainder_positions = {}
+    decimal_digits = []
+    while remainder != 0:
+        if remainder in remainder_positions:
+            repeat_pos = remainder_positions[remainder]
+            non_repeat = decimal_digits[:repeat_pos]
+            repeat = decimal_digits[repeat_pos:]
+            result.extend(non_repeat)
+            result.append("(")
+            result.extend(repeat)
+            result.append(")")
+            return "".join(result)
+        remainder_positions[remainder] = len(decimal_digits)
+        remainder *= 10
+        digit = remainder // denominator
+        decimal_digits.append(str(digit))
+        remainder %= denominator
+    result.extend(decimal_digits)
+    return "".join(result)

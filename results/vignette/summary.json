@@ -1,0 +1,52 @@
+{
+  "turns": [
+    {
+      "task": "fraction_to_decimal",
+      "routed_to": "haiku",
+      "corrected_bids": {
+        "haiku": 0.85,
+        "sonnet": 0.92,
+        "opus": 0.96
+      },
+      "reason": "cheapest model clearing the barrier (0.70)",
+      "passed": true,
+      "cost_usd": 0.003
+    },
+    {
+      "task": "multiply_strings",
+      "routed_to": "haiku",
+      "corrected_bids": {
+        "haiku": 0.85,
+        "sonnet": 0.92,
+        "opus": 0.96
+      },
+      "reason": "cheapest model clearing the barrier (0.70)",
+      "passed": true,
+      "cost_usd": 0.003
+    },
+    {
+      "task": "word_break",
+      "routed_to": "haiku",
+      "corrected_bids": {
+        "haiku": 0.85,
+        "sonnet": 0.92,
+        "opus": 0.96
+      },
+      "reason": "cheapest model clearing the barrier (0.70)",
+      "passed": true,
+      "cost_usd": 0.003
+    },
+    {
+      "task": "is_match",
+      "routed_to": "sonnet",
+      "corrected_bids": {
+        "haiku": 0.595,
+        "sonnet": 0.92,
+        "opus": 0.96
+      },
+      "reason": "cheapest model clearing the barrier (0.70)",
+      "passed": true,
+      "cost_usd": 0.036
+    }
+  ]
+}

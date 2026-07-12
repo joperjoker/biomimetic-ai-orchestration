@@ -63,11 +63,17 @@ Paper 2 = the deployed harness + the competitive head-to-head.
   limitations, conclusion. Next: verify citations online, then port to `paper2/`
   LaTeX (reuse `paper/refs.bib` + the head-to-head figure). `paper/` stays frozen.
 
-**Path 2 status: 2A-2C complete and 2D drafted, all at zero metered subagent
-cost** (2C ran as a leave-one-out replay over Phase 3's banked outcomes). Optional
-remaining: a live end-to-end broker vignette over a real subagent solver (metered,
-deployment colour only), and the `paper2/` LaTeX build. To resume, say "finish
-Paper 2" (LaTeX) or "run the live broker demo" (metered).
+**Path 2 status: all phases complete.** 2A-2C (broker, harness, replay) and 2D
+(`docs/paper2.md` + the `paper2/` LaTeX build) done, plus the optional **live
+end-to-end broker vignette** (`pilot_tasks/vignette.py`, `results/vignette/`): four
+real Claude subagent turns through the actual `AcpBroker`, track record warm-started
+from the ladder. Three routed to Haiku (passed); `is_match` (Haiku reliability 0.70,
+corrected bid 0.595 < 0.70 barrier) escalated to Sonnet (passed); 16x cost saving,
+all four passed. Written up as a subsection + table + figure in `paper2/main.tex`
+(now 6 pages). `tests/test_vignette.py` (+2; 161 pass). The vignette solutions are
+committed, so its scoring test is deterministic and re-runnable with no new solves.
+Paper 2 is a complete draft with real replay evidence and a live deployment
+vignette; remaining before submission is a proofread only.
 
 ## Paused 2026-07-11 (low usage)
 
