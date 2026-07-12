@@ -88,8 +88,9 @@ The framework is evaluated against a centralised baseline in two modes that shar
 
 One paper comes out of this work, in its own self-contained folder:
 
-- **The paper** (`paper1/`): "From Self-Reports to Track Records: Calibration-Robust
-  Task Allocation for Decentralised Multi-Agent LLM Systems". It runs from the
+- **The paper** (`paper1/`): "Scent, Threshold, and Track Record: A Biomimetic
+  Framework for Calibration-Robust Multi-Agent LLM Task Allocation" (plain-language
+  edition; the technical edition keeps a conventional title). It runs from the
   mechanism through synthetic and real-agent evidence to the deployed router (an
   Agent Client Protocol broker) with a head-to-head and a live vignette. Ships in
   two editions (`main.tex` plain-language, `main_formal.tex` technical). An earlier
