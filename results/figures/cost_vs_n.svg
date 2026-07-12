@@ -8,9 +8,9 @@
 <line x1="74" y1="208.0" x2="560" y2="208.0" stroke="#e8e8e8"/>
 <text x="66" y="212.0" text-anchor="end">91.07</text>
 <line x1="74" y1="124.0" x2="560" y2="124.0" stroke="#e8e8e8"/>
-<text x="66" y="128.0" text-anchor="end">3.6e+03</text>
+<text x="66" y="128.0" text-anchor="end">3,621</text>
 <line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
-<text x="66" y="44.0" text-anchor="end">1.4e+05</text>
+<text x="66" y="44.0" text-anchor="end">144,000</text>
 <line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
 <text x="74.0" y="394" text-anchor="middle">50.00</text>
 <line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
@@ -18,9 +18,9 @@
 <line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
 <text x="317.0" y="394" text-anchor="middle">707.11</text>
 <line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
-<text x="438.5" y="394" text-anchor="middle">2.7e+03</text>
+<text x="438.5" y="394" text-anchor="middle">2,659</text>
 <line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
-<text x="560.0" y="394" text-anchor="middle">1e+04</text>
+<text x="560.0" y="394" text-anchor="middle">10,000</text>
 <line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
 <line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
 <text x="317" y="424" text-anchor="middle">agents (log scale)</text>

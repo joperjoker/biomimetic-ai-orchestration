@@ -12,15 +12,15 @@
 <line x1="74" y1="40.0" x2="560" y2="40.0" stroke="#e8e8e8"/>
 <text x="66" y="44.0" text-anchor="end">1</text>
 <line x1="74.0" y1="376" x2="74.0" y2="381" stroke="#333"/>
-<text x="74.0" y="394" text-anchor="middle">3e+03</text>
+<text x="74.0" y="394" text-anchor="middle">2,982</text>
 <line x1="195.5" y1="376" x2="195.5" y2="381" stroke="#333"/>
-<text x="195.5" y="394" text-anchor="middle">3.7e+04</text>
+<text x="195.5" y="394" text-anchor="middle">37,346</text>
 <line x1="317.0" y1="376" x2="317.0" y2="381" stroke="#333"/>
-<text x="317.0" y="394" text-anchor="middle">7.2e+04</text>
+<text x="317.0" y="394" text-anchor="middle">71,711</text>
 <line x1="438.5" y1="376" x2="438.5" y2="381" stroke="#333"/>
-<text x="438.5" y="394" text-anchor="middle">1.1e+05</text>
+<text x="438.5" y="394" text-anchor="middle">106,075</text>
 <line x1="560.0" y1="376" x2="560.0" y2="381" stroke="#333"/>
-<text x="560.0" y="394" text-anchor="middle">1.4e+05</text>
+<text x="560.0" y="394" text-anchor="middle">140,439</text>
 <line x1="74" y1="376" x2="560" y2="376" stroke="#333"/>
 <line x1="74" y1="376" x2="74" y2="40" stroke="#333"/>
 <text x="317" y="424" text-anchor="middle">USD per task x 1e6 (representative tiers)</text>
