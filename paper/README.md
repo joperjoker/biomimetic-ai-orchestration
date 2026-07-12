@@ -9,10 +9,11 @@ The paper ships in two editions that share identical results, figures, tables, a
 bibliography; only the prose register and the title differ. Pick whichever suits
 the audience; submit one.
 
-- `main.tex` (plain-language edition): "Track Records Beat Self-Ratings:
-  Calibration-Robust Task Allocation for Cheap Multi-Agent LLM Swarms". Short
-  sentences, active voice, every term defined in plain words on first use. The
-  insight-forward title states the core finding upfront.
+- `main.tex` (plain-language edition): "From Self-Reports to Track Records:
+  Calibration-Robust Task Allocation for Decentralised Multi-Agent LLM Systems".
+  Short sentences, active voice, every term defined in plain words on first use.
+  The title leads with the paper's core move: replacing an unreliable signal
+  (self-assessment) with an observable one (the track record).
 - `main_formal.tex` (technical edition): "Calibration-Robust Decentralised Task
   Allocation for Multi-Agent LLM Systems". The denser, conventional register.
 
