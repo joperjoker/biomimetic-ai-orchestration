@@ -2,19 +2,20 @@
 
 A running log of what is complete and what comes next. Read this, then `claude.md`, `archive/planning/next_experiments.md`, and `docs/measures.md` to resume in a fresh session.
 
-## RESUME NEXT SESSION: combine Paper 1 + Paper 2 (decided 2026-07-12)
+## Combine done (2026-07-12): one paper
 
-Both papers are complete, proofread, and pushed (`paper1/` two editions, `paper2/`).
-A literature search then found close prior work: **MARGIN** (arXiv:2605.22949) scoops
-Paper 2's standalone core, plus **UCCI** (2605.18796) and **SwarmSys** (2510.10047).
-Decision: **merge Paper 2's strong parts (head-to-head, live ACP vignette, harness
-framing) into Paper 1 as deployment evidence, retire standalone Paper 2, and add a
-full related-work section citing MARGIN/UCCI/SwarmSys and the routing landscape.**
+The two papers are now merged into one, `paper1/` (both editions, 17 pages each).
+Paper 2's head-to-head, live ACP-broker vignette, and harness framing were folded in
+as a new Deployment section; a full related-work treatment now cites the close prior
+work found in the literature check (**MARGIN** arXiv:2605.22949, **UCCI** 2605.18796,
+**SwarmSys** 2510.10047, **BEST-Route** 2506.22716), all author-verified online
+before adding. Standalone Paper 2 is retired to `archive/paper2/` (source of the
+merged material). Both editions build cleanly, 161 tests pass, ruff and dash-check
+clean. The merge plan is in `archive/planning/combine_plan.md`.
 
-**The step-by-step plan is in `archive/planning/combine_plan.md`.** To resume, say
-"combine the papers" (or read that file). Nothing is in flight; 161 tests pass, tree
-clean and pushed at the tidy-reorg commit. Paper 1 remains the spine; keep both
-editions (accessible `main.tex` + technical `main_formal.tex`) in sync.
+Remaining before submission: a human read-through and the arXiv upload (source, not
+PDF). Optional science: the overconfident-model tier (the one honest gap) and a
+head-to-head against a named router on a standard benchmark.
 
 ## Two-paper split (recorded 2026-07-11, SUPERSEDED by the combine decision above)
 

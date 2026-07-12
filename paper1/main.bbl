@@ -1,9 +1,15 @@
-\begin{thebibliography}{12}
+\begin{thebibliography}{17}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Armstrong(2026)]{armstrong2026margin}
+Joss Armstrong.
+\newblock {MARGIN}: Runtime confidence calibration for multi-agent foundation
+  model coordination.
+\newblock \emph{arXiv preprint arXiv:2605.22949}, 2026.
 
 \bibitem[Bonabeau et~al.(1996)Bonabeau, Theraulaz, and
   Deneubourg]{bonabeau1996threshold}
@@ -36,6 +42,14 @@ M.~Bernardine Dias, Robert Zlot, Nidhi Kalra, and Anthony Stentz.
   2006.
 \newblock \doi{10.1109/JPROC.2006.876939}.
 
+\bibitem[Ding et~al.(2025)Ding, Mallick, Zhang, Wang, Madrigal,
+  Hipolito~Garcia, Xia, Lakshmanan, Wu, and R\"{u}hle]{ding2025bestroute}
+Dujian Ding, Ankur Mallick, Shaokun Zhang, Chi Wang, Daniel Madrigal, Mirian
+  Del~Carmen Hipolito~Garcia, Menglin Xia, Laks V.~S. Lakshmanan, Qingyun Wu,
+  and Victor R\"{u}hle.
+\newblock {BEST-Route}: Adaptive {LLM} routing with test-time optimal compute.
+\newblock \emph{arXiv preprint arXiv:2506.22716}, 2025.
+
 \bibitem[Dorigo et~al.(1996)Dorigo, Maniezzo, and Colorni]{dorigo1996ant}
 Marco Dorigo, Vittorio Maniezzo, and Alberto Colorni.
 \newblock Ant system: optimization by a colony of cooperating agents.
@@ -66,6 +80,20 @@ Brian~P. Gerkey and Maja~J. Matari\'{c}.
   (9):\penalty0 939--954, 2004.
 \newblock \doi{10.1177/0278364904045564}.
 
+\bibitem[Kotte(2026)]{kotte2026ucci}
+Varun Kotte.
+\newblock {UCCI}: Calibrated uncertainty for cost-optimal {LLM} cascade
+  routing.
+\newblock \emph{arXiv preprint arXiv:2605.18796}, 2026.
+
+\bibitem[Li et~al.(2025)Li, Liu, Zhao, Li, Li, Jiang, Xu, Zhao, Fan, and
+  Liang]{li2025swarmsys}
+Ruohao Li, Hongjun Liu, Leyi Zhao, Zisu Li, Jiawei Li, Jiajun Jiang, Linning
+  Xu, Chen Zhao, Mingming Fan, and Chen Liang.
+\newblock {SwarmSys}: Decentralized swarm-inspired agents for scalable and
+  adaptive reasoning.
+\newblock \emph{arXiv preprint arXiv:2510.10047}, 2025.
+
 \bibitem[Ong et~al.(2024)Ong, Almahairi, Wu, Chiang, Wu, Gonzalez, Kadous, and
   Stoica]{ong2024routellm}
 Isaac Ong, Amjad Almahairi, Vincent Wu, Wei-Lin Chiang, Tianhao Wu, Joseph~E.
@@ -86,6 +114,13 @@ Lilian Weng.
 \newblock Harness engineering for self-improvement.
 \newblock Lil'Log, 2026.
 \newblock \url{https://lilianweng.github.io/posts/2026-07-04-harness/}.
+
+\bibitem[{Zed Industries}(2025)]{acp2025}
+{Zed Industries}.
+\newblock Agent client protocol (acp).
+\newblock \url{https://agentclientprotocol.com}, 2025.
+\newblock Open protocol (JSON-RPC 2.0 over stdio) connecting code editors and
+  coding agents; released August 2025, Apache-2.0.
 
 \bibitem[Zhang et~al.(2026)Zhang, Zhu, Wei, Tian, Liu, Wang, Wang, and
   Liu]{zhang2026confidence}

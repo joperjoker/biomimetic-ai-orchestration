@@ -21,6 +21,11 @@ to build the papers, run the code, or reproduce the results.
 - `runbooks/`: operational runbooks.
   - `phase3_runbook.md`: the batched, resumable runbook for the real-agent
     (Phase 3) pilots.
+- `paper2/` and `paper2.md`: the retired standalone second paper. Its strong parts
+  (the head-to-head, the live ACP-broker vignette, and the harness framing) were
+  merged into the main paper (`../paper1/`) as the deployment section, after a
+  literature check found close prior work (MARGIN, UCCI). Kept here as the source
+  the merged material came from.
 
 ## Where the live material lives
 

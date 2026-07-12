@@ -1,7 +1,7 @@
 # arXiv submission package
 
-LaTeX source for the paper, converted from `docs/paper.md`. Builds to a 14-page
-preprint with 7 vector figures, four tables, and a bibliography.
+LaTeX source for the paper, converted from `docs/paper.md`. Builds to a 17-page
+preprint with vector figures, several tables, and a bibliography.
 
 ## Two editions
 

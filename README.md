@@ -86,13 +86,15 @@ The framework is evaluated against a centralised baseline in two modes that shar
 
 ## Repository Layout
 
-Two papers come out of this work, each in its own self-contained folder:
+One paper comes out of this work, in its own self-contained folder:
 
-- **Paper 1** (`paper1/`): the mechanism. "From Self-Reports to Track Records:
-  Calibration-Robust Task Allocation for Decentralised Multi-Agent LLM Systems".
-  Ships in two editions (`main.tex` plain-language, `main_formal.tex` technical).
-- **Paper 2** (`paper2/`): the deployed harness. "Calibration-Robust Routing as a
-  Self-Improving Agent Harness", with the head-to-head and a live-broker vignette.
+- **The paper** (`paper1/`): "From Self-Reports to Track Records: Calibration-Robust
+  Task Allocation for Decentralised Multi-Agent LLM Systems". It runs from the
+  mechanism through synthetic and real-agent evidence to the deployed router (an
+  Agent Client Protocol broker) with a head-to-head and a live vignette. Ships in
+  two editions (`main.tex` plain-language, `main_formal.tex` technical). An earlier
+  standalone second paper on the deployment was merged in and now lives in
+  `archive/paper2/`.
 
 ```
 .
@@ -102,10 +104,9 @@ Two papers come out of this work, each in its own self-contained folder:
 ├── CHANGELOG.md         Notable changes
 ├── REPRODUCE.md         How to regenerate every result from seeds
 ├── pyproject.toml       Project manifest and tooling configuration
-├── paper1/              Paper 1 arXiv package: main.tex (plain-language) and
+├── paper1/              The paper's arXiv package: main.tex (plain-language) and
 │                        main_formal.tex (technical), refs.bib, figures, build.sh,
 │                        and the reviewer-revision checklist (REVISIONS.md)
-├── paper2/              Paper 2 arXiv package: main.tex, refs.bib, figures, build.sh
 ├── src/cta/             The framework: scoring, engine, temporal, baselines,
 │                        generators, realism, harness, stats, store, cost,
 │                        routing, concurrent, dataset, report, dashboard, viz,
