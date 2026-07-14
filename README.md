@@ -2,6 +2,40 @@
 
 A decentralised multi-agent orchestration framework inspired by evolutionary biology. The project replaces the conventional top-down central scheduler with a distributed, signal-driven model in which tasks advertise themselves and agents self-select the work they are best suited to perform.
 
+## Use it as a tool
+
+`cta` is a **calibration-robust router for multi-model AI**. It corrects each model's self-reported confidence by an observable track record, then sends each task to the cheapest model that clears a reliability bar and escalates the rest. Use it as a Python library, or run it as an Agent Client Protocol (ACP) agent so it drops into any ACP-compatible editor. The longer it runs, the cheaper and more reliable it gets, because the track record accumulates.
+
+**Install**
+
+```
+pip install "git+https://github.com/joperjoker/biomimetic-ai-orchestration"
+```
+
+**60-second quickstart**
+
+```python
+from cta.wrappers import Fleet, Model, route
+
+fleet = Fleet(models=[Model("haiku", "economy"),
+                      Model("sonnet", "standard"),
+                      Model("opus", "premium")])
+
+# what the router has learned: haiku is reliable on "format", not on "parse"
+fleet.reliability = {"haiku":  {"format": 0.95, "parse": 0.30},
+                     "sonnet": {"format": 0.97, "parse": 0.95},
+                     "opus":   {"format": 0.99, "parse": 0.98}}
+
+for task in ("format", "parse"):
+    bids = {"haiku": 0.9, "sonnet": 0.9, "opus": 0.95}   # each model's self-report
+    print(task, "->", route(task, bids, fleet).model)     # format -> haiku; parse -> sonnet
+```
+
+Run the version above with `python -m examples.quickstart`, and see
+`python -m examples.wrapper_demo` for the task wrapper plus routing in one demo.
+
+**When it helps (honestly).** The saving is failure-contingent: it pays off most on a fleet of cheap, often overconfident models, where a confidently-wrong cheap answer is expensive (rework, failed tests, lost trust). Where the cheap model is already reliable, the router is a no-op with no regression, a safety net rather than a generic booster. The mechanism and the evidence behind it are the paper in `paper1/`.
+
 ## Motivation
 
 Current multi-agent frameworks tend to rely on a deterministic central orchestrator that assigns workloads from the top down. As the agent population grows, that orchestrator becomes a scaling bottleneck and a single point of failure. This repository validates a decentralised alternative drawn from reproductive biology, specifically the model of cryptic female choice described by Fitzpatrick and colleagues (2020).
