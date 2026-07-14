@@ -10,6 +10,8 @@ A decentralised multi-agent orchestration framework inspired by evolutionary bio
 
 **Tropos** is a **calibration-robust router for multi-model AI**. It corrects each model's self-reported confidence by an observable track record, then sends each task to the cheapest model that clears a reliability bar and escalates the rest. Use it as a Python library, or run it as an Agent Client Protocol (ACP) agent so it drops into any ACP-compatible editor. The longer it runs, the cheaper and more reliable it gets, because the track record accumulates. (The name is from *chemotropism*, growth toward a chemical signal; the implementation package is `cta`, the research codebase it grew out of.)
 
+![Tropos routing demo: format routes to the cheap model, parse escalates because its track record is too low](docs/tropos_demo.svg)
+
 **Install**
 
 ```

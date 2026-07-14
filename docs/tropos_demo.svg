@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="210" viewBox="0 0 760 210" font-family="SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace">
+  <rect x="1" y="1" width="758" height="208" rx="10" fill="#0d0d17" stroke="#313244"/>
+  <path d="M1 11 a10 10 0 0 1 10 -10 h738 a10 10 0 0 1 10 10 v26 h-758 z" fill="#181825"/>
+  <circle cx="22" cy="19" r="6" fill="#ff5f56"/>
+  <circle cx="42" cy="19" r="6" fill="#ffbd2e"/>
+  <circle cx="62" cy="19" r="6" fill="#27c93f"/>
+  <text x="380" y="24" text-anchor="middle" font-size="13" fill="#6c7086">tropos — quickstart</text>
+
+  <text x="24" y="72" font-size="16" xml:space="preserve"><tspan fill="#a6e3a1">$ </tspan><tspan fill="#cdd6f4">python -m examples.quickstart</tspan></text>
+
+  <text x="24" y="108" font-size="16" xml:space="preserve"><tspan fill="#cdd6f4">format </tspan><tspan fill="#6c7086"> &#8594;  </tspan><tspan fill="#89dceb">haiku </tspan><tspan fill="#6c7086">  cheap: clears the reliability bar</tspan></text>
+
+  <text x="24" y="138" font-size="16" xml:space="preserve"><tspan fill="#cdd6f4">parse  </tspan><tspan fill="#6c7086"> &#8594;  </tspan><tspan fill="#f9e2af">sonnet</tspan><tspan fill="#6c7086">  escalated: haiku's track record is too low</tspan></text>
+
+  <text x="24" y="184" font-size="13" fill="#6c7086" xml:space="preserve">same self-reports, different routing: the track record decides who gets the task.</text>
+</svg>

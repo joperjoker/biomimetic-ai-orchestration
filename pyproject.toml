@@ -6,13 +6,19 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "biomimetic-ai-orchestration"
+name = "tropos"
 version = "0.0.1"
 description = "Tropos: a calibration-robust router for multi-model AI (Chemotactic Task Allocation)."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "The biomimetic-ai-orchestration authors" }]
-license = "Apache-2.0"
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.5"]
