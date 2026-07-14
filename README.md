@@ -3,6 +3,9 @@
 [![CI](https://github.com/joperjoker/biomimetic-ai-orchestration/actions/workflows/ci.yml/badge.svg)](https://github.com/joperjoker/biomimetic-ai-orchestration/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
+[![Live site](https://img.shields.io/badge/live-project%20site-89dceb.svg)](https://joperjoker.github.io/biomimetic-ai-orchestration/)
+
+**Live site:** [joperjoker.github.io/biomimetic-ai-orchestration](https://joperjoker.github.io/biomimetic-ai-orchestration/) hosts the project landing page, the step-by-step [walkthrough](https://joperjoker.github.io/biomimetic-ai-orchestration/tropos_tour.html), the research dashboard, and the paper.
 
 A decentralised multi-agent orchestration framework inspired by evolutionary biology. The project replaces the conventional top-down central scheduler with a distributed, signal-driven model in which tasks advertise themselves and agents self-select the work they are best suited to perform.
 
