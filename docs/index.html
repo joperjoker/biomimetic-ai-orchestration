@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tropos — calibration-robust routing for multi-model AI</title>
+<meta name="description" content="Tropos routes each task to the cheapest AI model that is actually reliable, by track record rather than self-report. Walkthrough, research, and code.">
+<style>
+  :root{
+    --bg:#0b0b12; --panel:#14141f; --panel2:#171726; --stroke:#262636;
+    --text:#cdd6f4; --muted:#9aa0be; --dim:#6c7086;
+    --cyan:#89dceb; --green:#a6e3a1; --peach:#fab387; --mauve:#cba6f7;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:64px 24px 88px}
+  .eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+  h1{font-size:clamp(34px,6.4vw,54px);line-height:1.06;margin:.35em 0 .18em;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+  .tag{color:var(--cyan);font-weight:600;font-size:clamp(17px,3.2vw,21px);margin:.1em 0 .5em}
+  .lede{color:var(--muted);font-size:18px;max-width:62ch}
+  .install{margin:26px 0 6px;font-family:var(--mono);font-size:14.5px;background:var(--panel);border:1px solid var(--stroke);border-radius:10px;padding:13px 16px;overflow-x:auto}
+  .install .p{color:var(--green)}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:40px 0 0}
+  @media (max-width:560px){.cards{grid-template-columns:1fr}}
+  .card{display:block;background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:22px 22px 20px;color:var(--text);text-decoration:none;transition:border-color .15s,transform .15s}
+  .card:hover{border-color:#3a3a52;transform:translateY(-2px)}
+  .card:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+  .card .k{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  .card h2{font-size:20px;margin:8px 0 6px;font-weight:700;letter-spacing:-.01em}
+  .card.primary h2{color:var(--cyan)}
+  .card p{color:var(--muted);font-size:15px;margin:0}
+  .card .go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:13px;color:var(--peach)}
+  .note{background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:18px 22px;margin:40px 0 0;color:var(--muted);font-size:15.5px}
+  .note b{color:var(--green);font-weight:700}
+  .foot{margin-top:52px;border-top:1px solid var(--stroke);padding-top:22px;color:var(--dim);font-size:14px}
+  a.inline{color:var(--cyan);text-decoration:none;border-bottom:1px solid #89dceb40}
+  a.inline:hover{border-bottom-color:var(--cyan)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">tropos</div>
+  <h1>Route AI models by their <span style="color:var(--cyan)">track record</span>, not their word.</h1>
+  <p class="tag">A calibration-robust router for multi-model AI.</p>
+  <p class="lede">You have several models, cheap to expensive. Tropos corrects each model's self-reported confidence by an observable track record, then sends each task to the cheapest model that is actually reliable and escalates the rest. The longer it runs, the cheaper and more reliable it gets.</p>
+
+  <div class="install"><span class="p">$</span> pip install tropos</div>
+
+  <div class="cards">
+    <a class="card primary" href="tropos_tour.html">
+      <div class="k">start here</div>
+      <h2>Walkthrough</h2>
+      <p>The whole loop step by step, in real code with the real terminal output: define a fleet, route, report outcomes, watch the routing improve.</p>
+      <span class="go">open the tour &#8594;</span>
+    </a>
+    <a class="card" href="research.html">
+      <div class="k">the evidence</div>
+      <h2>Research dashboard</h2>
+      <p>The hypotheses, figures, and results behind the method, including the real-agent pilots and the cost analysis.</p>
+      <span class="go">view results &#8594;</span>
+    </a>
+    <a class="card" href="paper.pdf">
+      <div class="k">the paper</div>
+      <h2>Read the paper</h2>
+      <p>The full write-up of the framework, the experiments, and the honest limits, as a PDF.</p>
+      <span class="go">open PDF &#8594;</span>
+    </a>
+    <a class="card" href="https://github.com/joperjoker/biomimetic-ai-orchestration">
+      <div class="k">the code</div>
+      <h2>Source on GitHub</h2>
+      <p>Open source, Apache-2.0. Install it as a Python library or run it as an ACP agent inside your editor.</p>
+      <span class="go">browse the repo &#8594;</span>
+    </a>
+  </div>
+
+  <div class="note">
+    <b>Honest about what it does.</b> You supply each model's confidence and the outcome of each run; Tropos does the correcting, routing, and learning. It does not call your models or grade results for you, and it helps most on a fleet of cheap, often overconfident models. Where the cheap model is already reliable, it is a no-op with no regression, a safety net rather than a generic booster.
+  </div>
+
+  <div class="foot">
+    Open source, Apache-2.0. Built by Teo Qing Cong Eugene. Code and paper on <a class="inline" href="https://github.com/joperjoker/biomimetic-ai-orchestration">GitHub</a>.
+  </div>
+</div>
+</body>
+</html>
