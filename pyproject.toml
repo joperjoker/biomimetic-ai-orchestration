@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "biomimetic-ai-orchestration"
 version = "0.0.1"
-description = "Decentralised, signal-driven multi-agent orchestration of coding agents (Chemotactic Task Allocation)."
+description = "Tropos: a calibration-robust router for multi-model AI (Chemotactic Task Allocation)."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "The biomimetic-ai-orchestration authors" }]
@@ -20,6 +20,7 @@ viz = ["numpy>=1.26", "scipy>=1.11", "matplotlib>=3.8"]
 
 [project.scripts]
 cta = "cta.cli:main"
+tropos = "cta.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

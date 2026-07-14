@@ -1,10 +1,14 @@
 # Biomimetic AI Orchestration
 
+[![CI](https://github.com/joperjoker/biomimetic-ai-orchestration/actions/workflows/ci.yml/badge.svg)](https://github.com/joperjoker/biomimetic-ai-orchestration/actions/workflows/ci.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
+
 A decentralised multi-agent orchestration framework inspired by evolutionary biology. The project replaces the conventional top-down central scheduler with a distributed, signal-driven model in which tasks advertise themselves and agents self-select the work they are best suited to perform.
 
-## Use it as a tool
+## Tropos: use it as a tool
 
-`cta` is a **calibration-robust router for multi-model AI**. It corrects each model's self-reported confidence by an observable track record, then sends each task to the cheapest model that clears a reliability bar and escalates the rest. Use it as a Python library, or run it as an Agent Client Protocol (ACP) agent so it drops into any ACP-compatible editor. The longer it runs, the cheaper and more reliable it gets, because the track record accumulates.
+**Tropos** is a **calibration-robust router for multi-model AI**. It corrects each model's self-reported confidence by an observable track record, then sends each task to the cheapest model that clears a reliability bar and escalates the rest. Use it as a Python library, or run it as an Agent Client Protocol (ACP) agent so it drops into any ACP-compatible editor. The longer it runs, the cheaper and more reliable it gets, because the track record accumulates. (The name is from *chemotropism*, growth toward a chemical signal; the implementation package is `cta`, the research codebase it grew out of.)
 
 **Install**
 
@@ -15,7 +19,7 @@ pip install "git+https://github.com/joperjoker/biomimetic-ai-orchestration"
 **60-second quickstart**
 
 ```python
-from cta.wrappers import Fleet, Model, route
+from tropos import Fleet, Model, route
 
 fleet = Fleet(models=[Model("haiku", "economy"),
                       Model("sonnet", "standard"),
@@ -33,6 +37,19 @@ for task in ("format", "parse"):
 
 Run the version above with `python -m examples.quickstart`, and see
 `python -m examples.wrapper_demo` for the task wrapper plus routing in one demo.
+
+**Run it as an ACP agent** (drops into any ACP-compatible editor):
+
+```python
+from tropos import Fleet, Model, serve
+
+# Speaks JSON-RPC over stdio: on each prompt turn it elicits a confidence bid per
+# model, corrects it by the track record, routes to the cheapest model that clears
+# the bar, and streams that model's reply back to the editor.
+serve(Fleet(models=[Model("haiku", "economy"),
+                    Model("sonnet", "standard"),
+                    Model("opus", "premium")]))
+```
 
 **When it helps (honestly).** The saving is failure-contingent: it pays off most on a fleet of cheap, often overconfident models, where a confidently-wrong cheap answer is expensive (rework, failed tests, lost trust). Where the cheap model is already reliable, the router is a no-op with no regression, a safety net rather than a generic booster. The mechanism and the evidence behind it are the paper in `paper1/`.
 

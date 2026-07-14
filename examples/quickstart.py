@@ -9,7 +9,7 @@ and escalates the rest. This runs offline and deterministically, no model calls.
 
 from __future__ import annotations
 
-from cta.wrappers import Fleet, Model, route
+from tropos import Fleet, Model, route
 
 # A cheap-to-expensive fleet at representative price tiers.
 fleet = Fleet(models=[
