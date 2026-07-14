@@ -1,6 +1,7 @@
 # Biomimetic AI Orchestration
 
 [![CI](https://github.com/joperjoker/biomimetic-ai-orchestration/actions/workflows/ci.yml/badge.svg)](https://github.com/joperjoker/biomimetic-ai-orchestration/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/tropos.svg)](https://pypi.org/project/tropos/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![Live site](https://img.shields.io/badge/live-project%20site-89dceb.svg)](https://joperjoker.github.io/biomimetic-ai-orchestration/)
@@ -18,7 +19,7 @@ A decentralised multi-agent orchestration framework inspired by evolutionary bio
 **Install**
 
 ```
-pip install "git+https://github.com/joperjoker/biomimetic-ai-orchestration"
+pip install tropos
 ```
 
 **60-second quickstart**
