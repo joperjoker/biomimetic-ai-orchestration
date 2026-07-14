@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tropos — walkthrough</title>
+<style>
+  :root{
+    --bg:#0b0b12; --panel:#14141f; --panel2:#171726; --stroke:#262636;
+    --text:#cdd6f4; --muted:#9aa0be; --dim:#6c7086;
+    --cyan:#89dceb; --green:#a6e3a1; --yellow:#f9e2af; --peach:#fab387; --mauve:#cba6f7; --red:#f38ba8;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:60px 24px 88px}
+  .eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+  h1{font-size:clamp(34px,6.4vw,54px);line-height:1.06;margin:.35em 0 .18em;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+  .tag{color:var(--cyan);font-weight:600;font-size:clamp(17px,3.2vw,21px);margin:.1em 0 .5em}
+  .lede{color:var(--muted);font-size:18px;max-width:62ch}
+  .note{background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:20px 22px;margin:36px 0}
+  .note .hd{font-weight:600}
+  .note .hd b{color:var(--green);font-weight:700}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:15.5px;margin-top:12px}
+  .kv .k{color:var(--green);font-family:var(--mono);font-size:14px;white-space:nowrap;padding-top:1px}
+  .note .fine{color:var(--dim);margin:14px 0 0;font-size:15px}
+  .step{margin:50px 0}
+  .step h2{font-size:25px;margin:0 0 3px;font-weight:700;letter-spacing:-.01em}
+  .step h2 .n{color:var(--cyan);font-family:var(--mono);font-weight:700;margin-right:12px}
+  .step p{color:var(--muted);margin:.2em 0 16px;max-width:64ch}
+  pre{margin:0;overflow-x:auto;background:var(--panel);border:1px solid var(--stroke);border-radius:12px;padding:17px 20px}
+  code,pre{font-family:var(--mono);font-size:14.5px;line-height:1.7}
+  .win{margin-top:13px;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;background:var(--panel2)}
+  .win .bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--stroke);background:#10101b}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .win .bar .t{margin-left:6px;color:var(--dim);font-family:var(--mono);font-size:12.5px}
+  .win pre{border:0;border-radius:0;background:transparent}
+  .cmt{color:var(--dim)} .str{color:var(--green)} .kw{color:var(--mauve)} .num{color:var(--peach)}
+  .out{color:var(--cyan)} .lbl{color:var(--muted)} .prompt{color:var(--green)}
+  .caveat{margin:44px 0 0;color:var(--muted);font-size:15.5px}
+  .pill{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--peach);border:1px solid #fab38744;border-radius:999px;padding:3px 10px;margin-right:8px;letter-spacing:.03em}
+  .foot{margin-top:60px;border-top:1px solid var(--stroke);padding-top:22px;color:var(--dim);font-size:14px}
+  a{color:var(--cyan);text-decoration:none;border-bottom:1px solid #89dceb40}
+  a:hover{border-bottom-color:var(--cyan)}
+  a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">tropos · walkthrough</div>
+  <h1>Route AI models by their <span style="color:var(--cyan)">track record</span>, not their word.</h1>
+  <p class="tag">A calibration-robust router for multi-model AI.</p>
+  <p class="lede">You have several models, cheap to expensive. Tropos sends each task to the cheapest one that is actually reliable, using what it has learned rather than what the model claims about itself. Here is the whole loop, in real code, with the real output.</p>
+
+  <div class="note">
+    <div class="hd">What <b>you</b> plug in, and what <b>Tropos</b> does:</div>
+    <div class="kv">
+      <div class="k">you provide</div><div>each model's confidence, and the outcome of each run</div>
+      <div class="k">Tropos does</div><div>correct the confidence by the track record, route to the cheapest reliable model, then learn from the outcome</div>
+    </div>
+    <p class="fine">It does not call your models or grade results for you. You wire those up; Tropos makes the calibrated decision and remembers what happened.</p>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">1</span>Define your fleet</h2>
+    <p>Cheapest-first, each model on a price tier.</p>
+    <pre><code><span class="prompt">$</span> pip install tropos
+
+<span class="kw">from</span> tropos <span class="kw">import</span> Fleet, Model
+
+fleet = Fleet(models=[
+    Model(<span class="str">"haiku"</span>,  <span class="str">"economy"</span>),
+    Model(<span class="str">"sonnet"</span>, <span class="str">"standard"</span>),
+    Model(<span class="str">"opus"</span>,   <span class="str">"premium"</span>),
+])</code></pre>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">2</span>Route a task</h2>
+    <p>You pass each model's confidence bid. On a cold start there is no track record yet, so Tropos plays safe and escalates to the strongest model.</p>
+    <pre><code><span class="kw">from</span> tropos <span class="kw">import</span> route
+
+bids = {<span class="str">"haiku"</span>: <span class="num">0.9</span>, <span class="str">"sonnet"</span>: <span class="num">0.9</span>, <span class="str">"opus"</span>: <span class="num">0.95</span>}
+route(<span class="str">"parse"</span>, bids, fleet).model</code></pre>
+    <div class="win">
+      <div class="bar"><span class="dot" style="background:#ff5f56"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#27c93f"></span><span class="t">output</span></div>
+      <pre><code><span class="lbl">routed to :</span> <span class="out">opus</span>
+<span class="lbl">reason    :</span> no model cleared the barrier; escalated to the highest corrected bid</code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">3</span>Report outcomes, and it learns</h2>
+    <p>After each run, tell Tropos what actually happened. This is the whole point: the routing sharpens from real outcomes, with no privileged information.</p>
+    <pre><code><span class="cmt"># haiku got 'parse' wrong; sonnet got it right, twice</span>
+fleet.record(<span class="str">"haiku"</span>,  <span class="str">"parse"</span>, passed=<span class="num">False</span>)
+fleet.record(<span class="str">"sonnet"</span>, <span class="str">"parse"</span>, passed=<span class="num">True</span>)
+fleet.record(<span class="str">"sonnet"</span>, <span class="str">"parse"</span>, passed=<span class="num">True</span>)</code></pre>
+    <div class="win">
+      <div class="bar"><span class="dot" style="background:#ff5f56"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#27c93f"></span><span class="t">output</span></div>
+      <pre><code><span class="lbl">haiku  'parse' reliability :</span> <span class="num">0.42</span>
+<span class="lbl">sonnet 'parse' reliability :</span> <span class="num">0.80</span></code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">4</span>Route again, routing has improved</h2>
+    <p>Same bids as before. But now Tropos knows haiku is unreliable on <span style="font-family:var(--mono);font-size:.92em">parse</span>, so it routes to the cheaper reliable model instead of the frontier.</p>
+    <pre><code>route(<span class="str">"parse"</span>, bids, fleet).model</code></pre>
+    <div class="win">
+      <div class="bar"><span class="dot" style="background:#ff5f56"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#27c93f"></span><span class="t">output</span></div>
+      <pre><code><span class="lbl">routed to :</span> <span class="out">sonnet</span>
+<span class="lbl">reason    :</span> cheapest model clearing the barrier (0.70)</code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">&#9654;</span>Run the whole thing yourself</h2>
+    <p>Two commands. The output below is exactly what you will see.</p>
+    <pre><code><span class="prompt">$</span> pip install tropos
+<span class="prompt">$</span> python -m examples.walkthrough</code></pre>
+    <div class="win">
+      <div class="bar"><span class="dot" style="background:#ff5f56"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#27c93f"></span><span class="t">python -m examples.walkthrough</span></div>
+      <pre><code><span class="cmt">=== 1. Fleet defined: haiku (economy) &lt; sonnet (standard) &lt; opus (premium) ===</span>
+
+<span class="cmt">=== 2. Route 'parse' at cold start (no track record yet) ===</span>
+   bids        : {'haiku': 0.9, 'sonnet': 0.9, 'opus': 0.95}
+   routed to   : <span class="out">opus</span>
+   reason      : no model cleared the barrier; escalated to the highest corrected bid
+
+<span class="cmt">=== 3. Report real outcomes ===</span>
+   haiku  'parse' reliability : <span class="num">0.42</span>
+   sonnet 'parse' reliability : <span class="num">0.80</span>
+
+<span class="cmt">=== 4. Route 'parse' again, routing has improved ===</span>
+   routed to   : <span class="out">sonnet</span>
+   reason      : cheapest model clearing the barrier (0.70)</code></pre>
+    </div>
+  </div>
+
+  <p class="caveat"><span class="pill">honest caveat</span>Tropos helps most on a fleet of cheap, often overconfident models, where a confidently-wrong cheap answer is expensive (rework, failed tests, lost trust). Where the cheap model is already reliable, it is a no-op with no regression, a safety net rather than a generic booster.</p>
+
+  <div class="foot">
+    Open source, Apache-2.0. Code and the research paper are on <a href="https://github.com/joperjoker/biomimetic-ai-orchestration">GitHub</a>. Built by Teo Qing Cong Eugene.
+  </div>
+</div>
+</body>
+</html>

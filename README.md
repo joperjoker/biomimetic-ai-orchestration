@@ -40,6 +40,8 @@ for task in ("format", "parse"):
 Run the version above with `python -m examples.quickstart`, and see
 `python -m examples.wrapper_demo` for the task wrapper plus routing in one demo.
 
+**Prefer a guided tour?** `python -m examples.walkthrough` runs the whole loop step by step (define a fleet, route, report outcomes, watch the routing improve) and prints the real output at each stage. The same walkthrough is a self-contained web page at [`docs/tropos_tour.html`](docs/tropos_tour.html), which you can open in a browser or host to share.
+
 **Run it as an ACP agent** (drops into any ACP-compatible editor):
 
 ```python
